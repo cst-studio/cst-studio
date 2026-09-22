@@ -13,21 +13,6 @@ const router = createRouter({
       name: "home",
       component: HomeView,
     },
-    {
-      path: "/draw",
-      name: "draw",
-      component: () => import("../views/DrawView.vue"),
-    },
-    {
-      path: "/tuto",
-      name: "tuto",
-      component: () => import("../views/TutoView.vue"),
-    },
-    {
-      path: "/save",
-      name: "save",
-      component: () => import("../views/SaveView.vue"),
-    },
   ],
 });
 

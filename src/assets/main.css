@@ -12,7 +12,7 @@ body {
   min-height: 100%;
 }
 
-#rangoli--app {
+#cst--app {
   /*
   max-width: 1280px;
   margin: 0 auto;
@@ -36,7 +36,7 @@ body {
   
   */
   
-  .rangoli--app {
+  .cst--app {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;

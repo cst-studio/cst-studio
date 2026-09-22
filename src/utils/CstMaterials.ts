@@ -6,16 +6,16 @@ import projo_texture_url from "@/assets/bitmap/texture/projo.jpg?url";
 import screen_texture_url from "@/assets/bitmap/texture/movie.jpg?url";
 
 import { hexToVec3Srgb } from "@/utils/utils";
-import rangoliMaterialVertexShader from "../shader/RangoliMaterial.vert?raw";
-import rangoliMaterialFragmentShader from "../shader/RangoliMaterial.frag?raw";
+import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
+import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
 import { hexToVec3Linear } from "./utils";
 
-export interface RangoliMaterialsOpts {
+export interface CstMaterialsOpts {
   initialProgress?: number; // 0..1
 }
 
-export class RangoliMaterials {
-  public rangoli_BG_Mat: THREE.ShaderMaterial;
+export class CstMaterials {
+  public cst_BG_Mat: THREE.ShaderMaterial;
   public SpotLeft: THREE.ShaderMaterial;
   public SpotRight: THREE.ShaderMaterial;
   public SmogFloor: THREE.ShaderMaterial;
@@ -31,8 +31,8 @@ export class RangoliMaterials {
   private projo_Texture?: THREE.Texture;
   private screen_Texture?: THREE.Texture;
 
-  constructor(opts: RangoliMaterialsOpts = {}) {
-    this.rangoli_BG_Mat = this.makeSpotMaterial();
+  constructor(opts: CstMaterialsOpts = {}) {
+    this.cst_BG_Mat = this.makeSpotMaterial();
     this.SpotLeft = this.makeSpotMaterial();
     this.SpotRight = this.makeSpotMaterial();    
     this.SmogFloor = this.makeSmogMaterial();    
@@ -70,16 +70,16 @@ export class RangoliMaterials {
 
   dispose() {
     // TODO : Implement
-    // this.rangoli_LT_Mat.dispose();
-    // this.rangoli_LI_Mat.dispose();
-    // this.rangoli_LM_Mat.dispose();
-    // this.rangoli_LO_Mat.dispose();
-    // this.rangoli_LT_Mat.dispose();
+    // this.cst_LT_Mat.dispose();
+    // this.cst_LI_Mat.dispose();
+    // this.cst_LM_Mat.dispose();
+    // this.cst_LO_Mat.dispose();
+    // this.cst_LT_Mat.dispose();
   }
   public update(
     time: number
   ) {
-    this.rangoli_BG_Mat.uniforms.uTime.value = 
+    this.cst_BG_Mat.uniforms.uTime.value = 
     this.Floor.uniforms.uTime.value = 
     this.Logo.uniforms.uTime.value = 
     this.SmogFloor.uniforms.uTime.value = 
@@ -91,17 +91,17 @@ export class RangoliMaterials {
     this.SpotLeft.uniforms.uCloudTexture.value =
     this.SpotRight.uniforms.uCloudTexture.value =
     this.SmogFloor.uniforms.uCloudTexture.value =
-    this.rangoli_BG_Mat.uniforms.uCloudTexture.value =
+    this.cst_BG_Mat.uniforms.uCloudTexture.value =
       this.cloud_Texture;
     this.SpotLeft.uniforms.uSmogTexture.value =
     this.SpotRight.uniforms.uSmogTexture.value =
     this.SmogFloor.uniforms.uSmogTexture.value =
-    this.rangoli_BG_Mat.uniforms.uSmogTexture.value =
+    this.cst_BG_Mat.uniforms.uSmogTexture.value =
       this.smog_Texture;
     this.SpotLeft.uniforms.uSwirlTexture.value =
     this.SpotRight.uniforms.uSwirlTexture.value =
     this.SmogFloor.uniforms.uSwirlTexture.value =
-    this.rangoli_BG_Mat.uniforms.uSwirlTexture.value =
+    this.cst_BG_Mat.uniforms.uSwirlTexture.value =
       this.swirl_Texture;
     this.Projo.uniforms.uProjoTexture.value =
       this.projo_Texture;
@@ -538,10 +538,10 @@ export class RangoliMaterials {
     });
     return customMaterial;
   }
-  private makeRangoliMaterial(): THREE.ShaderMaterial {
+  private makeCstMaterial(): THREE.ShaderMaterial {
     const customMaterial = new THREE.ShaderMaterial({
-      vertexShader: rangoliMaterialVertexShader,
-      fragmentShader: rangoliMaterialFragmentShader,
+      vertexShader: cstMaterialVertexShader,
+      fragmentShader: cstMaterialFragmentShader,
       uniforms: {
         uTexture: { value: null },
         uTime: { value: 0.0 },

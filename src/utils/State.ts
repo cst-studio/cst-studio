@@ -1,6 +1,6 @@
 import { ref } from "vue";
 
-export type AppState = "intro" | "tuto" | "draw" | "export";
+export type AppState = "intro";
 
 const screenWidth = ref(1);
 const screenHeight = ref(1);

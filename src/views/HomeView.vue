@@ -11,7 +11,7 @@ const gradientStart = ref("#D80084");
 const gradientEnd = ref("#FF8F66");
 
 onMounted(() => {
-  eventBus.emit("introRangoli");
+  eventBus.emit("introCst");
 });
 
 onBeforeUnmount(() => {});

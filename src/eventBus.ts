@@ -6,24 +6,24 @@ type RouteChange = {
   from: string
 }
 type Events = {
-  introRangoli: undefined,
+  introCst: undefined,
   colorChanged: number,
-  rangoliClick: Point,
+  cstClick: Point,
   addRipple: {x:number, y:number},
   sizeRipple: {size:number, duration:number},
-  rangoliColorize: number,
-  rangoliLayerUp: number,
+  cstColorize: number,
+  cstLayerUp: number,
   sceneReady: boolean,
   'route-has-changed': RouteChange,
   'route-will-change': RouteChange,
   tutoIsoCamera: boolean,
-  rangoliRandom: undefined,
+  cstRandom: undefined,
   exportUsdz: undefined,
   exportImg: undefined,
   usdzReady: string,
   imgReady: string,
   activeExport: boolean,
-  saturateRangoli: boolean,
+  saturateCst: boolean,
   resize: {width:number, height:number}
 }
 

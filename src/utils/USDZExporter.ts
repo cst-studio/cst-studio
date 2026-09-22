@@ -195,7 +195,7 @@ export class USDZExporter {
     const usedNames = new Set<string>();
     const files: Record<string, any> = {};
     const modelFileName = "assets/model.usda";
-    const sceneFileName = "rangoli.usda";
+    const sceneFileName = "cst.usda";
 
     files[sceneFileName] = null;
 
@@ -229,7 +229,7 @@ def Xform "Root"
         float3 xformOp:scale = (4, 4, 4)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
 
-        def "Rangoli" (
+        def "Cst" (
             prepend apiSchemas = ["MaterialBindingAPI"]
             references = @assets/model.usda@
         )
@@ -252,7 +252,7 @@ def Xform "Root"
 
 def Material "Material_0"
     {
-        reorder nameChildren = ["PreviewSurface", "RangoliGraph"]
+        reorder nameChildren = ["PreviewSurface", "CstGraph"]
         color3f inputs:ColorDark = ${hexToStringLinear(COLORS[options.colorsIdx][0].dark, 1.9)} (
             colorSpace = "${colorSpace}"
             customData = {
@@ -275,7 +275,7 @@ def Material "Material_0"
         token outputs:realitykit:vertex
         float2 ui:nodegraph:realitykit:subgraphOutputs:pos = (365.5, 130.5)
 
-        def NodeGraph "RangoliGraph" (
+        def NodeGraph "CstGraph" (
             active = true
         )
         {
@@ -307,8 +307,8 @@ def Material "Material_0"
                     }
                 }
             )
-            color3f outputs:Color.connect = </Root/Material_0/RangoliGraph/Add_6.outputs:out>
-            float outputs:Noise.connect = </Root/Material_0/RangoliGraph/Mix_Noise.outputs:out>
+            color3f outputs:Color.connect = </Root/Material_0/CstGraph/Add_6.outputs:out>
+            float outputs:Noise.connect = </Root/Material_0/CstGraph/Mix_Noise.outputs:out>
             float outputs:OpacityThreshold (
                 customData = {
                     dictionary realitykit = {
@@ -317,7 +317,7 @@ def Material "Material_0"
                     }
                 }
             )
-            float outputs:OpacityThreshold.connect = </Root/Material_0/RangoliGraph/Dot_6.outputs:out>
+            float outputs:OpacityThreshold.connect = </Root/Material_0/CstGraph/Dot_6.outputs:out>
             float2 ui:nodegraph:node:pos = (-118.48828, 10.613281)
             int ui:nodegraph:node:stackingOrder = 13
             float2 ui:nodegraph:realitykit:subgraphOutputs:pos = (3679.0469, -1017.1328)
@@ -326,8 +326,8 @@ def Material "Material_0"
             def Shader "Add_10"
             {
                 uniform token info:id = "ND_add_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Add_7.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/marginGrainIn.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Add_7.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/marginGrainIn.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (713.5947, -903.2538)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -336,9 +336,9 @@ def Material "Material_0"
             def Shader "Mix_2"
             {
                 uniform token info:id = "ND_mix_color3"
-                color3f inputs:bg.connect = </Root/Material_0/RangoliGraph.inputs:ColorPale>
-                color3f inputs:fg.connect = </Root/Material_0/RangoliGraph.inputs:ColorDark>
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Multiply_IsCircle_03.outputs:out>
+                color3f inputs:bg.connect = </Root/Material_0/CstGraph.inputs:ColorPale>
+                color3f inputs:fg.connect = </Root/Material_0/CstGraph.inputs:ColorDark>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Multiply_IsCircle_03.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (739.1255, 34.85388)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -348,10 +348,10 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_mix_vector3"
                 float3 inputs:bg = (1, 0, 0)
-                float3 inputs:bg.connect = </Root/Material_0/RangoliGraph/Bitangent.outputs:out>
+                float3 inputs:bg.connect = </Root/Material_0/CstGraph/Bitangent.outputs:out>
                 float3 inputs:fg = (1, 0, 0)
                 float3 inputs:fg.connect = None
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Step_3.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Step_3.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1544.9817, 2341.1077)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -362,7 +362,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_subtract_float"
                 float inputs:in1 = 1
                 float inputs:in1.connect = None
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Separate2_1.outputs:outy>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Separate2_1.outputs:outy>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (20.19629, -1281.0116)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -371,7 +371,7 @@ def Material "Material_0"
             def Shader "Multiply_2"
             {
                 uniform token info:id = "ND_multiply_vector3"
-                float3 inputs:in1.connect = </Root/Material_0/RangoliGraph/Combine3.outputs:out>
+                float3 inputs:in1.connect = </Root/Material_0/CstGraph/Combine3.outputs:out>
                 float3 inputs:in2 = (2, 2, 2)
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-2764.7625, 2221.833)
@@ -384,9 +384,9 @@ def Material "Material_0"
                 color3f inputs:bg = (0.75, 0.75, 0.75) (
                     colorSpace = "lin_srgb"
                 )
-                color3f inputs:bg.connect = </Root/Material_0/RangoliGraph/Dot_14.outputs:out>
-                color3f inputs:fg.connect = </Root/Material_0/RangoliGraph/innerColor.outputs:out>
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Dot_10.outputs:out>
+                color3f inputs:bg.connect = </Root/Material_0/CstGraph/Dot_14.outputs:out>
+                color3f inputs:fg.connect = </Root/Material_0/CstGraph/innerColor.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Dot_10.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (2259.3184, -848.4779)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -395,8 +395,8 @@ def Material "Material_0"
             def Shader "Multiply_12"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Subtract.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Range_1.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Subtract.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Range_1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-3202.3506, 1873.8126)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -405,7 +405,7 @@ def Material "Material_0"
             def Shader "Convert_4"
             {
                 uniform token info:id = "ND_convert_float_color3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_10.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_10.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (2524.1943, -1175.1311)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -414,7 +414,7 @@ def Material "Material_0"
             def Shader "Dot_1"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Divide.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Divide.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2401.0867, 1601.7994)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -423,7 +423,7 @@ def Material "Material_0"
             def Shader "Power_1"
             {
                 uniform token info:id = "ND_power_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Subtract_1.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Subtract_1.outputs:out>
                 float inputs:in2 = 0.5
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2719.463, 1687.262)
@@ -433,7 +433,7 @@ def Material "Material_0"
             def Shader "Max"
             {
                 uniform token info:id = "ND_max_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Add_8.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Add_8.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1365.8901, -1477.142)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -444,7 +444,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_subtract_float"
                 float inputs:in1 = 1
                 float inputs:in1.connect = None
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Range_1.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Range_1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-3096.1045, 1385.7892)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -453,7 +453,7 @@ def Material "Material_0"
             def Shader "Convert_2"
             {
                 uniform token info:id = "ND_convert_float_color3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/innershadow.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/innershadow.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (2159.1099, -1376.0697)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -462,7 +462,7 @@ def Material "Material_0"
             def Shader "Dot_13"
             {
                 uniform token info:id = "ND_dot_vector3"
-                float3 inputs:in.connect = </Root/Material_0/RangoliGraph/Combine3.outputs:out>
+                float3 inputs:in.connect = </Root/Material_0/CstGraph/Combine3.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-2074.0725, 2046.4585)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -471,9 +471,9 @@ def Material "Material_0"
             def Shader "Combine3_3"
             {
                 uniform token info:id = "ND_combine3_vector3"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Separate3_1.outputs:outz>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Separate3_1.outputs:outz>
                 float inputs:in2
-                float inputs:in3.connect = </Root/Material_0/RangoliGraph/Multiply_15.outputs:out>
+                float inputs:in3.connect = </Root/Material_0/CstGraph/Multiply_15.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1915.0542, 2181.1055)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -482,7 +482,7 @@ def Material "Material_0"
             def Shader "Dot_5"
             {
                 uniform token info:id = "ND_dot_color3"
-                color3f inputs:in.connect = </Root/Material_0/RangoliGraph/Mix_7.outputs:out>
+                color3f inputs:in.connect = </Root/Material_0/CstGraph/Mix_7.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (3303.2744, -781.844)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -491,7 +491,7 @@ def Material "Material_0"
             def Shader "Separate2_1"
             {
                 uniform token info:id = "ND_separate2_vector2"
-                float2 inputs:in.connect = </Root/Material_0/RangoliGraph/TextureCoordinates_3.outputs:out>
+                float2 inputs:in.connect = </Root/Material_0/CstGraph/TextureCoordinates_3.outputs:out>
                 float outputs:outx
                 float outputs:outy
                 float2 ui:nodegraph:node:pos = (-234.30762, -1236.7108)
@@ -501,8 +501,8 @@ def Material "Material_0"
             def Shader "Divide"
             {
                 uniform token info:id = "ND_divide_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Subtract_7.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Dot.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Subtract_7.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Dot.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2495.5068, 1601.368)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -511,7 +511,7 @@ def Material "Material_0"
             def Shader "Separate3_1"
             {
                 uniform token info:id = "ND_separate3_vector3"
-                float3 inputs:in.connect = </Root/Material_0/RangoliGraph/Tangent.outputs:out>
+                float3 inputs:in.connect = </Root/Material_0/CstGraph/Tangent.outputs:out>
                 float outputs:outx
                 float outputs:outy
                 float outputs:outz
@@ -522,7 +522,7 @@ def Material "Material_0"
             def Shader "Convert_1"
             {
                 uniform token info:id = "ND_convert_float_color3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Multiply_11.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Multiply_11.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (162.78516, -701.64905)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -531,9 +531,9 @@ def Material "Material_0"
             def Shader "Grad"
             {
                 uniform token info:id = "ND_subtract_vector2"
-                float2 inputs:in1.connect = </Root/Material_0/RangoliGraph/TextureCoordinates_1.outputs:out>
+                float2 inputs:in1.connect = </Root/Material_0/CstGraph/TextureCoordinates_1.outputs:out>
                 float2 inputs:in2 = (0.5, 0)
-                float2 inputs:in2.connect = </Root/Material_0/RangoliGraph/Combine2.outputs:out>
+                float2 inputs:in2.connect = </Root/Material_0/CstGraph/Combine2.outputs:out>
                 float2 outputs:out
                 float2 ui:nodegraph:node:pos = (-631.083, 69.93268)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -551,8 +551,8 @@ def Material "Material_0"
             def Shader "Multiply_7"
             {
                 uniform token info:id = "ND_multiply_color3"
-                color3f inputs:in1.connect = </Root/Material_0/RangoliGraph.inputs:ColorDark>
-                color3f inputs:in2.connect = </Root/Material_0/RangoliGraph/Convert_3.outputs:out>
+                color3f inputs:in1.connect = </Root/Material_0/CstGraph.inputs:ColorDark>
+                color3f inputs:in2.connect = </Root/Material_0/CstGraph/Convert_3.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (621.5703, -348.1277)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -561,7 +561,7 @@ def Material "Material_0"
             def Shader "Dot_12"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_9.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_9.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-4074.8901, 1235.2118)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -570,7 +570,7 @@ def Material "Material_0"
             def Shader "Height_V3"
             {
                 uniform token info:id = "ND_convert_float_vector3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1668.2031, 2001.0774)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -588,7 +588,7 @@ def Material "Material_0"
             def Shader "Subtract_3"
             {
                 uniform token info:id = "ND_subtract_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Magnitude.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Magnitude.outputs:out>
                 float inputs:in2 = 0.35
                 float inputs:in2.connect = None
                 float outputs:out
@@ -599,8 +599,8 @@ def Material "Material_0"
             def Shader "DotProduct"
             {
                 uniform token info:id = "ND_dotproduct_vector3"
-                float3 inputs:in1.connect = </Root/Material_0/RangoliGraph/Dot_2.outputs:out>
-                float3 inputs:in2.connect = </Root/Material_0/RangoliGraph/Combine3_1.outputs:out>
+                float3 inputs:in1.connect = </Root/Material_0/CstGraph/Dot_2.outputs:out>
+                float3 inputs:in2.connect = </Root/Material_0/CstGraph/Combine3_1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-699.1177, 1981.3602)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -609,8 +609,8 @@ def Material "Material_0"
             def Shader "Multiply_9"
             {
                 uniform token info:id = "ND_multiply_vector2"
-                float2 inputs:in1.connect = </Root/Material_0/RangoliGraph/Combine2_5.outputs:out>
-                float2 inputs:in2.connect = </Root/Material_0/RangoliGraph/Combine2_1.outputs:out>
+                float2 inputs:in1.connect = </Root/Material_0/CstGraph/Combine2_5.outputs:out>
+                float2 inputs:in2.connect = </Root/Material_0/CstGraph/Combine2_1.outputs:out>
                 float2 outputs:out
                 float2 ui:nodegraph:node:pos = (-868.52563, -627.2396)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -621,7 +621,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_subtract_float"
                 float inputs:in1 = 1
                 float inputs:in1.connect = None
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Multiply_13.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Multiply_13.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (2594.8213, -2370)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -639,7 +639,7 @@ def Material "Material_0"
             def Shader "Dot_15"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/D2.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/D2.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-4360.7183, 1234.1533)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -648,8 +648,8 @@ def Material "Material_0"
             def Shader "Add_7"
             {
                 uniform token info:id = "ND_add_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/D1.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/D2.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/D1.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/D2.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-287.57812, -1080.4706)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -658,7 +658,7 @@ def Material "Material_0"
             def Shader "Multiply_14"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/CellNoise2D.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/CellNoise2D.outputs:out>
                 float inputs:in2 = 1
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (988.72363, -751.3905)
@@ -678,8 +678,8 @@ def Material "Material_0"
             def Shader "shadowsStep"
             {
                 uniform token info:id = "ND_realitykit_step_float"
-                float inputs:edge.connect = </Root/Material_0/RangoliGraph/Dot_9.outputs:out>
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/D1.outputs:out>
+                float inputs:edge.connect = </Root/Material_0/CstGraph/Dot_9.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/D1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1939.2964, -2351.83)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -688,7 +688,7 @@ def Material "Material_0"
             def Shader "Convert_6"
             {
                 uniform token info:id = "ND_convert_float_color3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Range.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Range.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (-111.75, 1977.9634)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -714,8 +714,8 @@ def Material "Material_0"
             def Shader "Add_6"
             {
                 uniform token info:id = "ND_add_color3"
-                color3f inputs:in1.connect = </Root/Material_0/RangoliGraph/Dot_5.outputs:out>
-                color3f inputs:in2.connect = </Root/Material_0/RangoliGraph/Convert_1.outputs:out>
+                color3f inputs:in1.connect = </Root/Material_0/CstGraph/Dot_5.outputs:out>
+                color3f inputs:in2.connect = </Root/Material_0/CstGraph/Convert_1.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (3404.1572, -707.23364)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -724,7 +724,7 @@ def Material "Material_0"
             def Shader "Multiply_Noise"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/WorleyNoise2D_Noise.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/WorleyNoise2D_Noise.outputs:out>
                 float inputs:in2 = 2
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-425.08743, -69.86575)
@@ -735,8 +735,8 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_mix_float"
                 float inputs:bg = 0.5
-                float inputs:fg.connect = </Root/Material_0/RangoliGraph/Noise2D_Noise.outputs:out>
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Clamp_Noise.outputs:out>
+                float inputs:fg.connect = </Root/Material_0/CstGraph/Noise2D_Noise.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Clamp_Noise.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-47.884594, -165.62248)
                 int ui:nodegraph:node:stackingOrder = 4713
@@ -746,7 +746,7 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_clamp_float"
                 float inputs:high
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Multiply_Noise.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Multiply_Noise.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-239.86888, -57.356842)
                 int ui:nodegraph:node:stackingOrder = 4747
@@ -757,7 +757,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_noise2d_float"
                 float inputs:amplitude = 0.5
                 float inputs:pivot = 0
-                float2 inputs:texcoord.connect = </Root/Material_0/RangoliGraph/Multiply_9.outputs:out>
+                float2 inputs:texcoord.connect = </Root/Material_0/CstGraph/Multiply_9.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-708.8152, -303.745)
                 int ui:nodegraph:node:stackingOrder = 4759
@@ -769,7 +769,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_worleynoise2d_float"
                 float inputs:jitter = 1
                 float inputs:jitter.connect = None
-                float2 inputs:texcoord.connect = </Root/Material_0/RangoliGraph/Multiply_9.outputs:out>
+                float2 inputs:texcoord.connect = </Root/Material_0/CstGraph/Multiply_9.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-696.8103, -139.88809)
                 int ui:nodegraph:node:stackingOrder = 4757
@@ -781,7 +781,7 @@ def Material "Material_0"
             def Shader "CellNoise2D"
             {
                 uniform token info:id = "ND_subtract_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Mix_Noise.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Mix_Noise.outputs:out>
                 float inputs:in2 = 0.0
                 float inputs:in2.connect = None
                 float outputs:out
@@ -792,7 +792,7 @@ def Material "Material_0"
             def Shader "innerColor_1"
             {
                 uniform token info:id = "ND_dot_color3"
-                color3f inputs:in.connect = </Root/Material_0/RangoliGraph/Mix_2.outputs:out>
+                color3f inputs:in.connect = </Root/Material_0/CstGraph/Mix_2.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (858.2666, -481.87695)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -805,10 +805,10 @@ def Material "Material_0"
                 color3f inputs:bg = (0.5882353, 0.5411765, 1) (
                     colorSpace = "srgb_texture"
                 )
-                color3f inputs:bg.connect = </Root/Material_0/RangoliGraph/Multiply_7.outputs:out>
-                color3f inputs:fg.connect = </Root/Material_0/RangoliGraph/innerColor_1.outputs:out>
+                color3f inputs:bg.connect = </Root/Material_0/CstGraph/Multiply_7.outputs:out>
+                color3f inputs:fg.connect = </Root/Material_0/CstGraph/innerColor_1.outputs:out>
                 float inputs:mix = 1
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Mix_1.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Mix_1.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (1249.6533, -524.803)
                 int ui:nodegraph:node:stackingOrder = 4737
@@ -819,7 +819,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_subtract_float"
                 float inputs:in1 = 1
                 float inputs:in1.connect = None
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Power.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Power.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2845.2583, 1676.8618)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -828,8 +828,8 @@ def Material "Material_0"
             def Shader "Multiply_13"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Subtract_8.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Mix_8.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Subtract_8.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Mix_8.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (2443.3394, -2441.3374)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -847,8 +847,8 @@ def Material "Material_0"
             def Shader "Subtract_9"
             {
                 uniform token info:id = "ND_subtract_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/D1.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/marginGrainOut.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/D1.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/marginGrainOut.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-331.26904, -2124.0156)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -857,8 +857,8 @@ def Material "Material_0"
             def Shader "Step_6"
             {
                 uniform token info:id = "ND_realitykit_step_float"
-                float inputs:edge.connect = </Root/Material_0/RangoliGraph/CellNoise2D.outputs:out>
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Range_5.outputs:out>
+                float inputs:edge.connect = </Root/Material_0/CstGraph/CellNoise2D.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Range_5.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1054.1729, -3045.5889)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -867,7 +867,7 @@ def Material "Material_0"
             def Shader "Dot_10"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Step_5.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Step_5.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1534.7349, -1070.075)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -888,8 +888,8 @@ def Material "Material_0"
             def Shader "Multiply_3"
             {
                 uniform token info:id = "ND_multiply_vector3"
-                float3 inputs:in1.connect = </Root/Material_0/RangoliGraph/Height_V3.outputs:out>
-                float3 inputs:in2.connect = </Root/Material_0/RangoliGraph/Dot_13.outputs:out>
+                float3 inputs:in1.connect = </Root/Material_0/CstGraph/Height_V3.outputs:out>
+                float3 inputs:in2.connect = </Root/Material_0/CstGraph/Dot_13.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1453.9636, 2018.8021)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -899,7 +899,7 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_clamp_float"
                 float inputs:high
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Range_2.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Range_2.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (597.55176, -1463.5194)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -910,7 +910,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_subtract_float"
                 float inputs:in1 = 2
                 float inputs:in1.connect = None
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Range_1.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Range_1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-3353.8584, 1928.2462)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -938,9 +938,9 @@ def Material "Material_0"
             def Shader "Mix_7"
             {
                 uniform token info:id = "ND_mix_color3"
-                color3f inputs:bg.connect = </Root/Material_0/RangoliGraph.inputs:ColorDark>
-                color3f inputs:fg.connect = </Root/Material_0/RangoliGraph/Mix_6.outputs:out>
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/emojiColor.outputs:out>
+                color3f inputs:bg.connect = </Root/Material_0/CstGraph.inputs:ColorDark>
+                color3f inputs:fg.connect = </Root/Material_0/CstGraph/Mix_6.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/emojiColor.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (2482.859, -859.4558)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -949,7 +949,7 @@ def Material "Material_0"
             def Shader "Slope_V3"
             {
                 uniform token info:id = "ND_convert_float_vector3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_1.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_1.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1668.812, 2103.9595)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -967,7 +967,7 @@ def Material "Material_0"
             def Shader "Convert_3"
             {
                 uniform token info:id = "ND_convert_float_color3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/ConstantFloat.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/ConstantFloat.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (365.96973, -363.3423)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -977,7 +977,7 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_clamp_float"
                 float inputs:high
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Multiply.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Multiply.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-47.444336, 112.2345)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -996,7 +996,7 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_realitykit_step_float"
                 float inputs:edge = 0.99
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_12.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_12.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2179.2168, 2403.6333)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1007,9 +1007,9 @@ def Material "Material_0"
                 uniform token info:id = "ND_range_float"
                 bool inputs:doclamp = 1
                 float inputs:gamma
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_12.outputs:out>
-                float inputs:inhigh.connect = </Root/Material_0/RangoliGraph/Add_3.outputs:out>
-                float inputs:inlow.connect = </Root/Material_0/RangoliGraph/Dot_16.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_12.outputs:out>
+                float inputs:inhigh.connect = </Root/Material_0/CstGraph/Add_3.outputs:out>
+                float inputs:inlow.connect = </Root/Material_0/CstGraph/Dot_16.outputs:out>
                 float inputs:outhigh = 2
                 float inputs:outlow = 0
                 float outputs:out
@@ -1020,8 +1020,8 @@ def Material "Material_0"
             def Shader "Step_5"
             {
                 uniform token info:id = "ND_realitykit_step_float"
-                float inputs:edge.connect = </Root/Material_0/RangoliGraph/Multiply_14.outputs:out>
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Range_4.outputs:out>
+                float inputs:edge.connect = </Root/Material_0/CstGraph/Multiply_14.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Range_4.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1192.3423, -844.56714)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1030,7 +1030,7 @@ def Material "Material_0"
             def Shader "Power_2"
             {
                 uniform token info:id = "ND_power_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Multiply_12.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Multiply_12.outputs:out>
                 float inputs:in2 = 0.5
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-3019.8037, 1868.0782)
@@ -1040,8 +1040,8 @@ def Material "Material_0"
             def Shader "Add_3"
             {
                 uniform token info:id = "ND_add_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Dot_16.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Dot_15.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Dot_16.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Dot_15.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-4180.6313, 1397.9019)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1050,7 +1050,7 @@ def Material "Material_0"
             def Shader "Magnitude"
             {
                 uniform token info:id = "ND_magnitude_vector2"
-                float2 inputs:in.connect = </Root/Material_0/RangoliGraph/Grad.outputs:out>
+                float2 inputs:in.connect = </Root/Material_0/CstGraph/Grad.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-445.10986, 70.000854)
                 int ui:nodegraph:node:stackingOrder = 4763
@@ -1059,7 +1059,7 @@ def Material "Material_0"
             def Shader "Power"
             {
                 uniform token info:id = "ND_power_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Range_1.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Range_1.outputs:out>
                 float inputs:in2 = 2
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2961.5583, 1686.1315)
@@ -1069,7 +1069,7 @@ def Material "Material_0"
             def Shader "Dot_6"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Subtract_4.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Subtract_4.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (2805.7866, -2476.31)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1078,8 +1078,8 @@ def Material "Material_0"
             def Shader "Multiply_4"
             {
                 uniform token info:id = "ND_multiply_vector3"
-                float3 inputs:in1.connect = </Root/Material_0/RangoliGraph/Slope_V3.outputs:out>
-                float3 inputs:in2.connect = </Root/Material_0/RangoliGraph/Mix.outputs:out>
+                float3 inputs:in1.connect = </Root/Material_0/CstGraph/Slope_V3.outputs:out>
+                float3 inputs:in2.connect = </Root/Material_0/CstGraph/Mix.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1451.5691, 2132.0327)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1090,9 +1090,9 @@ def Material "Material_0"
                 uniform token info:id = "ND_range_float"
                 bool inputs:doclamp = 0
                 float inputs:gamma
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_9.outputs:out>
-                float inputs:inhigh.connect = </Root/Material_0/RangoliGraph/Subtract_9.outputs:out>
-                float inputs:inlow.connect = </Root/Material_0/RangoliGraph/D1.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_9.outputs:out>
+                float inputs:inhigh.connect = </Root/Material_0/CstGraph/Subtract_9.outputs:out>
+                float inputs:inlow.connect = </Root/Material_0/CstGraph/D1.outputs:out>
                 float inputs:outhigh
                 float inputs:outlow
                 float outputs:out
@@ -1103,7 +1103,7 @@ def Material "Material_0"
             def Shader "Multiply_15"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Separate3_1.outputs:outx>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Separate3_1.outputs:outx>
                 float inputs:in2 = -1
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2105.5537, 2206.8828)
@@ -1113,7 +1113,7 @@ def Material "Material_0"
             def Shader "Subtract_5"
             {
                 uniform token info:id = "ND_subtract_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Multiply_10.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Multiply_10.outputs:out>
                 float inputs:in2 = 1
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-384.65918, -705.78894)
@@ -1123,7 +1123,7 @@ def Material "Material_0"
             def Shader "Max_1"
             {
                 uniform token info:id = "ND_max_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Power_2.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Power_2.outputs:out>
                 float inputs:in2 = 0.0001
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2835.1553, 1872.1056)
@@ -1133,7 +1133,7 @@ def Material "Material_0"
             def Shader "Multiply_10"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/CellNoise2D.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/CellNoise2D.outputs:out>
                 float inputs:in2 = 2
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-465.94434, -715.0897)
@@ -1146,7 +1146,7 @@ def Material "Material_0"
                 float inputs:bg = 1
                 float inputs:fg = 0.8
                 float inputs:fg.connect = None
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/shadowsStep.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/shadowsStep.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (2215.8574, -2280.2422)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1155,7 +1155,7 @@ def Material "Material_0"
             def Shader "NormalMap"
             {
                 uniform token info:id = "ND_normalmap"
-                float3 inputs:in.connect = </Root/Material_0/RangoliGraph/Normalize.outputs:out>
+                float3 inputs:in.connect = </Root/Material_0/CstGraph/Normalize.outputs:out>
                 float3 inputs:normal
                 float inputs:scale
                 string inputs:space = "tangent"
@@ -1168,7 +1168,7 @@ def Material "Material_0"
             def Shader "Dot_7"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Max.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Max.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1555.8105, -1477.5514)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1179,7 +1179,7 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_range_float"
                 bool inputs:doclamp
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/DotProduct.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/DotProduct.outputs:out>
                 float inputs:inlow = -1
                 float inputs:outhigh = 1
                 float inputs:outlow = 0.2
@@ -1193,7 +1193,7 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_realitykit_step_float"
                 float inputs:edge = -1
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Separate2_1.outputs:outy>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Separate2_1.outputs:outy>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1026.8159, -2070.5796)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1204,7 +1204,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_mix_float"
                 float inputs:bg = 0.4
                 float inputs:fg = 0
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Clamp.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Clamp.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1043.8887, -1523.3219)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1213,8 +1213,8 @@ def Material "Material_0"
             def Shader "Bitangent"
             {
                 uniform token info:id = "ND_crossproduct_vector3"
-                float3 inputs:in1.connect = </Root/Material_0/RangoliGraph/Dot_13.outputs:out>
-                float3 inputs:in2.connect = </Root/Material_0/RangoliGraph/Combine3_3.outputs:out>
+                float3 inputs:in1.connect = </Root/Material_0/CstGraph/Dot_13.outputs:out>
+                float3 inputs:in2.connect = </Root/Material_0/CstGraph/Combine3_3.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1672.9207, 2192.4663)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1223,7 +1223,7 @@ def Material "Material_0"
             def Shader "Dot_2"
             {
                 uniform token info:id = "ND_dot_vector3"
-                float3 inputs:in.connect = </Root/Material_0/RangoliGraph/Normalize.outputs:out>
+                float3 inputs:in.connect = </Root/Material_0/CstGraph/Normalize.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-832.2688, 2134.2173)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1232,7 +1232,7 @@ def Material "Material_0"
             def Shader "Dot"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Max_1.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Max_1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-2592.8455, 1687.711)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1241,7 +1241,7 @@ def Material "Material_0"
             def Shader "Multiply"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Subtract_3.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Subtract_3.outputs:out>
                 float inputs:in2 = 1.8
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-155.35059, 110.76575)
@@ -1251,8 +1251,8 @@ def Material "Material_0"
             def Shader "Subtract_2"
             {
                 uniform token info:id = "ND_subtract_vector3"
-                float3 inputs:in1.connect = </Root/Material_0/RangoliGraph/Multiply_3.outputs:out>
-                float3 inputs:in2.connect = </Root/Material_0/RangoliGraph/Multiply_4.outputs:out>
+                float3 inputs:in1.connect = </Root/Material_0/CstGraph/Multiply_3.outputs:out>
+                float3 inputs:in2.connect = </Root/Material_0/CstGraph/Multiply_4.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1333.6812, 2074.7505)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1263,9 +1263,9 @@ def Material "Material_0"
                 uniform token info:id = "ND_range_float"
                 bool inputs:doclamp = 1
                 float inputs:gamma
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_9.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_9.outputs:out>
                 float inputs:inhigh.connect = None
-                float inputs:inlow.connect = </Root/Material_0/RangoliGraph/Add_7.outputs:out>
+                float inputs:inlow.connect = </Root/Material_0/CstGraph/Add_7.outputs:out>
                 float inputs:outhigh
                 float inputs:outlow
                 float outputs:out
@@ -1276,7 +1276,7 @@ def Material "Material_0"
             def Shader "Normalize"
             {
                 uniform token info:id = "ND_normalize_vector3"
-                float3 inputs:in.connect = </Root/Material_0/RangoliGraph/Subtract_2.outputs:out>
+                float3 inputs:in.connect = </Root/Material_0/CstGraph/Subtract_2.outputs:out>
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-1204.564, 2071.434)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1285,7 +1285,7 @@ def Material "Material_0"
             def Shader "Multiply_11"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Dot_8.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Dot_8.outputs:out>
                 float inputs:in2 = 0.15
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (11.09082, -706.5858)
@@ -1295,7 +1295,7 @@ def Material "Material_0"
             def Shader "Add_4"
             {
                 uniform token info:id = "ND_add_vector3"
-                float3 inputs:in1.connect = </Root/Material_0/RangoliGraph/Multiply_2.outputs:out>
+                float3 inputs:in1.connect = </Root/Material_0/CstGraph/Multiply_2.outputs:out>
                 float3 inputs:in2 = (-1, -1, -1)
                 float3 outputs:out
                 float2 ui:nodegraph:node:pos = (-2649.102, 2220.8953)
@@ -1306,7 +1306,7 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_clamp_float"
                 float inputs:high
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/innershadow.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/innershadow.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (802.3965, -587.34094)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1315,7 +1315,7 @@ def Material "Material_0"
             def Shader "Dot_9"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Subtract_6.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Subtract_6.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (123.61621, -1286.8048)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1324,7 +1324,7 @@ def Material "Material_0"
             def Shader "Dot_14"
             {
                 uniform token info:id = "ND_dot_color3"
-                color3f inputs:in.connect = </Root/Material_0/RangoliGraph/Convert_6.outputs:out>
+                color3f inputs:in.connect = </Root/Material_0/CstGraph/Convert_6.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (1982.2915, -625.3749)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1333,7 +1333,7 @@ def Material "Material_0"
             def Shader "Dot_8"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Subtract_5.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Subtract_5.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-244.80322, -760.08545)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1342,7 +1342,7 @@ def Material "Material_0"
             def Shader "Dot_16"
             {
                 uniform token info:id = "ND_dot_float"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/D1.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/D1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (-4240.2285, 1260.8064)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1351,8 +1351,8 @@ def Material "Material_0"
             def Shader "Add_8"
             {
                 uniform token info:id = "ND_add_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Mix_3.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Clamp.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Mix_3.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Clamp.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1224.7041, -1469.4259)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1364,8 +1364,8 @@ def Material "Material_0"
                 float inputs:bg = 1
                 float inputs:bg.connect = None
                 float inputs:fg = 1
-                float inputs:fg.connect = </Root/Material_0/RangoliGraph/Dot_7.outputs:out>
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Dot_10.outputs:out>
+                float inputs:fg.connect = </Root/Material_0/CstGraph/Dot_7.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Dot_10.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1892.5049, -1432.2811)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1374,7 +1374,7 @@ def Material "Material_0"
             def Shader "innerColor"
             {
                 uniform token info:id = "ND_dot_color3"
-                color3f inputs:in.connect = </Root/Material_0/RangoliGraph/Mix_5.outputs:out>
+                color3f inputs:in.connect = </Root/Material_0/CstGraph/Mix_5.outputs:out>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (2090.9028, -785.06177)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1386,9 +1386,9 @@ def Material "Material_0"
                 uniform token info:id = "ND_range_float"
                 bool inputs:doclamp = 0
                 float inputs:gamma
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Dot_9.outputs:out>
-                float inputs:inhigh.connect = </Root/Material_0/RangoliGraph/Add_10.outputs:out>
-                float inputs:inlow.connect = </Root/Material_0/RangoliGraph/Add_7.outputs:out>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Dot_9.outputs:out>
+                float inputs:inhigh.connect = </Root/Material_0/CstGraph/Add_10.outputs:out>
+                float inputs:inlow.connect = </Root/Material_0/CstGraph/Add_7.outputs:out>
                 float inputs:outhigh
                 float inputs:outlow
                 float outputs:out
@@ -1401,7 +1401,7 @@ def Material "Material_0"
                 uniform token info:id = "ND_subtract_float"
                 float inputs:in1 = 1
                 float inputs:in1.connect = None
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Step_6.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Step_6.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1272.6694, -2967.667)
                 int ui:nodegraph:node:stackingOrder = 4462
@@ -1419,7 +1419,7 @@ def Material "Material_0"
             def Shader "Separate3"
             {
                 uniform token info:id = "ND_separate3_vector3"
-                float3 inputs:in.connect = </Root/Material_0/RangoliGraph/Position.outputs:out>
+                float3 inputs:in.connect = </Root/Material_0/CstGraph/Position.outputs:out>
                 float outputs:outx
                 float outputs:outy
                 float outputs:outz
@@ -1430,8 +1430,8 @@ def Material "Material_0"
             def Shader "Combine2_1"
             {
                 uniform token info:id = "ND_combine2_vector2"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Separate3.outputs:outx>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Separate3.outputs:outz>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Separate3.outputs:outx>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Separate3.outputs:outz>
                 float2 outputs:out
                 float2 ui:nodegraph:node:pos = (-1101.3906, -523.8633)
                 int ui:nodegraph:node:stackingOrder = 4479
@@ -1449,7 +1449,7 @@ def Material "Material_0"
             def Shader "Separate2"
             {
                 uniform token info:id = "ND_separate2_vector2"
-                float2 inputs:in.connect = </Root/Material_0/RangoliGraph/TextureCoordinates.outputs:out>
+                float2 inputs:in.connect = </Root/Material_0/CstGraph/TextureCoordinates.outputs:out>
                 float outputs:outx
                 float outputs:outy
                 float2 ui:nodegraph:node:pos = (993.0625, -256.71484)
@@ -1460,11 +1460,11 @@ def Material "Material_0"
             {
                 uniform token info:id = "ND_mix_float"
                 float inputs:bg = 0
-                float inputs:bg.connect = </Root/Material_0/RangoliGraph/Clamp_1.outputs:out>
+                float inputs:bg.connect = </Root/Material_0/CstGraph/Clamp_1.outputs:out>
                 float inputs:fg = 1
                 float inputs:fg.connect = None
                 float inputs:mix = 1
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Separate2.outputs:outx>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Separate2.outputs:outx>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (1191.5156, -327.52344)
                 int ui:nodegraph:node:stackingOrder = 4745
@@ -1473,7 +1473,7 @@ def Material "Material_0"
             def Shader "Convert"
             {
                 uniform token info:id = "ND_convert_float_color3"
-                float inputs:in.connect = </Root/Material_0/RangoliGraph/Separate2.outputs:outx>
+                float inputs:in.connect = </Root/Material_0/CstGraph/Separate2.outputs:outx>
                 color3f outputs:out
                 float2 ui:nodegraph:node:pos = (3365.9487, -913.763)
                 int ui:nodegraph:node:stackingOrder = 4743
@@ -1482,7 +1482,7 @@ def Material "Material_0"
             def Shader "Multiply_1"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Magnitude.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Magnitude.outputs:out>
                 float inputs:in2 = 2
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (47, 403.3672)
@@ -1492,9 +1492,9 @@ def Material "Material_0"
             def Shader "Mix_4"
             {
                 uniform token info:id = "ND_mix_float"
-                float inputs:bg.connect = </Root/Material_0/RangoliGraph/Dist.outputs:out>
-                float inputs:fg.connect = </Root/Material_0/RangoliGraph/Multiply_1.outputs:out>
-                float inputs:mix.connect = </Root/Material_0/RangoliGraph/Separate2.outputs:outx>
+                float inputs:bg.connect = </Root/Material_0/CstGraph/Dist.outputs:out>
+                float inputs:fg.connect = </Root/Material_0/CstGraph/Multiply_1.outputs:out>
+                float inputs:mix.connect = </Root/Material_0/CstGraph/Separate2.outputs:outx>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (335.58984, 294.96094)
                 int ui:nodegraph:node:stackingOrder = 4766
@@ -1505,7 +1505,7 @@ def Material "Material_0"
             def Shader "Multiply_IsCircle_02"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Separate2.outputs:outx>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Separate2.outputs:outx>
                 float inputs:in2 = 0.2
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (47, 403.3672)
@@ -1514,7 +1514,7 @@ def Material "Material_0"
             def Shader "Add_Circle_1"
             {
                 uniform token info:id = "ND_add_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Multiply_IsCircle_02.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Multiply_IsCircle_02.outputs:out>
                 float inputs:in2 = 1.0
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (713.5947, -903.2538)
@@ -1523,8 +1523,8 @@ def Material "Material_0"
             def Shader "Multiply_IsCircle_03"
             {
                 uniform token info:id = "ND_multiply_float"
-                float inputs:in1.connect = </Root/Material_0/RangoliGraph/Mix_4.outputs:out>
-                float inputs:in2.connect = </Root/Material_0/RangoliGraph/Add_Circle_1.outputs:out>
+                float inputs:in1.connect = </Root/Material_0/CstGraph/Mix_4.outputs:out>
+                float inputs:in2.connect = </Root/Material_0/CstGraph/Add_Circle_1.outputs:out>
                 float outputs:out
                 float2 ui:nodegraph:node:pos = (47, 403.3672)
                 int ui:nodegraph:node:stackingOrder = 4765
@@ -1545,10 +1545,10 @@ def Material "Material_0"
         {
             uniform token info:id = "ND_realitykit_unlit_surfaceshader"
             bool inputs:applyPostProcessToneMap = 0
-            color3f inputs:color.connect = </Root/Material_0/RangoliGraph.outputs:Color>
+            color3f inputs:color.connect = </Root/Material_0/CstGraph.outputs:Color>
             bool inputs:hasPremultipliedAlpha
             float inputs:opacity = 0.5
-            float inputs:opacityThreshold.connect = </Root/Material_0/RangoliGraph.outputs:OpacityThreshold>
+            float inputs:opacityThreshold.connect = </Root/Material_0/CstGraph.outputs:OpacityThreshold>
             token outputs:out
             float2 ui:nodegraph:node:pos = (171.79688, -79.89844)
             int ui:nodegraph:node:stackingOrder = 11
@@ -1560,13 +1560,13 @@ def Material "Material_0"
             uniform token info:id = "ND_UsdPreviewSurface_surfaceshader"
             float inputs:clearcoat
             float inputs:clearcoatRoughness
-            color3f inputs:diffuseColor.connect = </Root/Material_0/RangoliGraph.outputs:Color>
+            color3f inputs:diffuseColor.connect = </Root/Material_0/CstGraph.outputs:Color>
             color3f inputs:emissiveColor
             float inputs:metallic
             float3 inputs:normal
             float inputs:occlusion
             float inputs:opacity = 0.5
-            float inputs:opacityThreshold.connect = </Root/Material_0/RangoliGraph.outputs:OpacityThreshold>
+            float inputs:opacityThreshold.connect = </Root/Material_0/CstGraph.outputs:OpacityThreshold>
             float inputs:roughness.connect = </Root/Material_0/Subtract.outputs:out>
             token outputs:out
             float2 ui:nodegraph:node:pos = (70.10547, -379.21484)
@@ -1588,7 +1588,7 @@ def Material "Material_0"
         {
             uniform token info:id = "ND_range_float"
             bool inputs:doclamp = 0
-            float inputs:in.connect = </Root/Material_0/RangoliGraph.outputs:Noise>
+            float inputs:in.connect = </Root/Material_0/CstGraph.outputs:Noise>
             float inputs:inhigh = 0.5
             float inputs:inlow = 0.2
             float inputs:outhigh = 1
@@ -2289,7 +2289,7 @@ function referencedMaterial(material: MeshStandardMaterial): USDNode {
   );
   materialNode.addMetadata(
     "prepend references",
-    `@rangoli.usda@</Root/Material_${material.userData.idxColor}>`,
+    `@cst.usda@</Root/Material_${material.userData.idxColor}>`,
   );
   return materialNode;
 }

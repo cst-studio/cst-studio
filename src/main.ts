@@ -10,5 +10,5 @@ import router from './router'
     app.use(router)
 
     await router.isReady()
-    app.mount('#rangoli--app')
+    app.mount('#cst--app')
   })()

@@ -5,11 +5,11 @@ import type { LayerValues } from "../utils/utils.ts";
 import { randomId } from "../utils/utils.ts";
 import { exportPNG } from "../utils/exportPNG.ts";
 import { useAppState } from "../utils/State.ts";
-import { RangoliMaterials } from "../utils/RangoliMaterials.ts";
-import { RangoliPost } from "../utils/PostProcess.ts";
+import { CstMaterials } from "../utils/CstMaterials.ts";
+import { CstPost } from "../utils/PostProcess.ts";
 import { USDZExporter } from "../utils/USDZExporter.ts";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import gltfUrl from "@/assets/rangoliz.glb?url";
+import gltfUrl from "@/assets/cst.glb?url";
 import { t } from "@/strings";
 import { gsap } from "gsap";
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -58,10 +58,10 @@ const canvas = ref<HTMLCanvasElement | null>(null);
   const scene = new Scene();
   const introTL = gsap.timeline();
   let backgroundPlane: Mesh;
-  const rangoliContainer: Group = new Group();
-  let rangoliLibrary: Group;
-  const rangoliGroup: Group = new Group();
-  const rangoliMaterials: RangoliMaterials = new RangoliMaterials();
+  const cstContainer: Group = new Group();
+  let cstLibrary: Group;
+  const cstGroup: Group = new Group();
+  const cstMaterials: CstMaterials = new CstMaterials();
   let activePost: Boolean = true;
   
   
@@ -76,7 +76,7 @@ let composer: EffectComposer;
 
 let camera: PerspectiveCamera
 const clock = new Clock();
-const rangoliPost = new RangoliPost();
+const cstPost = new CstPost();
 function getiOSVersion() {
   const match = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
   if (!match) return null;
@@ -92,7 +92,7 @@ const iosVersion = getiOSVersion();
 const initScroll = () => {
   gsap.registerPlugin(ScrollTrigger)
   lenis.on('scroll', (val)=>{
-    rangoliPost.updateScroll(val.animatedScroll);
+    cstPost.updateScroll(val.animatedScroll);
     ScrollTrigger.update()
   })
   gsap.ticker.add((time) => {
@@ -138,11 +138,11 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
 
 }
 const initThree = () => {
-  loadRangoliLibrary(gltfUrl, (xhr) => {
+  loadCstLibrary(gltfUrl, (xhr) => {
   }).then((gltf) => {
-    rangoliLibrary = gltf.scene;
+    cstLibrary = gltf.scene;
     eventBus.emit("sceneReady", true);
-    initRangoliLibrary();
+    initCstLibrary();
     setTimeout(()=>{
       gsap.to(Scene1.position, {
         z: -8,
@@ -155,7 +155,7 @@ const initThree = () => {
           onUpdate: (cal) => {
             // BgCurve.material.uniforms.uScroll.value = 1.0 - Math.min(1.0, (-BgCurve.position.z/2))
             BgCurve.material.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
-            rangoliMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
+            cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
             }
         }
       })
@@ -202,7 +202,7 @@ const busy = (): boolean => {
   return flag;
 };
 
-function loadRangoliLibrary(url, onProgress) {
+function loadCstLibrary(url, onProgress) {
   const loaderGLTF = new GLTFLoader();
   return loaderGLTF.loadAsync(url, onProgress).then((gltf) => {
     return gltf;
@@ -218,38 +218,38 @@ let iPad : Mesh;
 let Projo1 : Mesh;
 let Projo2 : Mesh;
 let Scene1 : Group;
-const initRangoliLibrary = () => {
-  console.log(rangoliLibrary)
+const initCstLibrary = () => {
+  console.log(cstLibrary)
   // logo?.rotation.set(0,0,0)
   
   
-  SpotLeft = rangoliLibrary.getObjectByName("SpotLeft")! as Mesh
-  SpotLeft.material = rangoliMaterials.SpotLeft
+  SpotLeft = cstLibrary.getObjectByName("SpotLeft")! as Mesh
+  SpotLeft.material = cstMaterials.SpotLeft
   SpotLeft.position.set(-3,0,-4)
   SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xc3c8db) 
   scene.add(SpotLeft);
   
-  SpotRight = rangoliLibrary.getObjectByName("SpotRight")! as Mesh
-  SpotRight.material = rangoliMaterials.SpotRight
+  SpotRight = cstLibrary.getObjectByName("SpotRight")! as Mesh
+  SpotRight.material = cstMaterials.SpotRight
   SpotRight.material.uniforms.uOffsetUV.value = 0.5
   SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xDD6666) 
   SpotRight.position.set(5,0,-4)
   scene.add(SpotRight);
   
-  SmokeFloor = rangoliLibrary.getObjectByName("SmokeFloor")! as Mesh
-  SmokeFloor.material = rangoliMaterials.Floor
-  // SmokeFloor.material = rangoliMaterials.SmogFloor
+  SmokeFloor = cstLibrary.getObjectByName("SmokeFloor")! as Mesh
+  SmokeFloor.material = cstMaterials.Floor
+  // SmokeFloor.material = cstMaterials.SmogFloor
   SmokeFloor.position.set(0,0,6.2)
   scene.add(SmokeFloor);
   
-  SmokeOver = rangoliLibrary.getObjectByName("SmokeOver")! as Mesh
-  SmokeOver.material = rangoliMaterials.SmogFloor
+  SmokeOver = cstLibrary.getObjectByName("SmokeOver")! as Mesh
+  SmokeOver.material = cstMaterials.SmogFloor
   SmokeOver.position.set(0,0,0)
   scene.add(SmokeOver);
   
   
-  Logo = rangoliLibrary.getObjectByName("Logo")! as Mesh
-  Logo.material = rangoliMaterials.Logo
+  Logo = cstLibrary.getObjectByName("Logo")! as Mesh
+  Logo.material = cstMaterials.Logo
   Logo.position.set(0,0,6.2)
   scene.add(Logo);
   
@@ -257,24 +257,24 @@ const initRangoliLibrary = () => {
 
   Scene1 = new Group()
   scene.add(Scene1);
-  BgCurve = rangoliLibrary.getObjectByName("BgCurve")! as Mesh
-  BgCurve.material = rangoliMaterials.BgCurve
+  BgCurve = cstLibrary.getObjectByName("BgCurve")! as Mesh
+  BgCurve.material = cstMaterials.BgCurve
   BgCurve.position.set(0,0,0)
   Scene1.add(BgCurve);
 
-  iPad = rangoliLibrary.getObjectByName("iPad")! as Mesh
-  iPad.material = rangoliMaterials.Screen
+  iPad = cstLibrary.getObjectByName("iPad")! as Mesh
+  iPad.material = cstMaterials.Screen
   iPad.position.set(0,0,0)
   iPad.scale.setScalar(1.4)
   Scene1.add(iPad);
   
-  Projo1 = rangoliLibrary.getObjectByName("Projo1")! as Mesh
-  Projo1.material = rangoliMaterials.Projo
+  Projo1 = cstLibrary.getObjectByName("Projo1")! as Mesh
+  Projo1.material = cstMaterials.Projo
   Projo1.scale.setScalar(2)
   Scene1.add(Projo1);
   
-  Projo2 = rangoliLibrary.getObjectByName("Projo2")! as Mesh
-  Projo2.material = rangoliMaterials.Projo
+  Projo2 = cstLibrary.getObjectByName("Projo2")! as Mesh
+  Projo2.material = cstMaterials.Projo
   Projo2.scale.setScalar(1.8)
   Scene1.add(Projo2);
   
@@ -412,7 +412,7 @@ const setupThree = () => {
   composer.setSize(width, height);
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
-  composer.addPass(rangoliPost.rangoli_post);
+  composer.addPass(cstPost.cst_post);
 
   window.addEventListener("resize", resize);
   renderer.setPixelRatio(1.0);
@@ -422,10 +422,10 @@ const setupThree = () => {
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping;
 
-  scene.add(rangoliGroup);
-  scene.add(rangoliContainer);
+  scene.add(cstGroup);
+  scene.add(cstContainer);
 
-  initRangoli();
+  initCst();
   const light1Direction = new Vector3();
   const light2Direction = new Vector3();
   function animate(time: number) {
@@ -448,11 +448,11 @@ const setupThree = () => {
     SpotLeft.rotation.y = Math.cos(elapsedTime*0.5)*0.1+Math.PI*0.25-Math.PI*0.07
     SpotRight.rotation.y = Math.sin(elapsedTime*0.5)*0.1-Math.PI*0.25+Math.PI*0.07
     // console.log(light1Direction)
-    rangoliMaterials.Logo.uniforms.uLightDirection1.value.copy(light1Direction);
-    rangoliMaterials.Logo.uniforms.uLightDirection2.value.copy(light2Direction);
+    cstMaterials.Logo.uniforms.uLightDirection1.value.copy(light1Direction);
+    cstMaterials.Logo.uniforms.uLightDirection2.value.copy(light2Direction);
 
-    rangoliMaterials.update(elapsedTime);
-    rangoliPost.update(elapsedTime);
+    cstMaterials.update(elapsedTime);
+    cstPost.update(elapsedTime);
     render();
   }
   requestAnimationFrame(animate);
@@ -469,7 +469,7 @@ const stopIntro = () => {
 };
 
 
-const initRangoli = () => {
+const initCst = () => {
   gsap.globalTimeline.timeScale(1.15);
 };
 

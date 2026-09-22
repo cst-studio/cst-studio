@@ -9,9 +9,9 @@ interface Ripple {
   center: Vector2;
   startTime: number;
 }
-export class RangoliPost {
+export class CstPost {
   private dust_Texture?: THREE.Texture;
-  public rangoli_post: ShaderPass;
+  public cst_post: ShaderPass;
   constructor() {
   const loader = new THREE.TextureLoader();
     Promise.all([
@@ -24,10 +24,10 @@ export class RangoliPost {
         texture.wrapT = THREE.MirroredRepeatWrapping;
       }
       this.dust_Texture = texture1;
-      this.rangoli_post.uniforms.tDust.value = texture1
-      this.rangoli_post.uniforms.tSwirl.value = texture2
+      this.cst_post.uniforms.tDust.value = texture1
+      this.cst_post.uniforms.tSwirl.value = texture2
       console.log(this.dust_Texture)
-      console.log(this.rangoli_post)
+      console.log(this.cst_post)
     });
 
 
@@ -90,14 +90,14 @@ export class RangoliPost {
     `,
     precision: 'lowp',
     };
-    this.rangoli_post = new ShaderPass(MyPass);
+    this.cst_post = new ShaderPass(MyPass);
   }
 
   public busy: boolean = false;
   public updateScroll(scroll: number) {
-    this.rangoli_post.uniforms.uScroll.value = scroll/500;
+    this.cst_post.uniforms.uScroll.value = scroll/500;
   }
   public update(time: number) {
-    this.rangoli_post.uniforms.uTime.value = time;
+    this.cst_post.uniforms.uTime.value = time;
   }
 }

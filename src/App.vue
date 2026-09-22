@@ -2,7 +2,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import ThreeCanvas from './views/ThreeCanvas.vue'
 import Home from './views/HomeView.vue'
-import CutOut from './components/CutOut.vue'
 import TopNav from './components/TopNav.vue'
 import { eventBus } from '@/eventBus'
 import { ref } from 'vue'
@@ -19,7 +18,7 @@ eventBus.on('sceneReady', sceneReady)
   <div 
   v-if="!sceneIsReady"
   class="loader">. . .</div>
-  <div class="rangoli--app">
+  <div class="cst--app">
     <ThreeCanvas />
     <!-- <CutOut /> -->
     <TopNav />
