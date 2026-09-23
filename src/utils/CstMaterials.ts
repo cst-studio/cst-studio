@@ -2,7 +2,8 @@ import * as THREE from "three";
 import cloud_texture_url from "@/assets/bitmap/texture/cloud.jpg?url";
 import smog_texture_url from "@/assets/bitmap/texture/smog.png?url";
 import swirl_texture_url from "@/assets/bitmap/texture/swirl.jpg?url";
-import projo_texture_url from "@/assets/bitmap/texture/projo.jpg?url";
+import projo_texture_url from "@/assets/bitmap/texture/projo.png?url";
+import concrete_texture_url from "@/assets/bitmap/texture/concrete-wall.jpg?url";
 import screen_texture_url from "@/assets/bitmap/texture/movie.jpg?url";
 
 import { hexToVec3Srgb } from "@/utils/utils";
@@ -30,6 +31,7 @@ export class CstMaterials {
   private swirl_Texture?: THREE.Texture;
   private projo_Texture?: THREE.Texture;
   private screen_Texture?: THREE.Texture;
+  private concrete_Texture?: THREE.Texture;
 
   constructor(opts: CstMaterialsOpts = {}) {
     this.cst_BG_Mat = this.makeSpotMaterial();
@@ -48,8 +50,9 @@ export class CstMaterials {
       loader.loadAsync(swirl_texture_url),
       loader.loadAsync(projo_texture_url),
       loader.loadAsync(screen_texture_url),
-    ]).then(([texture1, texture2, texture3, texture4, texture5]) => {
-      for (const texture of [texture1, texture2, texture3, texture4, texture5]) {
+      loader.loadAsync(concrete_texture_url),
+    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6]) => {
+      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6]) {
         texture.colorSpace = THREE.NoColorSpace;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -61,6 +64,7 @@ export class CstMaterials {
       this.swirl_Texture = texture3;
       this.projo_Texture = texture4;
       this.screen_Texture = texture5;
+      this.concrete_Texture = texture6;
       this.setTextures();
     });
 
@@ -105,8 +109,8 @@ export class CstMaterials {
       this.swirl_Texture;
     this.Projo.uniforms.uProjoTexture.value =
       this.projo_Texture;
-    this.Screen.uniforms.uTexture.value =
-      this.screen_Texture;
+    this.Screen.uniforms.uTexture.value = this.screen_Texture;
+    this.BgCurve.uniforms.uTexture.value = this.concrete_Texture;
   }
   private makeSpotMaterial(): THREE.ShaderMaterial {
     const customMaterial = new THREE.ShaderMaterial({
@@ -385,6 +389,7 @@ export class CstMaterials {
       uniform vec3 uColor3;
       uniform float uTime;
       uniform float uScroll;
+      uniform sampler2D uTexture;
       void main() {
           vec2 grid = floor(vUv * 40.0);
         float checker = mod(grid.x + grid.y, 2.0);
@@ -402,6 +407,11 @@ export class CstMaterials {
         color *= 0.2;
         gl_FragColor = vec4(color, clamp(vUv.y-0.0, 0.0, 1.0));
         gl_FragColor = vec4(color*(0.9+0.1*checker), uScroll);
+        gl_FragColor.rgba = texture2D(uTexture, vUv*3.0).rgba;
+        gl_FragColor.rgb *= gl_FragColor.r;
+        gl_FragColor.rgb *= 0.1;
+        gl_FragColor.a = uScroll;
+        gl_FragColor.a *= clamp(vUv.y*4.0, 0.0, 1.0);
       }
       `,
       precision: 'lowp',
@@ -410,6 +420,7 @@ export class CstMaterials {
         uColor2: { value: hexToVec3Srgb(0xff3b30) },
         uColor3: { value: hexToVec3Srgb(0xDDDCFF) },
         uTime: { value: 0.0 },
+        uTexture: { value: null },
         uScroll: { value: 1.0 }
       },
       side: THREE.FrontSide,
@@ -442,21 +453,10 @@ export class CstMaterials {
       uniform float uScroll;
       uniform sampler2D uTexture;
       void main() {
-          vec2 grid = floor(vUv * 40.0);
-        float checker = mod(grid.x + grid.y, 2.0);
-        vec3 color = mix(
-            vec3(0.0),
-            vec3(0.01),
-            checker
-        );
-        
-        gl_FragColor = vec4(color, distance(vec2(0.5,0.0), vUv));
-        // color = mix(vec3(0.95,0.95,0.95), vec3(0.2,0.2,0.3), clamp(vUv.y*2.0-0.5, 0.0,1.0));
-        // color = mix(vec3(0.1,0.1,0.1), color, clamp(vUv.y*2.0, 0.0,1.0));
-        // color *= 0.2;
-        gl_FragColor = vec4(color, clamp(vUv.y-0.0, 0.0, 1.0));
-        gl_FragColor = vec4(color, uScroll);
-        gl_FragColor.rgba = texture2D(uTexture, vUv).rgba;
+      vec2 uv = vUv;
+      // uv = vec2(uv.y, 1.0 - uv.x);
+      // uv.x/=1920.0/1080.0*2.0;
+        gl_FragColor.rgba = texture2D(uTexture, uv).rgba;
       }
       `,
       precision: 'lowp',
@@ -505,7 +505,7 @@ export class CstMaterials {
             vec3(0.01),
             checker
         );
-        
+        /*
         gl_FragColor = vec4(color, distance(vec2(0.5,0.0), vUv));
         // color = mix(vec3(0.95,0.95,0.95), vec3(0.2,0.2,0.3), clamp(vUv.y*2.0-0.5, 0.0,1.0));
         // color = mix(vec3(0.1,0.1,0.1), color, clamp(vUv.y*2.0, 0.0,1.0));
@@ -515,8 +515,22 @@ export class CstMaterials {
         gl_FragColor = vec4(vec3(1.0), uScroll);
         gl_FragColor.rgba = texture2D(uProjoTexture, vUv).rgba;
         // gl_FragColor.rgb*=0.2;
-        gl_FragColor.rgb= mix(vec3(1.0), gl_FragColor.rgb, uScroll);
-        // gl_FragColor.a *= uScroll;
+        */
+        color = texture2D(uProjoTexture, vUv).rgb;
+        gl_FragColor.a = 1.0;
+        float brightness = min(color.r, min(color.g, color.b));
+        float mask = smoothstep(0.92, 0.99, brightness);
+        gl_FragColor.a = 1.0 - mask;
+        
+        {
+          }
+          
+          gl_FragColor = texture2D(uProjoTexture, vUv).rgba;
+        //  gl_FragColor.rgb *= gl_FragColor.a*gl_FragColor.a*gl_FragColor.a;
+        //  gl_FragColor.a = step(0.9 , gl_FragColor.a);
+         gl_FragColor.rgb *= mix(0.2, 1.0, step(0.9 , gl_FragColor.a));
+         gl_FragColor.rgb *= 0.3;
+        gl_FragColor.a *= uScroll*0.5+0.5;
       }
       `,
       precision: 'lowp',
@@ -530,11 +544,11 @@ export class CstMaterials {
       },
       side: THREE.FrontSide,
       transparent: true,
-      premultipliedAlpha: true,
+      // premultipliedAlpha: true,
+      // blending: THREE.MultiplyBlending,
+      // blending: THREE.MultiplyBlending,
       depthWrite: false,
       depthTest: false,
-      // blending: THREE.AdditiveBlending
-      blending: THREE.MultiplyBlending
     });
     return customMaterial;
   }

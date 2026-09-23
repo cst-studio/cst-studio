@@ -264,29 +264,29 @@ const initCstLibrary = () => {
 
   iPad = cstLibrary.getObjectByName("iPad")! as Mesh
   iPad.material = cstMaterials.Screen
-  iPad.position.set(0,0,0)
+  iPad.position.set(0,0,-0.3)
   iPad.scale.setScalar(1.4)
   Scene1.add(iPad);
   
   Projo1 = cstLibrary.getObjectByName("Projo1")! as Mesh
   Projo1.material = cstMaterials.Projo
-  Projo1.scale.setScalar(2)
+  // Projo1.scale.setScalar(2)
   Scene1.add(Projo1);
   
   Projo2 = cstLibrary.getObjectByName("Projo2")! as Mesh
   Projo2.material = cstMaterials.Projo
-  Projo2.scale.setScalar(1.8)
+  // Projo2.scale.setScalar(1.8)
   Scene1.add(Projo2);
   
-  SpotRight.renderOrder = 20
+  SpotRight.renderOrder = 31
   SpotLeft.renderOrder = 30
   SmokeFloor.renderOrder = 4
   SmokeOver.renderOrder = 5
   Logo.renderOrder = 1
   BgCurve.renderOrder = 0
-  iPad.renderOrder = 10
-  Projo2.renderOrder = 11
-  Projo1.renderOrder = 12
+  iPad.renderOrder = 40
+  Projo2.renderOrder = 41
+  Projo1.renderOrder = 42
   
   appState.colorCurrent.value = Math.round(Math.random() * (COLORS.length - 1));
 
@@ -355,6 +355,16 @@ const resize = () => {
   placeObject(SpotLeft, new Vector3(-1.0, 1.0, 0));
   placeObject(Projo1, new Vector3(-1.02, -0.2, 0));
   placeObject(Projo2, new Vector3(1.03, -0.2, 0));
+
+  Projo1.scale.setScalar(1+(1/aspect)*0.75);
+  Projo2.scale.setScalar(1+(1/aspect)*0.75);
+
+  if(aspect>1) {
+    iPad.rotation.y = 0
+  } else {
+    iPad.rotation.y = Math.PI/2
+
+  }
   
   // placeObject(SmokeFloor, new Vector3(0.0001, -1.0, 0));
   // const scaleSpot = 1/aspect * 0.5
@@ -433,7 +443,7 @@ const setupThree = () => {
     const elapsedTime = clock.getElapsedTime();
 
     iPad.rotation.z = Math.cos(elapsedTime*0.5)*0.1
-    iPad.rotation.x = Math.sin(elapsedTime*0.5)*0.1
+    iPad.rotation.x = Math.sin(elapsedTime*0.5)*0.02
     // console.log(SpotLeft.rotation.y)
     SpotLeft.rotation.y = Math.cos(elapsedTime*0.5)*0.3+Math.PI*0.25
     SpotRight.rotation.y = Math.sin(elapsedTime*0.5)*0.3-Math.PI*0.25
