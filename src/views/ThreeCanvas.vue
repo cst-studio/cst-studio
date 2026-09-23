@@ -361,8 +361,10 @@ const resize = () => {
 
   if(aspect>1) {
     iPad.rotation.y = 0
+    iPad.scale.setScalar(1.4)
   } else {
     iPad.rotation.y = Math.PI/2
+    iPad.scale.setScalar(1.9)
 
   }
   
