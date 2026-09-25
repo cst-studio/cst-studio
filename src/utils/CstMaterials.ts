@@ -437,9 +437,21 @@ export class CstMaterials {
     const customMaterial = new THREE.ShaderMaterial({
       vertexShader: `
       varying vec2 vUv;
+      uniform float rotation;
       varying vec3 vWorldPosition;
+      vec2 rotateUV(vec2 uv, float rotation) {
+        vec2 center = vec2(0.5);
+        uv -= center;
+        float s = sin(rotation);
+        float c = cos(rotation);
+        uv = mat2(c, -s, s, c) * uv;
+        uv += center;
+        return uv;
+      }
       void main() {
-          vUv = 1.0-uv;
+        vUv = 1.0-uv;
+        vUv.x = 1.0-vUv.x;
+        vUv = rotateUV(vUv, -rotation * 3.1415 / 2.0);
           vec3 mPosition = position;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(mPosition, 1.0);
       }
@@ -450,8 +462,10 @@ export class CstMaterials {
       uniform vec3 uColor2;
       uniform vec3 uColor3;
       uniform float uTime;
+      uniform float rotation;
       uniform float uScroll;
       uniform sampler2D uTexture;
+      
       void main() {
       vec2 uv = vUv;
       // uv = vec2(uv.y, 1.0 - uv.x);
@@ -465,6 +479,7 @@ export class CstMaterials {
         uColor2: { value: hexToVec3Srgb(0xff3b30) },
         uColor3: { value: hexToVec3Srgb(0xDDDCFF) },
         uTexture: { value: null },
+        rotation: { value: 0.0 },
         uTime: { value: 0.0 },
         uScroll: { value: 1.0 }
       },

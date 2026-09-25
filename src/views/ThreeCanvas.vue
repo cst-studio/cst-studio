@@ -77,6 +77,10 @@ let composer: EffectComposer;
 let camera: PerspectiveCamera
 const clock = new Clock();
 const cstPost = new CstPost();
+
+
+
+
 function getiOSVersion() {
   const match = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
   if (!match) return null;
@@ -201,7 +205,17 @@ const busy = (): boolean => {
   // flag ||= tutoSaturateTween.tween?.isActive();
   return flag;
 };
-
+const tweenTo = (
+  tween: gsap.core.Tween,
+  progress: number,
+  duration: number = 0.5,
+) => {
+  if(tween?.vars.progress==progress) return ;
+  tween?.kill();
+  tween.duration(duration);
+  tween.vars.progress = progress;
+  tween.invalidate().restart();
+};
 function loadCstLibrary(url, onProgress) {
   const loaderGLTF = new GLTFLoader();
   return loaderGLTF.loadAsync(url, onProgress).then((gltf) => {
@@ -218,6 +232,25 @@ let iPad : Mesh;
 let Projo1 : Mesh;
 let Projo2 : Mesh;
 let Scene1 : Group;
+
+
+const iPadRotationTween = { progress: 0, tween: null as unknown as gsap.core.Tween };
+iPadRotationTween.tween = gsap.to(iPadRotationTween, {
+  progress: 0,
+  duration: 0,
+  ease: "power1.inOut",
+  onUpdate:()=>{
+    if(iPad){
+      iPad.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
+      iPad.scale.setScalar(1.6 + 1.2 * Math.min(Math.max(iPadRotationTween.progress*8.0-7.0, 0.0), 1.0))
+      cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress
+    }
+  }
+});
+
+
+
+
 const initCstLibrary = () => {
   console.log(cstLibrary)
   // logo?.rotation.set(0,0,0)
@@ -264,8 +297,8 @@ const initCstLibrary = () => {
 
   iPad = cstLibrary.getObjectByName("iPad")! as Mesh
   iPad.material = cstMaterials.Screen
-  iPad.position.set(0,0,-0.3)
-  iPad.scale.setScalar(1.4)
+  iPad.position.set(0,0,-0.0)
+  iPad.scale.setScalar(1.6)
   Scene1.add(iPad);
   
   Projo1 = cstLibrary.getObjectByName("Projo1")! as Mesh
@@ -360,11 +393,14 @@ const resize = () => {
   Projo2.scale.setScalar(1+(1/aspect)*0.75);
 
   if(aspect>1) {
-    iPad.rotation.y = 0
-    iPad.scale.setScalar(1.4)
+    // iPad.rotation.y = 0
+    if(iPadRotationTween.tween?.vars.progress!=0){
+      tweenTo(iPadRotationTween.tween, 0, 0.6)
+    }
   } else {
-    iPad.rotation.y = Math.PI/2
-    iPad.scale.setScalar(1.9)
+    if(iPadRotationTween.tween?.vars.progress!=1){
+      tweenTo(iPadRotationTween.tween, 1, 0.6)
+    }
 
   }
   
