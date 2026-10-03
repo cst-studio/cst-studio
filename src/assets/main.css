@@ -19,7 +19,7 @@ body {
   /* touch-action: none; */
   font-size:17px;
   min-height: 100%;
-
+  background: var(--dark);
 }
 
 #cst--app {
