@@ -150,11 +150,13 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
       end: 'bottom bottom',
       scrub: true,
       invalidateOnRefresh: true,
+      // onRefresh: () => {
+        // resize()
+      // },
       onUpdate: (self) => {
       const { segment, progress } = segmentedEase(self.progress, track.children.length-1)
       const p = (segment+progress)/(track.children.length-1)
       track.style.transform = `translateX(${- (track.scrollWidth - document.documentElement.clientWidth) * p}px)`
-            // const progress = gsap.parseEase("power1.out")(self.progress)
     }
     },
   })
@@ -408,7 +410,8 @@ const screenCoord = (ndc:Vector3 = new Vector3(1, 1, 0), positionY: number = 0):
   ndc.unproject(camera);
   const direction = ndc.sub(camera.position).normalize();
   const distance = (positionY - camera.position.y) / direction.y;
-  return camera.position.clone().add(direction.multiplyScalar(distance))
+  const ret: Vector3 = camera.position.clone().add(direction.multiplyScalar(distance))
+  return ret;
 }
 const placeObject = (object: Object3D, ndc:Vector3 = new Vector3(1, 1, 0)) => {
   ndc.unproject(camera);
@@ -446,24 +449,40 @@ const resize = () => {
   const cameraZ = 8;
   const hFov = 2 * Math.atan((objWidth / 2) / cameraZ);
   const vFov = 2 * Math.atan(Math.tan(hFov / 2) / aspect);
+  if(!camera) {
+    setTimeout(resize, 500)
+    return
+  }
+  // console.log("vFov", vFov, "aspect", aspect, "width", width, "height", height)
   camera.fov = MathUtils.radToDeg(vFov);
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
   composer.setSize(width, height);
+
+
+
+
+  const camY = camera.position.y;
+  camera.position.y = 5;
+  camera.updateMatrixWorld();
   screenTopLeft = screenCoord(new Vector3(-1, 1, 0), 0);
   screenTopLeftAt2 = screenCoord(new Vector3(-1, 1, 0), -2);
+  // screenTopLeftAt2 = screenTopLeft;
+  // console.log("screenTopLeftAt2.x", screenTopLeftAt2.x)
+  // console.log("screenTopLeft.x", screenTopLeft.x)
+  
   Projo1.position.set(screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
   Projo2.position.set(-screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
   SpotLeft.position.set(screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
   SpotRight.position.set(-screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
-  // placeObject(SpotRight, new Vector3(1, 1, 0));
-  // placeObject(SpotLeft, new Vector3(-1.0, 1.0, 0));
-  // placeObject(Projo1, new Vector3(-1.02, -0.2, 0));
-  // placeObject(Projo2, new Vector3(1.03, -0.2, 0));
 
+  
   Projo1.scale.setScalar(1+(1/aspect)*0.75);
   Projo2.scale.setScalar(1+(1/aspect)*0.75);
+
+
+  
 
   // if(aspect>1) {
   //   // iPad.rotation.y = 0
@@ -489,8 +508,12 @@ const resize = () => {
   SpotLeft.scale.setScalar(viewportH*0.28);
   SpotRight.scale.setScalar(viewportH*0.28);
   SmokeOver.scale.setScalar(viewportM*0.1);
+
+  camera.position.y = camY;
+  camera.updateMatrixWorld();
   // alert("resize")
   // render(true);
+  // SmokeOver.position.x = Projo1.position.x = Projo2.position.x = SpotLeft.position.x = SpotRight.position.x = 100
   eventBus.emit("resize", { width, height });
 };
 
@@ -580,7 +603,7 @@ const setupThree = () => {
   setTimeout(()=>{
     resize();
 
-  }, 100)
+  }, 1000)
   // resize();
 };
 
@@ -595,12 +618,14 @@ const initCst = () => {
 };
 
 const addListeners = () => {
+  eventBus.on("textureReady", resize);
   eventBus.on("sceneReady", setupThree);
   eventBus.on("route-will-change", onRouteChange);
   eventBus.on("route-has-changed", onRouteChanged);
 };
 const removeListeners = () => {
   eventBus.off("sceneReady", setupThree);
+  eventBus.off("textureReady", resize);
   eventBus.off("route-will-change", onRouteChange);
   eventBus.off("route-has-changed", onRouteChanged);
 };

@@ -14,6 +14,7 @@ type Events = {
   cstColorize: number,
   cstLayerUp: number,
   sceneReady: boolean,
+  textureReady: boolean,
   'route-has-changed': RouteChange,
   'route-will-change': RouteChange,
   tutoIsoCamera: boolean,

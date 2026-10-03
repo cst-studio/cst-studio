@@ -10,6 +10,7 @@ import { hexToVec3Srgb } from "@/utils/utils";
 import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
 import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
 import { hexToVec3Linear } from "./utils";
+import { eventBus } from "@/eventBus";
 
 export interface CstMaterialsOpts {
   initialProgress?: number; // 0..1
@@ -66,6 +67,7 @@ export class CstMaterials {
       this.screen_Texture = texture5;
       this.concrete_Texture = texture6;
       this.setTextures();
+      eventBus.emit("textureReady", true);
     });
 
 
