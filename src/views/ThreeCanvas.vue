@@ -151,7 +151,7 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
       scrub: true,
       invalidateOnRefresh: true,
       // onRefresh: () => {
-        // resize()
+      //   resize()
       // },
       onUpdate: (self) => {
       const { segment, progress } = segmentedEase(self.progress, track.children.length-1)
@@ -165,6 +165,15 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
 })
 
 }
+const updateScene1 = (value:number = 0) => {
+  const progress = gsap.parseEase("power1.out")(value)
+  const progress2 = gsap.parseEase("sine.out")(value)
+  camera.position.y = 4+progress
+  iPad.position.y = -0.0-progress*2.0
+  // iPad.rotation.x = Math.PI * 2.0 * Math.max(0.0, Math.min(progress*4.0-2.0, 1.0))
+  const rotationProgress = Math.sin(progress2*Math.PI*2.0-Math.PI*0.5)+1.0
+  iPad.rotation.x = -0.1 * rotationProgress
+}
 const initThree = () => {
   loadCstLibrary(gltfUrl, (xhr) => {
     eventBus.emit("loadGLB", Math.round(xhr.loaded / xhr.total * 100));
@@ -172,8 +181,8 @@ const initThree = () => {
     cstLibrary = gltf.scene;
     eventBus.emit("sceneReady", true);
     initCstLibrary();
+    updateScene1(0)
     setTimeout(()=>{
-      const wip = {value:0}
       gsap.to({}, {
         scrollTrigger: {
           trigger: '#main-hero-p1',
@@ -181,14 +190,13 @@ const initThree = () => {
           end: 'bottom bottom',
           markers: false,
           scrub: 1,
+          // invalidateOnRefresh: true,
+          // onRefresh: () => {
+          //   resize()
+          // },
           onUpdate: (self) => {
-            const progress = gsap.parseEase("power1.out")(self.progress)
-            const progress2 = gsap.parseEase("sine.out")(self.progress)
-            camera.position.y = 4+progress
-            iPad.position.y = -0.0-progress*2.0
-            // iPad.rotation.x = Math.PI * 2.0 * Math.max(0.0, Math.min(progress*4.0-2.0, 1.0))
-            const rotationProgress = Math.sin(progress2*Math.PI*2.0-Math.PI*0.5)+1.0
-            iPad.rotation.x = -0.1 * rotationProgress
+            updateScene1(self.progress)
+            
             // iPad.rotation.z = 0.1 * rotationProgress
             // iPad.rotation.x = Math.PI * 2.0 * progress2
             // iPad.rotation.z = Math.PI * 2.0 * progress2
