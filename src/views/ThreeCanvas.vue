@@ -93,6 +93,18 @@ function getiOSVersion() {
 }
 const iosVersion = getiOSVersion();
 
+const ease = gsap.parseEase("circ.inOut")
+function segmentedEase(progress, segments = 4) {
+  const segment = Math.min(
+    Math.floor(progress * segments),
+    segments - 1
+  )
+  const localProgress = (progress * segments) - segment
+  return {
+    segment,
+    progress: ease(localProgress)
+  }
+}
 
 const initScroll = () => {
   gsap.registerPlugin(ScrollTrigger)
@@ -126,15 +138,24 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
 
   updateHeight()
 
-  gsap.to(track, {
-    x: () => -(track.scrollWidth - document.documentElement.clientWidth),
-    ease: 'none',
+  // gsap.to(track, {
+  //   x: () => {
+  //     return -(track.scrollWidth - document.documentElement.clientWidth)
+  //   },
+  //   ease: 'power1.inOut',
+  gsap.to({}, {
     scrollTrigger: {
       trigger: section,
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
       invalidateOnRefresh: true,
+      onUpdate: (self) => {
+      const { segment, progress } = segmentedEase(self.progress, track.children.length-1)
+      const p = (segment+progress)/(track.children.length-1)
+      track.style.transform = `translateX(${- (track.scrollWidth - document.documentElement.clientWidth) * p}px)`
+            // const progress = gsap.parseEase("power1.out")(self.progress)
+    }
     },
   })
 

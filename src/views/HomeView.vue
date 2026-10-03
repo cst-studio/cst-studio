@@ -111,31 +111,35 @@ en Image<span class="dot"></span></h1>
     <main class="horizontal-track">
       <article>
         <div>
-          <h2> 01 <span class="red">—</span> PRODUCTION VIDÉO </h2>
-          <h3>Vidéo d'Entreprise</h3>
-          <p>Films institutionnels, publicités digitales, interviews corporate, reportages événementiels. L'exigence du cinéma au service de votre message.</p>
+          <h2> 01 <span class="red">—</span> PRODUCTION #1 </h2>
+          <h3>#1</h3>
+          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
         </div>
+        <img :src="wipImage" alt="Web & Digital" />
       </article>
       <article>
         <div>
-          <h2> 02 <span class="red">—</span> IMAGERIE AÉRIENNE </h2>
-          <h3>Drone & Aérien</h3>
-          <p>Drone certifié catégorie A1/A3, prises de vue 4K à 360°, time-lapse aériens. Des angles impossibles qui subliment vos espaces et événements.</p>
+          <h2> 02 <span class="red">—</span> PRODUCTION #2 </h2>
+          <h3>#2</h3>
+          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
         </div>
+        <img :src="wipImage" alt="Web & Digital" />
       </article>
       <article>
         <div>
-          <h2> 03 <span class="red">—</span> PHOTOGRAPHIE </h2>
-          <h3>Photo Corporate</h3>
-          <p>Portraits corporate, shooting événementiel, photographie d'architecture et de produit. Des images qui renforcent votre identité visuelle.</p>
+          <h2> 03 <span class="red">—</span> PRODUCTION #3 </h2>
+          <h3>#3</h3>
+          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
         </div>
+        <img :src="wipImage" alt="Web & Digital" />
       </article>
       <article>
         <div>
-          <h2> 04 <span class="red">—</span> WEB & DIGITAL </h2>
-          <h3>Site Internet</h3>
-          <p>Conception web sur mesure, identité digitale, landing pages haute performance. Votre vitrine en ligne pensée pour attirer, convaincre et convertir.</p>
+          <h2> 04 <span class="red">—</span> PRODUCTION #4 </h2>
+          <h3>#4</h3>
+          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
         </div>
+        <img :src="wipImage" alt="Web & Digital" />
       </article>
     </main>
     <footer>
