@@ -7,17 +7,26 @@ import { eventBus } from '@/eventBus'
 import { ref } from 'vue'
 
 const sceneIsReady = ref<Boolean | null>(null)
+const percentGLB = ref<number>(0)
+const percentTexture = ref<number>(0)
+const onLoadTexture = (progress:number) => {
+  percentTexture.value = progress
+}
+const onLoadGLB = (progress:number) => {
+  percentGLB.value = progress
+}
 const sceneReady = (isReady:boolean) => {
-  // alert("SCENE READY")
   sceneIsReady.value = true
 }
 eventBus.on('sceneReady', sceneReady)
+eventBus.on('loadGLB', onLoadGLB)
+eventBus.on('loadTexture', onLoadTexture)
 </script>
 
 <template>
-  <div 
-  v-if="!sceneIsReady"
-  class="loader">. . .</div>
+  <div v-if="!sceneIsReady" class="loader">
+    <span v-html="`${Math.round((percentGLB + percentTexture) / 2)}%`"></span>
+  </div>
   <div class="cst--app">
     <ThreeCanvas />
     <!-- <CutOut /> -->
@@ -49,13 +58,16 @@ header {
 }
 .loader {
   position: absolute;
-  top: 50%;
   width: 100%;
-  left: 0;
-  transform: translateY(-50%);
-  text-align: center;
-  font-size: 6rem;
-  color: #e0e0e0;
+  height: 100%;
+  inset:0;
+  font-size: 12rem;
+  color: var(--red);
+  background: var(--dark);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .logo {
   display: block;

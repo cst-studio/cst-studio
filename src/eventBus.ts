@@ -13,6 +13,8 @@ type Events = {
   sizeRipple: {size:number, duration:number},
   cstColorize: number,
   cstLayerUp: number,
+  loadTexture: number,
+  loadGLB: number,
   sceneReady: boolean,
   textureReady: boolean,
   'route-has-changed': RouteChange,

@@ -167,6 +167,7 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
 }
 const initThree = () => {
   loadCstLibrary(gltfUrl, (xhr) => {
+    eventBus.emit("loadGLB", Math.round(xhr.loaded / xhr.total * 100));
   }).then((gltf) => {
     cstLibrary = gltf.scene;
     eventBus.emit("sceneReady", true);

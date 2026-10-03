@@ -44,7 +44,18 @@ export class CstMaterials {
     this.BgCurve = this.makeBgCurveMaterial();    
     this.Projo = this.makeProjoMaterial();    
     this.Screen = this.makeScreenMaterial();    
-    const loader = new THREE.TextureLoader();
+    // const loader = new THREE.TextureLoader();
+
+    const manager = new THREE.LoadingManager();
+
+  manager.onProgress = (url, loaded, total) => {
+
+  const progress = loaded / total;
+  eventBus.emit("loadTexture", Math.round(progress * 100));
+
+};
+
+const loader = new THREE.TextureLoader(manager);
     Promise.all([
       loader.loadAsync(cloud_texture_url),
       loader.loadAsync(smog_texture_url),
