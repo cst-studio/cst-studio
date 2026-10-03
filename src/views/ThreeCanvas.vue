@@ -78,7 +78,8 @@ let camera: PerspectiveCamera
 const clock = new Clock();
 const cstPost = new CstPost();
 
-
+let screenTopLeft: Vector3 = new Vector3(-1, 1, 0);
+let screenTopLeftAt2: Vector3 = new Vector3(-1, 1, 0);
 
 
 function getiOSVersion() {
@@ -148,21 +149,60 @@ const initThree = () => {
     eventBus.emit("sceneReady", true);
     initCstLibrary();
     setTimeout(()=>{
-      gsap.to(Scene1.position, {
-        z: -8,
+      const wip = {value:0}
+      gsap.to({}, {
         scrollTrigger: {
-          trigger: '#main-hero',
+          trigger: '#main-hero-p1',
+          start: 'top top',
+          end: 'bottom bottom',
+          markers: false,
+          scrub: 1,
+          onUpdate: (self) => {
+            const progress = gsap.parseEase("power1.out")(self.progress)
+            const progress2 = gsap.parseEase("sine.out")(self.progress)
+            camera.position.y = 4+progress
+            iPad.position.y = -0.0-progress*2.0
+            // iPad.rotation.x = Math.PI * 2.0 * Math.max(0.0, Math.min(progress*4.0-2.0, 1.0))
+            const rotationProgress = Math.sin(progress2*Math.PI*2.0-Math.PI*0.5)+1.0
+            iPad.rotation.x = -0.1 * rotationProgress
+            // iPad.rotation.z = 0.1 * rotationProgress
+            // iPad.rotation.x = Math.PI * 2.0 * progress2
+            // iPad.rotation.z = Math.PI * 2.0 * progress2
+          }
+        }
+      })
+      gsap.to({}, {
+        scrollTrigger: {
+          trigger: '#main-hero-p2',
           start: 'top top',
           end: 'bottom top',
           markers: false,
           scrub: 1,
-          onUpdate: (cal) => {
-            // BgCurve.material.uniforms.uScroll.value = 1.0 - Math.min(1.0, (-BgCurve.position.z/2))
-            BgCurve.material.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
-            cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
+          onUpdate: (self) => {
+            // console.log(cal.progress)
+            const progress = gsap.parseEase("circ.in")(self.progress)
+            Scene1.position.z = screenTopLeftAt2.z*progress*2.0
+            Scene1.position.y = 0
+            BgCurve.material.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
+            cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
             }
         }
       })
+
+      // gsap.to(Scene1.position, {
+      //   z: -8,
+      //   scrollTrigger: {
+      //     trigger: '#main-hero',
+      //     start: 'top top',
+      //     end: 'bottom top',
+      //     markers: false,
+      //     scrub: 1,
+      //     onUpdate: (cal) => {
+      //       BgCurve.material.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
+      //       cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
+      //       }
+      //   }
+      // })
       gsap.to(Logo.position, {
         z: 0,
         scrollTrigger: {
@@ -234,19 +274,19 @@ let Projo2 : Mesh;
 let Scene1 : Group;
 
 
-const iPadRotationTween = { progress: 0, tween: null as unknown as gsap.core.Tween };
-iPadRotationTween.tween = gsap.to(iPadRotationTween, {
-  progress: 0,
-  duration: 0,
-  ease: "power1.inOut",
-  onUpdate:()=>{
-    if(iPad){
-      iPad.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
-      iPad.scale.setScalar(1.6 + 1.2 * Math.min(Math.max(iPadRotationTween.progress*8.0-7.0, 0.0), 1.0))
-      cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress
-    }
-  }
-});
+// const iPadRotationTween = { progress: 0, tween: null as unknown as gsap.core.Tween };
+// iPadRotationTween.tween = gsap.to(iPadRotationTween, {
+//   progress: 0,
+//   duration: 0,
+//   ease: "power1.inOut",
+//   onUpdate:()=>{
+//     if(iPad){
+//       iPad.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
+//       iPad.scale.setScalar(1.6 + 1.2 * Math.min(Math.max(iPadRotationTween.progress*8.0-7.0, 0.0), 1.0))
+//       cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress
+//     }
+//   }
+// });
 
 
 
@@ -303,6 +343,7 @@ const initCstLibrary = () => {
   
   Projo1 = cstLibrary.getObjectByName("Projo1")! as Mesh
   Projo1.material = cstMaterials.Projo
+  Projo1.position.set(0,-2,-0.0)
   // Projo1.scale.setScalar(2)
   Scene1.add(Projo1);
   
@@ -342,7 +383,12 @@ const initCstLibrary = () => {
 
 };
 
-
+const screenCoord = (ndc:Vector3 = new Vector3(1, 1, 0), positionY: number = 0): Vector3 => {
+  ndc.unproject(camera);
+  const direction = ndc.sub(camera.position).normalize();
+  const distance = (positionY - camera.position.y) / direction.y;
+  return camera.position.clone().add(direction.multiplyScalar(distance))
+}
 const placeObject = (object: Object3D, ndc:Vector3 = new Vector3(1, 1, 0)) => {
   ndc.unproject(camera);
   const direction = ndc.sub(camera.position).normalize();
@@ -384,25 +430,31 @@ const resize = () => {
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
   composer.setSize(width, height);
-  placeObject(SpotRight, new Vector3(1, 1, 0));
-  placeObject(SpotLeft, new Vector3(-1.0, 1.0, 0));
-  placeObject(Projo1, new Vector3(-1.02, -0.2, 0));
-  placeObject(Projo2, new Vector3(1.03, -0.2, 0));
+  screenTopLeft = screenCoord(new Vector3(-1, 1, 0), 0);
+  screenTopLeftAt2 = screenCoord(new Vector3(-1, 1, 0), -2);
+  Projo1.position.set(screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
+  Projo2.position.set(-screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
+  SpotLeft.position.set(screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
+  SpotRight.position.set(-screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
+  // placeObject(SpotRight, new Vector3(1, 1, 0));
+  // placeObject(SpotLeft, new Vector3(-1.0, 1.0, 0));
+  // placeObject(Projo1, new Vector3(-1.02, -0.2, 0));
+  // placeObject(Projo2, new Vector3(1.03, -0.2, 0));
 
   Projo1.scale.setScalar(1+(1/aspect)*0.75);
   Projo2.scale.setScalar(1+(1/aspect)*0.75);
 
-  if(aspect>1) {
-    // iPad.rotation.y = 0
-    if(iPadRotationTween.tween?.vars.progress!=0){
-      tweenTo(iPadRotationTween.tween, 0, 0.6)
-    }
-  } else {
-    if(iPadRotationTween.tween?.vars.progress!=1){
-      tweenTo(iPadRotationTween.tween, 1, 0.6)
-    }
+  // if(aspect>1) {
+  //   // iPad.rotation.y = 0
+  //   if(iPadRotationTween.tween?.vars.progress!=0){
+  //     tweenTo(iPadRotationTween.tween, 0, 0.6)
+  //   }
+  // } else {
+  //   if(iPadRotationTween.tween?.vars.progress!=1){
+  //     tweenTo(iPadRotationTween.tween, 1, 0.6)
+  //   }
 
-  }
+  // }
   
   // placeObject(SmokeFloor, new Vector3(0.0001, -1.0, 0));
   // const scaleSpot = 1/aspect * 0.5
@@ -480,8 +532,8 @@ const setupThree = () => {
     requestAnimationFrame(animate);
     const elapsedTime = clock.getElapsedTime();
 
-    iPad.rotation.z = Math.cos(elapsedTime*0.5)*0.1
-    iPad.rotation.x = Math.sin(elapsedTime*0.5)*0.02
+    // iPad.rotation.z = Math.cos(elapsedTime*0.5)*0.1
+    // iPad.rotation.x = Math.sin(elapsedTime*0.5)*0.02
     // console.log(SpotLeft.rotation.y)
     SpotLeft.rotation.y = Math.cos(elapsedTime*0.5)*0.3+Math.PI*0.25
     SpotRight.rotation.y = Math.sin(elapsedTime*0.5)*0.3-Math.PI*0.25
