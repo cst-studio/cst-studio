@@ -88,6 +88,11 @@ body {
     font-size: 1.5rem;
     line-height: 1.2;
   }
+  header{
+    p{
+      filter: drop-shadow(2px 4px 6px black);
+    }
+  }
   .red{
     color: var(--red);
   }
