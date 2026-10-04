@@ -33,17 +33,48 @@ export class CstMaterials {
   private projo_Texture?: THREE.Texture;
   private screen_Texture?: THREE.Texture;
   private concrete_Texture?: THREE.Texture;
+  private video: HTMLVideoElement;
+  private videoTexture: THREE.VideoTexture;
 
   constructor(opts: CstMaterialsOpts = {}) {
     this.cst_BG_Mat = this.makeSpotMaterial();
     this.SpotLeft = this.makeSpotMaterial();
-    this.SpotRight = this.makeSpotMaterial();    
-    this.SmogFloor = this.makeSmogMaterial();    
-    this.Logo = this.makeLogoMaterial();    
-    this.Floor = this.makeFloorMaterial();    
-    this.BgCurve = this.makeBgCurveMaterial();    
-    this.Projo = this.makeProjoMaterial();    
-    this.Screen = this.makeScreenMaterial();    
+    this.SpotRight = this.makeSpotMaterial();
+    this.SmogFloor = this.makeSmogMaterial();
+    this.Logo = this.makeLogoMaterial();
+    this.Floor = this.makeFloorMaterial();
+    this.BgCurve = this.makeBgCurveMaterial();
+    this.Projo = this.makeProjoMaterial();
+    this.Screen = this.makeScreenMaterial();
+
+    this.video = document.createElement("video");
+
+this.video.src = "/video/Astor_Sport_Promo_HD.mp4";
+this.video.muted = true;
+this.video.loop = true;
+this.video.playsInline = true;
+this.video.preload = "auto";
+
+this.videoTexture = new THREE.VideoTexture(this.video);
+this.videoTexture.colorSpace = THREE.SRGBColorSpace;
+
+  this.video.addEventListener("loadeddata", () => {
+  console.log("Video loaded", this.video.videoWidth, this.video.videoHeight);
+  // this.video.play()
+  //   .then(() => {
+  //     console.log("Video playing");
+  //   })
+  //   .catch((error) => {
+  //     console.error("Video play failed:", error);
+  //   });
+});
+    // VideoTexture
+
+  this.videoTexture = new THREE.VideoTexture(this.video);
+  this.videoTexture.colorSpace = THREE.SRGBColorSpace;
+  this.videoTexture.minFilter = THREE.LinearFilter;
+  this.videoTexture.magFilter = THREE.LinearFilter;
+    this.video.play();
     // const loader = new THREE.TextureLoader();
 
     const manager = new THREE.LoadingManager();
@@ -100,6 +131,7 @@ const loader = new THREE.TextureLoader(manager);
     this.Floor.uniforms.uTime.value = 
     this.Logo.uniforms.uTime.value = 
     this.SmogFloor.uniforms.uTime.value = 
+    this.Floor.uniforms.uTime.value = 
     this.SpotLeft.uniforms.uTime.value = 
     this.SpotRight.uniforms.uTime.value = 
     time;
@@ -108,21 +140,25 @@ const loader = new THREE.TextureLoader(manager);
     this.SpotLeft.uniforms.uCloudTexture.value =
     this.SpotRight.uniforms.uCloudTexture.value =
     this.SmogFloor.uniforms.uCloudTexture.value =
+    this.Floor.uniforms.uCloudTexture.value =
     this.cst_BG_Mat.uniforms.uCloudTexture.value =
       this.cloud_Texture;
     this.SpotLeft.uniforms.uSmogTexture.value =
     this.SpotRight.uniforms.uSmogTexture.value =
     this.SmogFloor.uniforms.uSmogTexture.value =
+    this.Floor.uniforms.uSmogTexture.value =
     this.cst_BG_Mat.uniforms.uSmogTexture.value =
       this.smog_Texture;
     this.SpotLeft.uniforms.uSwirlTexture.value =
     this.SpotRight.uniforms.uSwirlTexture.value =
     this.SmogFloor.uniforms.uSwirlTexture.value =
+    this.Floor.uniforms.uSwirlTexture.value =
     this.cst_BG_Mat.uniforms.uSwirlTexture.value =
       this.swirl_Texture;
     this.Projo.uniforms.uProjoTexture.value =
       this.projo_Texture;
-    this.Screen.uniforms.uTexture.value = this.screen_Texture;
+    this.Screen.uniforms.uTexture.value = this.videoTexture;
+    // this.Screen.uniforms.uTexture.value = this.screen_Texture;
     this.BgCurve.uniforms.uTexture.value = this.concrete_Texture;
   }
   private makeSpotMaterial(): THREE.ShaderMaterial {
@@ -253,16 +289,19 @@ const loader = new THREE.TextureLoader(manager);
           // colorOut.rgb += noise / 32.0;
           gl_FragColor = vec4(colorOut, fade);
           // gl_FragColor = texture2D(uSwirlTexture, vUv);
-          vec2 flow = texture2D(uSwirlTexture, vUv+vec2(uTime*0.03, 0.0)).rg;
-          vec3 smogs = texture2D(uCloudTexture, vUv+flow*0.1).rgb;
+          vec2 flow = texture2D(uSwirlTexture, vUv+vec2(uTime*0.02, uTime*0.02)).rg;
+          vec3 smogs = texture2D(uCloudTexture, vUv+flow*0.95).rgb;
           // float smog = mix(smogs.r, smogs.b, abs(cos(uTime*0.1)));
           float smog = smogs.r*0.33+smogs.g*0.33+smogs.b*0.33;
           // gl_FragColor = vec4(vec3(smog)*0.02, 1.0);
-          colorOut.rgb = uColor1*smog*0.1;
+          // colorOut.rgb = uColor1*smog*0.1;
+          colorOut.rgb = uColor1*smog*0.21;
           // gl_FragColor = vec4(vec3(smog)*0.05, 1.0);
           gl_FragColor = vec4(colorOut.rgb, 1.0);
           // float noise = dither0(gl_FragCoord.xy);
           // gl_FragColor.rgb += noise / 32.0;
+          // gl_FragColor.rgb = vec3(texture2D(uSmogTexture, vUv+flow*0.21).g);
+          gl_FragColor.rgb = vec3(texture2D(uCloudTexture, vUv+flow*0.21).g*0.14);
       }
       `,
       precision: 'lowp',
@@ -314,6 +353,7 @@ const loader = new THREE.TextureLoader(manager);
         // vec3 uLightDirection2 = (vec3(sin(uTime),-0.5,cos(uTime)));
         float light2 = max(dot(normalize(vWorldNormal), normalize(uLightDirection2)), 0.0 );
         colorOut.rgb = uColor3*0.05;
+        colorOut.rgb = vec3(0.0);
         colorOut.rgb += uColor1*light2+uColor2*light1;
         // colorOut.rgb = vec3(light1);
           gl_FragColor = vec4(colorOut.rgb, 1.0);
@@ -352,35 +392,88 @@ const loader = new THREE.TextureLoader(manager);
       fragmentShader: `
       varying vec2 vUv;
       uniform vec3 uColor1;
-      uniform vec3 uColor2;
-      uniform vec3 uColor3;
+      uniform sampler2D uCloudTexture;
+      uniform sampler2D uSmogTexture;
+      uniform sampler2D uSwirlTexture;
       uniform float uTime;
+      uniform float uOffsetUV;
       void main() {
-          vec2 grid = floor(vUv * 40.0);
-        float checker = mod(grid.x + grid.y, 2.0);
-        vec3 color = mix(
-            vec3(0.0),
-            vec3(1.0),
-            checker
-        );
-        
-        gl_FragColor = vec4(color, distance(vec2(0.5,0.0), vUv));
+          float noiseValue2;
+          vec3 colorOut;
+          float fade = 0.0;
+          {
+            float x = vUv.x;
+            float y = mix(0.06, 1.0, vUv.y);
+            x = x-0.5;
+            x = x*0.5;
+            x = x / y;
+            x = x+0.5;
+            float y2 = vUv.y*0.01;
+            fade = x -0.5;
+            fade = abs(fade);
+            fade = 1.0-fade;
+            fade = pow(fade, 5.0);
+            noiseValue2 = texture2D(uCloudTexture, vec2(x, y2-uTime*0.020+uOffsetUV)).r;
+          }
+          {
+            float x = vUv.x;
+            x -= 0.5;
+            x = abs(x);
+            x *= 2.0;
+            x = 1.0-x;
+            fade*=x;
+          }
+          {
+            float dist0 = distance(vec2(0.5,0.0), vUv);
+            dist0 = 1.0 - dist0;
+            dist0 = pow(dist0, 1.6);
+            fade *= dist0;
+          }  
+          noiseValue2 = pow(noiseValue2, 1.5);
+          colorOut.rgb = uColor1*noiseValue2;
+          // float noise = dither0(gl_FragCoord.xy);
+          // colorOut.rgb += noise / 32.0;
+          gl_FragColor = vec4(colorOut, fade);
+          // gl_FragColor = texture2D(uSwirlTexture, vUv);
+          vec2 flow = texture2D(uSwirlTexture, vUv*2.0+vec2(uTime*0.02, -uTime*0.03)).rg;
+          vec3 smogs = texture2D(uCloudTexture, vUv+flow*0.51).rgb;
+          // float smog = mix(smogs.r, smogs.b, abs(cos(uTime*0.1)));
+          float smog = smogs.r*0.33+smogs.g*0.33+smogs.b*0.33;
+          // gl_FragColor = vec4(vec3(smog)*0.02, 1.0);
+          // colorOut.rgb = uColor1*smog*0.1;
+          colorOut.rgb = uColor1*smog*0.821;
+          // gl_FragColor = vec4(vec3(smog)*0.05, 1.0);
+          gl_FragColor = vec4(colorOut.rgb, 1.0);
+          // float noise = dither0(gl_FragCoord.xy);
+          // gl_FragColor.rgb += noise / 32.0;
+          gl_FragColor.rgb = vec3(vUv.y);
+          gl_FragColor.rgb = vec3(smog);
+          // colorOut.a = smog*0.5;
+          // colorOut.a = 0.95;
+          // gl_FragColor = texture2D(uSwirlTexture, vUv*5.0);
+          vec2 uvSmog = vUv;
+          uvSmog.x = (uvSmog.x-0.5)*1.0+0.5;
+          uvSmog.y = (uvSmog.y-0.5)*2.0+0.5;
+          gl_FragColor.rgb = vec3(texture2D(uSmogTexture, uvSmog+flow*0.21).g);
+          gl_FragColor.rgb *= vUv.y;
+          gl_FragColor.rgb *= 0.3;
+          // gl_FragColor.rgb = vec3(flow, 0.0);
       }
       `,
       precision: 'lowp',
       uniforms: {
         uColor1: { value: hexToVec3Srgb(0xDDDCFF) },
-        uColor2: { value: hexToVec3Srgb(0xff3b30) },
-        uColor3: { value: hexToVec3Srgb(0xDDDCFF) },
+        uCloudTexture: { value: null },
+        uSmogTexture: { value: null },
+        uSwirlTexture: { value: null },
+        uOffsetUV: { value: 0.0 },
         uTime: { value: 0.0 }
       },
       side: THREE.FrontSide,
       transparent: true,
-      // premultipliedAlpha: true,
       depthWrite: false,
       depthTest: false,
-      // blending: THREE.AdditiveBlending
-      // blending: THREE.MultiplyBlending
+      blending: THREE.AdditiveBlending
     });
     return customMaterial;
   }
