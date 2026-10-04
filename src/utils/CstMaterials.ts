@@ -558,6 +558,8 @@ const loader = new THREE.TextureLoader(manager);
         vUv = 1.0-uv;
         vUv.x = 1.0-vUv.x;
         vUv = rotateUV(vUv, -rotation * 3.1415 / 2.0);
+        vUv.x /= 1.0+rotation;
+
           vec3 mPosition = position;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(mPosition, 1.0);
       }
