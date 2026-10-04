@@ -32,15 +32,6 @@ eventBus.on('loadTexture', onLoadTexture)
     <!-- <CutOut /> -->
     <TopNav />
     <Home />
-    <!-- <div v-if="sceneIsReady">
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" :key="$route.fullPath" />
-        </transition>
-      </router-view>
-    </div> -->
-    <div id="footer">FOOTER</div>
-    
   </div>
 </template>
 
