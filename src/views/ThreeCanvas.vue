@@ -246,7 +246,7 @@ const initThree = () => {
           }
       })
     gsap.to(SmokeFloor.position, {
-      z: 0,
+      z: 0.9,
       scrollTrigger: {
           trigger: '#footer',
           start: 'top bottom',
@@ -255,16 +255,18 @@ const initThree = () => {
           scrub: 1,
           }
       })
-    gsap.to(SmokeFloor.rotation, {
-      x: 0.1,
-      scrollTrigger: {
-          trigger: '#footer',
-          start: 'top bottom',
-          end: 'bottom bottom',
-          markers: false,
-          scrub: 1,
-          }
-          })
+    // gsap.to(SmokeFloor.rotation, {
+    //   x: 0.0,
+    //   scrollTrigger: {
+    //       trigger: '#footer',
+    //       start: 'top bottom',
+    //       end: 'bottom bottom',
+    //       markers: false,
+    //       scrub: 1,
+    //       }
+    //       })
+
+
     }, 500)
 
 
@@ -331,20 +333,27 @@ const initCstLibrary = () => {
   SpotLeft = cstLibrary.getObjectByName("SpotLeft")! as Mesh
   SpotLeft.material = cstMaterials.SpotLeft
   SpotLeft.position.set(-3,0,-4)
-  SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xc3c8db) 
+  // SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xc3c8db) 
+  SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xb3b8db) 
   scene.add(SpotLeft);
   
   SpotRight = cstLibrary.getObjectByName("SpotRight")! as Mesh
   SpotRight.material = cstMaterials.SpotRight
   SpotRight.material.uniforms.uOffsetUV.value = 0.5
   SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xDD6666) 
+  // SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0x996666) 
   SpotRight.position.set(5,0,-4)
   scene.add(SpotRight);
   
   SmokeFloor = cstLibrary.getObjectByName("SmokeFloor")! as Mesh
   SmokeFloor.material = cstMaterials.Floor
   // SmokeFloor.material = cstMaterials.SmogFloor
+  // SmokeFloor.material = cstMaterials.SmogFloor
+  // SmokeFloor.position.set(0,0,6.2)
   SmokeFloor.position.set(0,0,6.2)
+  SmokeFloor.rotation.set(Math.PI/4,0,0)
+  // SmokeFloor.position.set(0,0,0)
+  // iPad.scale.setScalar(1.6)
   scene.add(SmokeFloor);
   
   SmokeOver = cstLibrary.getObjectByName("SmokeOver")! as Mesh
@@ -513,7 +522,7 @@ const resize = () => {
   const viewportW = scaleToViewportWidth()
   const viewportH = scaleToViewportHeight()
   const viewportM = Math.max(viewportW, viewportH);
-  SmokeFloor.scale.setScalar(viewportW*0.28);
+  SmokeFloor.scale.setScalar(viewportW*0.28*0.5);
   SpotLeft.scale.setScalar(viewportH*0.28);
   SpotRight.scale.setScalar(viewportH*0.28);
   SmokeOver.scale.setScalar(viewportM*0.1);
@@ -570,6 +579,7 @@ const setupThree = () => {
   window.addEventListener("resize", resize);
   renderer.setPixelRatio(1.0);
   composer.setPixelRatio(1.5);
+  composer.setPixelRatio(1.0);
   // renderer.setClearColor(0xf9f9fc, 1);
   renderer.setClearColor(0x080808, 1);
   renderer.outputColorSpace = SRGBColorSpace;
