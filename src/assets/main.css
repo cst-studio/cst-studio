@@ -121,7 +121,27 @@ body {
     font-style: italic;
     line-height: 1.2;
   }
+section{
+  header, footer, main{
+    width: 1440px;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+  header{
+    margin-top: 90px;
+  }
+  footer{
+    margin-bottom: 50px;
+  }
+    
+.full-width{
 
+}
+  main.horizontal-track{
+    width: auto;
+    max-width: unset;
+  }
+}
   
 }
 
