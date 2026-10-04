@@ -238,7 +238,7 @@ const initThree = () => {
       gsap.to(Logo.position, {
         z: 0,
         scrollTrigger: {
-          trigger: '#footer',
+          trigger: '.contact-section',
           start: 'top bottom',
           end: 'bottom bottom',
           markers: false,
@@ -248,7 +248,7 @@ const initThree = () => {
     gsap.to(SmokeFloor.position, {
       z: 0.9,
       scrollTrigger: {
-          trigger: '#footer',
+          trigger: '.contact-section',
           start: 'top bottom',
           end: 'bottom bottom',
           markers: false,
