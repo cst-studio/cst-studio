@@ -35,7 +35,7 @@ onBeforeUnmount(() => {});
         
       </header>
       <main></main>
-      <footer>
+      <footer class="full-width">
         <h1 class="font-display">Votre vision<br>
 en Image<span class="dot"></span></h1>
         <p>Du concept à la livraison, nous transformons vos idées <br>en contenus visuels qui captivent, convertissent et marquent les esprits.</p>
@@ -256,8 +256,8 @@ main.main {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding-top: 100px;
-      padding-bottom: 20px;
+      /* padding-top: 100px; */
+      /* padding-bottom: 20px; */
       header{
         /* flex: 1; */
         /* background: linear-gradient(to bottom, #f0f6, #f006); */
