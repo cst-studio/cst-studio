@@ -5,8 +5,11 @@ import swirl_texture_url from "@/assets/bitmap/texture/swirl.jpg?url";
 import projo_texture_url from "@/assets/bitmap/texture/projo.png?url";
 import concrete_texture_url from "@/assets/bitmap/texture/concrete-wall.jpg?url";
 import screen_texture_url from "@/assets/bitmap/texture/screen.png?url";
+import MatCap_texture_url from "@/assets/bitmap/texture/MatCap.png?url";
 
 import { hexToVec3Srgb } from "@/utils/utils";
+import matcapVertexShader from "../shader/matcapMaterial.vert?raw";
+import matcapFragmentShader from "../shader/matcapMaterial.frag?raw";
 import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
 import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
 import { hexToVec3Linear } from "./utils";
@@ -27,6 +30,7 @@ export class CstMaterials {
   public Projo: THREE.ShaderMaterial;
   public Screen: THREE.ShaderMaterial;
   public ScreenFrame: THREE.ShaderMaterial;
+  public MatCapMat: THREE.ShaderMaterial;
   
   private cloud_Texture?: THREE.Texture;
   private smog_Texture?: THREE.Texture;
@@ -48,6 +52,7 @@ export class CstMaterials {
     this.Projo = this.makeProjoMaterial();
     this.Screen = this.makeScreenMaterial();
     this.ScreenFrame = this.makeScreenFrameMaterial();
+    this.MatCapMat = this.makeMatcapMaterial();
 
     this.video = document.createElement("video");
 
@@ -96,8 +101,9 @@ const loader = new THREE.TextureLoader(manager);
       loader.loadAsync(projo_texture_url),
       loader.loadAsync(screen_texture_url),
       loader.loadAsync(concrete_texture_url),
-    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6]) => {
-      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6]) {
+      loader.loadAsync(MatCap_texture_url),
+    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6, texture7]) => {
+      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6, texture7]) {
         texture.colorSpace = THREE.NoColorSpace;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -110,6 +116,7 @@ const loader = new THREE.TextureLoader(manager);
       this.projo_Texture = texture4;
       this.screen_Texture = texture5;
       this.concrete_Texture = texture6;
+      this.MatCapMat.uniforms.uMatcap.value=texture7;
       this.setTextures();
       eventBus.emit("textureReady", true);
     });
@@ -499,6 +506,7 @@ const loader = new THREE.TextureLoader(manager);
       uniform float uScroll;
       uniform sampler2D uTexture;
       void main() {
+      
           vec2 grid = floor(vUv * 40.0);
         float checker = mod(grid.x + grid.y, 2.0);
         vec3 color = mix(
@@ -506,6 +514,7 @@ const loader = new THREE.TextureLoader(manager);
             vec3(0.01),
             checker
         );
+        
         
         gl_FragColor = vec4(color, distance(vec2(0.5,0.0), vUv));
         // color = mix(vec3(0.95,0.95,0.95), vec3(0.2,0.2,0.3), clamp(vUv.y*2.0-0.5, 0.0,1.0));
@@ -519,7 +528,18 @@ const loader = new THREE.TextureLoader(manager);
         gl_FragColor.rgb *= gl_FragColor.r;
         gl_FragColor.rgb *= 0.1;
         gl_FragColor.a = uScroll;
-        gl_FragColor.a *= clamp(vUv.y*4.0, 0.0, 1.0);
+        // gl_FragColor.a *= clamp(vUv.y*4.0, 0.0, 1.0);
+
+/*
+        vec2 grid = floor(vUv * 40.0);
+        float checker = mod(grid.x + grid.y, 2.0);
+        vec3 color = mix(
+            vec3(0.0),
+            vec3(0.01),
+            checker
+        );
+        gl_FragColor = vec4(color, 1.0);
+        */
       }
       `,
       precision: 'lowp',
@@ -727,6 +747,25 @@ const loader = new THREE.TextureLoader(manager);
       },
       side: THREE.FrontSide,
       transparent: true,
+      depthWrite: false,
+      depthTest: false,
+    });
+    return customMaterial;
+  }
+  private makeMatcapMaterial(): THREE.ShaderMaterial {
+    const customMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uMatcap: {
+          value: null,
+        },
+      },
+      vertexShader: matcapVertexShader,
+      fragmentShader: matcapFragmentShader,
+      side: THREE.FrontSide,
+      transparent: true,
+      // premultipliedAlpha: true,
+      // blending: THREE.MultiplyBlending,
+      // blending: THREE.MultiplyBlending,
       depthWrite: false,
       depthTest: false,
     });
