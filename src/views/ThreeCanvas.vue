@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import type { Point } from "../utils/utils.ts";
-import type { LayerValue } from "../utils/utils.ts";
-import type { LayerValues } from "../utils/utils.ts";
-import { randomId } from "../utils/utils.ts";
-import { exportPNG } from "../utils/exportPNG.ts";
+import { isMobile } from "../utils/utils.ts";
 import { useAppState } from "../utils/State.ts";
 import { CstMaterials } from "../utils/CstMaterials.ts";
 import { CstPost } from "../utils/PostProcess.ts";
-import { USDZExporter } from "../utils/USDZExporter.ts";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import gltfUrl from "@/assets/cst.glb?url";
 import { t } from "@/strings";
@@ -54,6 +49,7 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { mx_bilerp_1 } from "three/src/nodes/materialx/lib/mx_noise.js";
 
+const _isMobile = isMobile()
 const canvas = ref<HTMLCanvasElement | null>(null);
   const scene = new Scene();
   const introTL = gsap.timeline();
@@ -65,9 +61,17 @@ const canvas = ref<HTMLCanvasElement | null>(null);
   let activePost: Boolean = true;
   
   
-  const lenis = new Lenis()
   
-
+  const lenis = new Lenis(
+    {
+      lerp: _isMobile?1.0:0.1,
+      syncTouch: !_isMobile,
+      autoRaf: true,
+    }
+  )
+  
+let isScrolling = false;
+let scrollTimeout: ReturnType<typeof setTimeout>;
 
 const appState = useAppState();
 
@@ -80,6 +84,7 @@ const cstPost = new CstPost();
 
 let screenTopLeft: Vector3 = new Vector3(-1, 1, 0);
 let screenTopLeftAt2: Vector3 = new Vector3(-1, 1, 0);
+let isPortrait: Boolean = false
 
 
 function getiOSVersion() {
@@ -111,6 +116,12 @@ const initScroll = () => {
   lenis.on('scroll', (val)=>{
     cstPost.updateScroll(val.animatedScroll);
     ScrollTrigger.update()
+    isScrolling = true;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isScrolling = false;
+      // onResize(); // do one final resize after scrolling stops
+    }, 100);
   })
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000)
@@ -126,13 +137,11 @@ const initScroll = () => {
 
 document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) => {
   const track = section.querySelector<HTMLElement>('.horizontal-track')
-
+  if (_isMobile) return
   if (!track) return
-
   const updateHeight = () => {
     const distance =
       track.scrollWidth - document.documentElement.clientWidth
-
     section.style.height = `${distance + window.innerHeight}px`
   }
 
@@ -170,6 +179,10 @@ const updateScene1 = (value:number = 0) => {
   const progress2 = gsap.parseEase("sine.out")(value)
   camera.position.y = 4+progress
   iPad.position.y = -0.0-progress*2.0
+  iPadContainer.position.z = -progress*(isPortrait?1.4:0.2)
+  iPadContainer.scale.setScalar(1.0-progress*0.5)
+  Projo1Container.position.x = (progress-1)*2
+  Projo2Container.position.x = -Projo1Container.position.x
   // iPad.rotation.x = Math.PI * 2.0 * Math.max(0.0, Math.min(progress*4.0-2.0, 1.0))
   const rotationProgress = Math.sin(progress2*Math.PI*2.0-Math.PI*0.5)+1.0
   iPad.rotation.x = -0.1 * rotationProgress
@@ -303,24 +316,27 @@ let SmokeOver : Mesh;
 let Logo : Mesh;
 let BgCurve : Mesh;
 let iPad : Mesh;
+let iPadContainer : Group;
+let Projo1Container : Group;
+let Projo2Container : Group;
 let Projo1 : Mesh;
 let Projo2 : Mesh;
 let Scene1 : Group;
 
 
-// const iPadRotationTween = { progress: 0, tween: null as unknown as gsap.core.Tween };
-// iPadRotationTween.tween = gsap.to(iPadRotationTween, {
-//   progress: 0,
-//   duration: 0,
-//   ease: "power1.inOut",
-//   onUpdate:()=>{
-//     if(iPad){
-//       iPad.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
-//       iPad.scale.setScalar(1.6 + 1.2 * Math.min(Math.max(iPadRotationTween.progress*8.0-7.0, 0.0), 1.0))
-//       cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress
-//     }
-//   }
-// });
+const iPadRotationTween = { progress: 0, tween: null as unknown as gsap.core.Tween };
+iPadRotationTween.tween = gsap.to(iPadRotationTween, {
+  progress: 0,
+  duration: 0,
+  ease: "power1.inOut",
+  onUpdate:()=>{
+    if(iPad){
+      iPad.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
+      // iPad.scale.setScalar(1.6 + 1.2 * Math.min(Math.max(iPadRotationTween.progress*8.0-7.0, 0.0), 1.0))
+      cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress
+    }
+  }
+});
 
 
 
@@ -376,22 +392,27 @@ const initCstLibrary = () => {
   BgCurve.position.set(0,0,0)
   Scene1.add(BgCurve);
 
+  iPadContainer = new Group()
   iPad = cstLibrary.getObjectByName("iPad")! as Mesh
   iPad.material = cstMaterials.Screen
   iPad.position.set(0,0,-0.0)
-  iPad.scale.setScalar(1.6)
-  Scene1.add(iPad);
+  iPad.scale.setScalar(1.5)
+  iPadContainer.add(iPad);
+  Scene1.add(iPadContainer);
   
+
+  Projo1Container = new Group()
+  Projo2Container = new Group()
   Projo1 = cstLibrary.getObjectByName("Projo1")! as Mesh
   Projo1.material = cstMaterials.Projo
   Projo1.position.set(0,-2,-0.0)
-  // Projo1.scale.setScalar(2)
-  Scene1.add(Projo1);
+  Projo1Container.add(Projo1);
+  Scene1.add(Projo1Container);
   
   Projo2 = cstLibrary.getObjectByName("Projo2")! as Mesh
   Projo2.material = cstMaterials.Projo
-  // Projo2.scale.setScalar(1.8)
-  Scene1.add(Projo2);
+  Projo2Container.add(Projo2);
+  Scene1.add(Projo2Container);
   
   SpotRight.renderOrder = 31
   SpotLeft.renderOrder = 30
@@ -457,12 +478,15 @@ const scaleToViewportHeight = () => {
 };
 // let height = window.innerHeight
 const resize = () => {
+  if (isScrolling) return;
   // const height = window.visualViewport?.height ?? window.innerHeight;
-  const height = document.documentElement.clientHeight;
+  const height = document.documentElement.clientHeight+100;
   const width = window.visualViewport?.width ?? window.innerWidth;
   // const height = window.innerHeight;
   // const width = window.innerWidth;
   const aspect = width / height;
+  const iPadAspect = 1.7;
+  
   const objWidth = 10.0;
   const cameraZ = 8;
   const hFov = 2 * Math.atan((objWidth / 2) / cameraZ);
@@ -495,24 +519,31 @@ const resize = () => {
   SpotLeft.position.set(screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
   SpotRight.position.set(-screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
 
-  
-  Projo1.scale.setScalar(1+(1/aspect)*0.75);
-  Projo2.scale.setScalar(1+(1/aspect)*0.75);
+
+  if(_isMobile){
+    Projo1.scale.setScalar(4);
+    Projo2.scale.setScalar(4);
+  } else {
+    Projo1.scale.setScalar(1+(1/aspect)*0.75);
+    Projo2.scale.setScalar(1+(1/aspect)*0.75);
+
+  }
 
 
   
-
-  // if(aspect>1) {
-  //   // iPad.rotation.y = 0
-  //   if(iPadRotationTween.tween?.vars.progress!=0){
-  //     tweenTo(iPadRotationTween.tween, 0, 0.6)
-  //   }
-  // } else {
-  //   if(iPadRotationTween.tween?.vars.progress!=1){
-  //     tweenTo(iPadRotationTween.tween, 1, 0.6)
-  //   }
-
-  // }
+  if(aspect<1.7){
+    iPad.scale.setScalar(1.5 + (1.7-aspect)*2.0)
+  }
+  isPortrait = aspect<1
+  if(!isPortrait) {
+    if(iPadRotationTween.tween?.vars.progress!=0){
+      tweenTo(iPadRotationTween.tween, 0, 0.6)
+    }
+  } else {
+    if(iPadRotationTween.tween?.vars.progress!=1){
+      tweenTo(iPadRotationTween.tween, 1, 0.6)
+    }
+  }
   
   // placeObject(SmokeFloor, new Vector3(0.0001, -1.0, 0));
   // const scaleSpot = 1/aspect * 0.5

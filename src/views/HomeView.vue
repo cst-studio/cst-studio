@@ -281,7 +281,7 @@ main.main {
               width: 450px;
               display: flex;
               flex-direction: column;
-          }
+            }
           }
           img{
             object-fit: cover;
@@ -353,7 +353,8 @@ main.main {
 
   .horizontal-section {
     position: relative;
-    height: 400vh;
+    /* TODO change this height based on its content */
+    height: 400vh; 
     align-items: normal;
     .horizontal-sticky {
       position: sticky;
@@ -370,5 +371,77 @@ main.main {
 
 
 
+}
+
+
+@media (max-width: 767px) {
+  /* mobile */
+  main.main {
+    & .services-section, & .prods-section {
+      height: auto; 
+      & .horizontal-sticky {
+        position: relative;
+        padding-top: 70px;
+        height: auto; 
+          & .horizontal-track {
+            flex-direction: column;
+            article{
+              margin: 30px 0;
+              &:first-child{
+                margin-top: 60px;
+              }
+              &:last-child{
+                margin-bottom: 60px;
+              }
+            }
+          }
+            & header{
+              margin-left: 10px;
+            }
+            & main {
+                & article {
+                  &>div{
+            flex-direction: column;
+            &>div{
+              width: 80vw;              
+            }
+          }
+          img{
+            width: 350px;
+            height: 200px;
+            margin-left: 0px;
+            margin-top: 20px;
+          }
+                  
+                }
+            }
+        }
+    }
+    & .contact-section{
+      margin-left: 10px;
+      footer{
+        margin-left: 0px;
+      }
+    }
+
+
+.main-hero-section{
+    .main-hero-section-sticky{
+      header{
+        flex: 1;
+        /* background: linear-gradient(to bottom, #f0f6, #f006); */
+      }
+      main{
+        /* flex: 1; */
+        /* background: linear-gradient(to bottom, #f0f6, #00f6); */
+      }
+      footer{
+        margin-left: 10px;
+        margin-bottom: 90px;
+      }
+    }
+  }
+
+  }
 }
 </style>
