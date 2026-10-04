@@ -174,6 +174,7 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
 
 }
 const updateScene1 = (value:number = 0) => {
+  // const progress = gsap.parseEase("power1.out")(value)
   const progress = gsap.parseEase("power1.out")(value)
   const progress2 = gsap.parseEase("sine.out")(value)
   camera.position.y = 4+progress
@@ -231,6 +232,11 @@ const initThree = () => {
             Scene1.position.y = 0
             BgCurve.material.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
             cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
+            if(self.progress>=0.75){
+              if(!cstMaterials.video.paused) cstMaterials.video.pause()
+            } else {
+              if(cstMaterials.video.paused) cstMaterials.video.play()
+            }
             }
         }
       })
@@ -333,7 +339,7 @@ iPadRotationTween.tween = gsap.to(iPadRotationTween, {
   ease: "power1.inOut",
   onUpdate:()=>{
     if(iPad){
-      iPad.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
+      iPadContainer.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
       // iPad.scale.setScalar(1.6 + 1.2 * Math.min(Math.max(iPadRotationTween.progress*8.0-7.0, 0.0), 1.0))
       cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress
     }
@@ -381,7 +387,8 @@ const initCstLibrary = () => {
   
   
   Logo = cstLibrary.getObjectByName("Logo")! as Mesh
-  Logo.material = cstMaterials.Logo
+  // Logo.material = cstMaterials.Logo
+  Logo.material = cstMaterials.MatCapMat
   Logo.position.set(0,0,6.2)
   scene.add(Logo);
   
@@ -396,7 +403,8 @@ const initCstLibrary = () => {
 
   iPadContainer = new Group()
   iPadFrame = cstLibrary.getObjectByName("iPadFrame")! as Mesh
-  iPadFrame.material = cstMaterials.ScreenFrame
+  // iPadFrame.material = cstMaterials.ScreenFrame
+  iPadFrame.material = cstMaterials.MatCapMat
   iPadFrame.scale.setScalar(1.5)
   iPad = cstLibrary.getObjectByName("iPad")! as Mesh
   iPad.material = cstMaterials.Screen
