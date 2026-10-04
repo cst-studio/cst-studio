@@ -25,7 +25,6 @@ import {
   Matrix4,
   MeshBasicMaterial,
   WebGLRenderer,
-  // OrthographicCamera,
   PerspectiveCamera,
   Clock,
   Vector3,
@@ -179,13 +178,15 @@ const updateScene1 = (value:number = 0) => {
   const progress2 = gsap.parseEase("sine.out")(value)
   camera.position.y = 4+progress
   iPad.position.y = -0.0-progress*2.0
-  iPadContainer.position.z = -progress*(isPortrait?1.4:0.2)
+  iPadFrame.position.y = -0.0-progress*2.0
+  iPadContainer.position.z = -progress*(isPortrait?1.4:0.5)
   iPadContainer.scale.setScalar(1.0-progress*0.5)
   Projo1Container.position.x = (progress-1)*2
   Projo2Container.position.x = -Projo1Container.position.x
   // iPad.rotation.x = Math.PI * 2.0 * Math.max(0.0, Math.min(progress*4.0-2.0, 1.0))
+  cstMaterials.Screen.uniforms.uScroll.value = Math.max(0.0, Math.min(progress*4.0-3.0, 1.0))
   const rotationProgress = Math.sin(progress2*Math.PI*2.0-Math.PI*0.5)+1.0
-  iPad.rotation.x = -0.1 * rotationProgress
+  iPadContainer.rotation.x = -0.1 * rotationProgress
 }
 const initThree = () => {
   loadCstLibrary(gltfUrl, (xhr) => {
@@ -316,6 +317,7 @@ let SmokeOver : Mesh;
 let Logo : Mesh;
 let BgCurve : Mesh;
 let iPad : Mesh;
+let iPadFrame : Mesh;
 let iPadContainer : Group;
 let Projo1Container : Group;
 let Projo2Container : Group;
@@ -393,11 +395,15 @@ const initCstLibrary = () => {
   Scene1.add(BgCurve);
 
   iPadContainer = new Group()
+  iPadFrame = cstLibrary.getObjectByName("iPadFrame")! as Mesh
+  iPadFrame.material = cstMaterials.ScreenFrame
+  iPadFrame.scale.setScalar(1.5)
   iPad = cstLibrary.getObjectByName("iPad")! as Mesh
   iPad.material = cstMaterials.Screen
   iPad.position.set(0,0,-0.0)
   iPad.scale.setScalar(1.5)
   iPadContainer.add(iPad);
+  iPadContainer.add(iPadFrame);
   Scene1.add(iPadContainer);
   
 
@@ -421,8 +427,9 @@ const initCstLibrary = () => {
   Logo.renderOrder = 1
   BgCurve.renderOrder = 0
   iPad.renderOrder = 40
-  Projo2.renderOrder = 41
-  Projo1.renderOrder = 42
+  iPadFrame.renderOrder = 41
+  Projo2.renderOrder = 51
+  Projo1.renderOrder = 52
   
   appState.colorCurrent.value = Math.round(Math.random() * (COLORS.length - 1));
 
@@ -532,7 +539,9 @@ const resize = () => {
 
   
   if(aspect<1.7){
+    // iPadContainer.scale.setScalar(1.5 + (1.7-aspect)*2.0)
     iPad.scale.setScalar(1.5 + (1.7-aspect)*2.0)
+    iPadFrame.scale.setScalar(1.5 + (1.7-aspect)*2.0)
   }
   isPortrait = aspect<1
   if(!isPortrait) {

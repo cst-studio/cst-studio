@@ -4,7 +4,7 @@ import smog_texture_url from "@/assets/bitmap/texture/smog.png?url";
 import swirl_texture_url from "@/assets/bitmap/texture/swirl.jpg?url";
 import projo_texture_url from "@/assets/bitmap/texture/projo.png?url";
 import concrete_texture_url from "@/assets/bitmap/texture/concrete-wall.jpg?url";
-import screen_texture_url from "@/assets/bitmap/texture/movie.jpg?url";
+import screen_texture_url from "@/assets/bitmap/texture/screen.png?url";
 
 import { hexToVec3Srgb } from "@/utils/utils";
 import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
@@ -26,6 +26,7 @@ export class CstMaterials {
   public BgCurve: THREE.ShaderMaterial;
   public Projo: THREE.ShaderMaterial;
   public Screen: THREE.ShaderMaterial;
+  public ScreenFrame: THREE.ShaderMaterial;
   
   private cloud_Texture?: THREE.Texture;
   private smog_Texture?: THREE.Texture;
@@ -46,6 +47,7 @@ export class CstMaterials {
     this.BgCurve = this.makeBgCurveMaterial();
     this.Projo = this.makeProjoMaterial();
     this.Screen = this.makeScreenMaterial();
+    this.ScreenFrame = this.makeScreenFrameMaterial();
 
     this.video = document.createElement("video");
 
@@ -158,7 +160,7 @@ const loader = new THREE.TextureLoader(manager);
     this.Projo.uniforms.uProjoTexture.value =
       this.projo_Texture;
     this.Screen.uniforms.uTexture.value = this.videoTexture;
-    // this.Screen.uniforms.uTexture.value = this.screen_Texture;
+    this.Screen.uniforms.uTextureOverlay.value = this.screen_Texture;
     this.BgCurve.uniforms.uTexture.value = this.concrete_Texture;
   }
   private makeSpotMaterial(): THREE.ShaderMaterial {
@@ -539,6 +541,36 @@ const loader = new THREE.TextureLoader(manager);
     });
     return customMaterial;
   }
+
+  private makeScreenFrameMaterial(): THREE.ShaderMaterial {
+    const customMaterial = new THREE.ShaderMaterial({
+      vertexShader: `
+      varying vec2 vUv;
+      varying vec3 vWorldPosition;
+      void main() {
+        vUv = 1.0-uv;
+        vUv.x = 1.0-vUv.x;
+        vec3 mPosition = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(mPosition, 1.0);
+      }
+      `,
+      fragmentShader: `
+      varying vec2 vUv;
+      void main() {
+      vec2 uv = vUv;
+        gl_FragColor.rgba = vec4(0.0,0.0,0.0,1.0);
+      }
+      `,
+      precision: 'lowp',
+      uniforms: {
+      },
+      side: THREE.FrontSide,
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+    });
+    return customMaterial;
+  }
   private makeScreenMaterial(): THREE.ShaderMaterial {
     const customMaterial = new THREE.ShaderMaterial({
       vertexShader: `
@@ -573,12 +605,16 @@ const loader = new THREE.TextureLoader(manager);
       uniform float rotation;
       uniform float uScroll;
       uniform sampler2D uTexture;
+      uniform sampler2D uTextureOverlay;
       
       void main() {
       vec2 uv = vUv;
       // uv = vec2(uv.y, 1.0 - uv.x);
       // uv.x/=1920.0/1080.0*2.0;
+        vec4 overlay = texture2D(uTextureOverlay, uv).rgba;
         gl_FragColor.rgba = texture2D(uTexture, uv).rgba;
+        // gl_FragColor.rgb=mix(gl_FragColor.rgb, gl_FragColor.rgb*overlay.rgb, uScroll);
+        gl_FragColor.rgb=mix(gl_FragColor.rgb, overlay.rgb, clamp(-rotation+uScroll*overlay.a, 0.0, 1.0)*0.5);
       }
       `,
       precision: 'lowp',
@@ -587,6 +623,7 @@ const loader = new THREE.TextureLoader(manager);
         uColor2: { value: hexToVec3Srgb(0xff3b30) },
         uColor3: { value: hexToVec3Srgb(0xDDDCFF) },
         uTexture: { value: null },
+        uTextureOverlay: { value: null },
         rotation: { value: 0.0 },
         uTime: { value: 0.0 },
         uScroll: { value: 1.0 }
