@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import videoProdImage from '@/assets/images/CST-video-prod.jpeg'
-import droneImage from '@/assets/images/CST-drone.jpg'
+import droneImage from '@/assets/images/CST-drone.jpeg'
 import photoImage from '@/assets/images/CST-photo.jpeg'
+import eventImage from '@/assets/images/CST-event.jpeg'
+import socialImage from '@/assets/images/CST-social.jpeg'
 import wipImage from '@/assets/images/work-in-progress.jpg'
 import { RouterLink } from "vue-router";
 import { onMounted, onBeforeUnmount, ref } from "vue";
@@ -53,43 +55,53 @@ en Image<span class="dot"></span></h1>
     <main class="horizontal-track">
       <article>
         <div>
-          <h2> 01 <span class="red">—</span> PRODUCTION VIDÉO </h2>
-          <h3>Vidéo d'Entreprise</h3>
-          <p>Films institutionnels, publicités digitales, interviews corporate, reportages événementiels. L'exigence du cinéma au service de votre message.</p>
+          <div>
+            <h2> 01 <span class="red">—</span> PRODUCTION VIDÉO </h2>
+            <h3>Vidéo d'Entreprise</h3>
+            <p>Films institutionnels, publicités digitales, interviews corporate, reportages événementiels. L'exigence du cinéma au service de votre message.</p>
+          </div>
+          <img :src="videoProdImage" alt="Video Production" />
         </div>
-        <img :src="videoProdImage" alt="Video Production" />
       </article>
       <article>
         <div>
-          <h2> 02 <span class="red">—</span> IMAGERIE AÉRIENNE </h2>
-          <h3>Drone & Aérien</h3>
-          <p>Drone certifié catégorie A1/A3, prises de vue 4K à 360°, time-lapse aériens. Des angles impossibles qui subliment vos espaces et événements.</p>
-        </div>
-        <img :src="droneImage" alt="Drone & Aérien" />
+          <div>
+            <h2> 02 <span class="red">—</span> IMAGERIE AÉRIENNE </h2>
+            <h3>Drone & Aérien</h3>
+            <p>Drone certifié catégorie A1/A3, prises de vue 4K à 360°, time-lapse aériens. Des angles impossibles qui subliment vos espaces et événements.</p>
+          </div>
+          <img :src="droneImage" alt="Drone & Aérien" />
+      </div>
       </article>
       <article>
         <div>
-          <h2> 03 <span class="red">—</span> PHOTOGRAPHIE </h2>
-          <h3>Photo Corporate</h3>
-          <p>Portraits corporate, shooting événementiel, photographie d'architecture et de produit. Des images qui renforcent votre identité visuelle.</p>
-        </div>
-        <img :src="photoImage" alt="Photo Corporate" />
+          <div>
+            <h2> 03 <span class="red">—</span> PHOTOGRAPHIE </h2>
+            <h3>Photo Corporate</h3>
+            <p>Portraits corporate, shooting événementiel, photographie d'architecture et de produit. Des images qui renforcent votre identité visuelle.</p>
+          </div>
+          <img :src="photoImage" alt="Photo Corporate" />
+      </div>
       </article>
       <article>
         <div>
-          <h2> 04 <span class="red">—</span> ÉVÉNEMENTIEL </h2>
-          <h3>Couverture & Interviews</h3>
-          <p>Captation d'événements, interviews sur le vif, aftermovies et contenus immersifs. Nous racontons l'énergie de vos événements à travers des images spontanées et authentiques.</p>
-        </div>
-        <img :src="wipImage" alt="Web & Digital" />
+          <div>
+            <h2> 04 <span class="red">—</span> ÉVÉNEMENTIEL </h2>
+            <h3>Couverture & Interviews</h3>
+            <p>Captation d'événements, interviews sur le vif, aftermovies et contenus immersifs. Nous racontons l'énergie de vos événements à travers des images spontanées et authentiques.</p>
+          </div>
+          <img :src="eventImage" alt="Web & Digital" />
+      </div>
       </article>
       <article>
         <div>
-          <h2> 05 <span class="red">—</span> RÉSEAUX SOCIAUX </h2>
-          <h3>Social Media Content</h3>
-          <p>Reels, vidéos courtes, interviews et contenus verticaux pensés pour les réseaux sociaux. Du tournage à la publication, des formats qui captent l'attention et font vivre votre actualité.</p>
-        </div>
-        <img :src="wipImage" alt="Web & Digital" />
+          <div>
+            <h2> 05 <span class="red">—</span> RÉSEAUX SOCIAUX </h2>
+            <h3>Social Media Content</h3>
+            <p>Reels, vidéos courtes, interviews et contenus verticaux pensés pour les réseaux sociaux. Du tournage à la publication, des formats qui captent l'attention et font vivre votre actualité.</p>
+          </div>
+          <img :src="socialImage" alt="Web & Digital" />
+      </div>
       </article>
     </main>
     <footer>
@@ -97,6 +109,7 @@ en Image<span class="dot"></span></h1>
     </footer>
   </div>
 </section>
+
 
 
 
@@ -111,35 +124,43 @@ en Image<span class="dot"></span></h1>
     <main class="horizontal-track">
       <article>
         <div>
-          <h2> 01 <span class="red">—</span> PRODUCTION #1 </h2>
-          <h3>#1</h3>
-          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
-        </div>
-        <img :src="wipImage" alt="Web & Digital" />
+          <div>
+            <h2> 01 <span class="red">—</span> PRODUCTION #1 </h2>
+            <h3>#1</h3>
+            <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
+          </div>
+          <img :src="wipImage" alt="Web & Digital" />
+      </div>
       </article>
       <article>
         <div>
-          <h2> 02 <span class="red">—</span> PRODUCTION #2 </h2>
-          <h3>#2</h3>
-          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
-        </div>
-        <img :src="wipImage" alt="Web & Digital" />
+          <div>
+            <h2> 02 <span class="red">—</span> PRODUCTION #2 </h2>
+            <h3>#2</h3>
+            <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
+          </div>
+          <img :src="wipImage" alt="Web & Digital" />
+      </div>
       </article>
       <article>
         <div>
-          <h2> 03 <span class="red">—</span> PRODUCTION #3 </h2>
-          <h3>#3</h3>
-          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
-        </div>
-        <img :src="wipImage" alt="Web & Digital" />
+          <div>
+            <h2> 03 <span class="red">—</span> PRODUCTION #3 </h2>
+            <h3>#3</h3>
+            <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
+          </div>
+          <img :src="wipImage" alt="Web & Digital" />
+      </div>
       </article>
       <article>
         <div>
-          <h2> 04 <span class="red">—</span> PRODUCTION #4 </h2>
-          <h3>#4</h3>
-          <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
-        </div>
-        <img :src="wipImage" alt="Web & Digital" />
+          <div>
+            <h2> 04 <span class="red">—</span> PRODUCTION #4 </h2>
+            <h3>#4</h3>
+            <p>Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.</p>
+          </div>
+          <img :src="wipImage" alt="Web & Digital" />
+      </div>
       </article>
     </main>
     <footer>
@@ -148,9 +169,25 @@ en Image<span class="dot"></span></h1>
   </div>
 </section>
 
-<section class="section-half">
-</section>
 
+
+<section class="contact-section">
+      <header>
+      <h1>Faisons quelque de grand ensemble<span class="dot"></span></h1>
+      <p>Une idée, un projet, une ambition : racontons-la avec des images qui marquent.</p>
+    </header>
+    <main>
+      <div>
+        <h2>Shoot us a line @</h2>
+        <a href="mailto:contact@cst-studio.prod">👉 contact@cst-studio.prod</a>
+        <h2>Ou un simple coup de téléphone</h2>
+        <a href="tel:+33667035154">🤙 06 67 03 51 54</a>
+      </div>
+    </main>
+    <footer>
+      <p class="quote">De la première idée à la dernière image, donnons vie à ce qui vous ressemble.</p>
+    </footer>
+  </section>
 
   </main>
 </template>
@@ -187,7 +224,7 @@ main.main {
     height: 400vh;
     position: relative;
     top: 0;
-    margin-bottom: 50vh;
+    margin-bottom: 40vh;
     /* background: linear-gradient(to bottom, #f0f6, #0f06); */
     .main-hero-section-sticky{
       position: sticky;
@@ -214,7 +251,7 @@ main.main {
   }
   .services-section,.prods-section{
     /* background: linear-gradient(to bottom, #f0f6, #0f06); */
-    margin-bottom: 50vh;
+    margin-bottom: 10vh;
     .horizontal-sticky{
       display: flex;
       flex-direction: column;
@@ -240,15 +277,19 @@ main.main {
           /* padding-right: 10vw; */
           &>div{
             display: flex;
-            flex-direction: column;
-                                    width: 450px;
-            /* align-items: center; */
+            &>div{
+              width: 450px;
+              display: flex;
+              flex-direction: column;
+          }
           }
           img{
             object-fit: cover;
             object-position: center;
             width: 350px;
             height: 200px;
+            width: 600px;
+            height: 400px;
             border-radius: 10px;
             margin-left: 20px;
           }
@@ -265,30 +306,51 @@ main.main {
       }
     }
   }
-  .section-half {
-    min-height: 50vh;
-    display: flex;
+  
+  .contact-section{
+    top: 0;
+      height: 100vh;
+      padding-top: 100px;
+      padding-bottom: 20px;
+      margin-left: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      /* background: linear-gradient(to bottom, #f0f6, #0f06); */
+
+      /* align-items: center; */
+      header{
+        /* flex: 1; */
+        /* background: linear-gradient(to bottom, #f0f6, #f006); */
+      }
+      main{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* background: linear-gradient(to bottom, #f0f6, #00f6); */
+        &>div{
+          display: flex;
+          flex-direction: column;
+          /* align-items: center; */
+          /* background: linear-gradient(to bottom, #00f6, #0f06); */
+          a{
+            color: var(--red);
+            text-decoration: none;
+            font-size: 2rem;
+            font-family: var(--font-quote);
+            font-weight: 900;
+          }
+        }
+      }
+      footer{
+        /* background: linear-gradient(to bottom, #f0f6, #0f06); */
+        margin-left: 60px;
+        margin-bottom: 60px;
+            text-align: center;
+      }
   }
-  /* .section {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    height: calc(100dvh - 80px);
-    margin-top: 80px;
-    padding-left: 20px;
-    header{
-      flex: 0 0 15%;
-    }
-    main{
-      flex: 0 0 65%;
-    }
-    footer{
-      flex: 0 0 20%;
-    }
-    p{
-      opacity: 0.4;
-    }
-  } */
+
   .horizontal-section {
     position: relative;
     height: 400vh;
@@ -298,46 +360,10 @@ main.main {
       top: 0;
       height: 100vh;
       overflow: hidden;
-      /* header{
-        padding-left: 20px;
-        position: absolute;
-        top: 60px;
-        p{
-          opacity: 0.4;
-        }
-      }
-      footer{
-        position: absolute;
-        bottom: 60px;
-        text-align: center;
-        padding-left: 20px;
-        padding-right: 20px;
-        opacity: 0.4;
-      } */
       .horizontal-track {
         display: flex;
-        /* background-color: blue; */
         width: max-content;
         height: 100%;
-        article {
-          /* width: 100vw;
-          padding-left: 60px; */
-          /* 
-          height: 100%;
-          padding-right: 20px;
-          flex: 0 0 100vw;
-          display: flex;
-          justify-content: center;
-          flex-direction: column;
-          p{
-            opacity: 0.4;
-          } */
-          /* font-size: 60px; */
-          /* background-color: aquamarine; */
-          &:nth-child(2){
-            /* background-color:bisque; */
-          }
-        }
       }
     }
   }
