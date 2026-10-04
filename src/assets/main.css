@@ -20,6 +20,11 @@ body {
   font-size:17px;
   min-height: 100%;
   background: var(--dark);
+  @media (max-width: 767px) {
+    /* mobile */
+    font-size:10px;
+
+  }
 }
 
 #cst--app {
@@ -52,6 +57,10 @@ body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    /* height: 100svh; */
+    /* overflow: hidden; */
+
   }
   h1{
     font-family: var(--font-display);
@@ -112,6 +121,8 @@ body {
     font-style: italic;
     line-height: 1.2;
   }
+
+  
 }
 
 * {
