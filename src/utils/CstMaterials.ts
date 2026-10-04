@@ -49,7 +49,7 @@ export class CstMaterials {
 
     this.video = document.createElement("video");
 
-this.video.src = "/video/Astor_Sport_Promo_HD.mp4";
+this.video.src = "./video/CST_reel_2026.mp4";
 this.video.muted = true;
 this.video.loop = true;
 this.video.playsInline = true;
