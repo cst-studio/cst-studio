@@ -24,7 +24,7 @@ export class CstMaterials {
   public cst_BG_Mat: THREE.ShaderMaterial;
   public SpotLeft: THREE.ShaderMaterial;
   public SpotRight: THREE.ShaderMaterial;
-  public SmogFloor: THREE.ShaderMaterial;
+  // public SmogFloor: THREE.ShaderMaterial;
   public Logo: THREE.ShaderMaterial;
   public Floor: THREE.ShaderMaterial;
   public BgCurve: THREE.ShaderMaterial;
@@ -47,7 +47,7 @@ export class CstMaterials {
     this.cst_BG_Mat = this.makeSpotMaterial();
     this.SpotLeft = this.makeSpotMaterial();
     this.SpotRight = this.makeSpotMaterial();
-    this.SmogFloor = this.makeSmogMaterial();
+    // this.SmogFloor = this.makeSmogMaterial();
     this.Logo = this.makeLogoMaterial();
     this.Floor = this.makeFloorMaterial();
     this.BgCurve = this.makeBgCurveMaterial();
@@ -144,7 +144,7 @@ const loader = new THREE.TextureLoader(manager);
     this.cst_BG_Mat.uniforms.uTime.value = 
     this.Floor.uniforms.uTime.value = 
     this.Logo.uniforms.uTime.value = 
-    this.SmogFloor.uniforms.uTime.value = 
+    // this.SmogFloor.uniforms.uTime.value = 
     this.Floor.uniforms.uTime.value = 
     this.SpotLeft.uniforms.uTime.value = 
     this.SpotRight.uniforms.uTime.value = 
@@ -154,19 +154,19 @@ const loader = new THREE.TextureLoader(manager);
   public setTextures() {
     this.SpotLeft.uniforms.uCloudTexture.value =
     this.SpotRight.uniforms.uCloudTexture.value =
-    this.SmogFloor.uniforms.uCloudTexture.value =
+    // this.SmogFloor.uniforms.uCloudTexture.value =
     this.Floor.uniforms.uCloudTexture.value =
     this.cst_BG_Mat.uniforms.uCloudTexture.value =
       this.cloud_Texture;
     this.SpotLeft.uniforms.uSmogTexture.value =
     this.SpotRight.uniforms.uSmogTexture.value =
-    this.SmogFloor.uniforms.uSmogTexture.value =
+    // this.SmogFloor.uniforms.uSmogTexture.value =
     this.Floor.uniforms.uSmogTexture.value =
     this.cst_BG_Mat.uniforms.uSmogTexture.value =
       this.smog_Texture;
     this.SpotLeft.uniforms.uSwirlTexture.value =
     this.SpotRight.uniforms.uSwirlTexture.value =
-    this.SmogFloor.uniforms.uSwirlTexture.value =
+    // this.SmogFloor.uniforms.uSwirlTexture.value =
     this.Floor.uniforms.uSwirlTexture.value =
     this.cst_BG_Mat.uniforms.uSwirlTexture.value =
       this.swirl_Texture;
@@ -473,7 +473,7 @@ const loader = new THREE.TextureLoader(manager);
           uvSmog.y = (uvSmog.y-0.5)*2.0+0.5;
           gl_FragColor.rgb = vec3(texture2D(uSmogTexture, uvSmog+flow*0.21).g);
           gl_FragColor.rgb *= vUv.y;
-          gl_FragColor.rgb *= 0.3;
+          gl_FragColor.rgb *= 0.15;
           // gl_FragColor.rgb = vec3(flow, 0.0);
       }
       `,
