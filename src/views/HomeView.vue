@@ -245,7 +245,7 @@ main.main {
       }
       footer{
         /* background: linear-gradient(to bottom, #f0f6, #0f06); */
-        margin-left: 60px;
+        /* margin-left: 60px; */
         margin-bottom: 60px;
       }
     }
@@ -262,7 +262,7 @@ main.main {
       header{
         /* flex: 1; */
         /* background: linear-gradient(to bottom, #f0f6, #f006); */
-        margin-left: 60px;
+        /* margin-left: 60px; */
       }
       main{
         /* flex: 1; */
@@ -311,9 +311,9 @@ main.main {
   .contact-section{
     top: 0;
       height: 100vh;
-      padding-top: 100px;
+      /* padding-top: 100px; */
       padding-bottom: 20px;
-      margin-left: 60px;
+      /* margin-left: 60px; */
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -346,7 +346,7 @@ main.main {
       }
       footer{
         /* background: linear-gradient(to bottom, #f0f6, #0f06); */
-        margin-left: 60px;
+        /* margin-left: 60px; */
         margin-bottom: 60px;
             text-align: center;
       }

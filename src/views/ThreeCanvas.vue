@@ -31,6 +31,7 @@ import {
   Vector3,
   Vector2,
   SRGBColorSpace,
+  LinearSRGBColorSpace,
   NoToneMapping,
   Mesh,
   InstancedMesh,
@@ -43,6 +44,12 @@ import {
   BoxGeometry,
   MathUtils,
   Raycaster,
+  LinearToneMapping,
+ReinhardToneMapping,
+CineonToneMapping,
+ACESFilmicToneMapping,
+AgXToneMapping,
+NeutralToneMapping
 } from "three";
 // import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 // import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
@@ -407,7 +414,7 @@ const initCstLibrary = () => {
   
   Logo = cstLibrary.getObjectByName("Logo")! as Mesh
   // Logo.material = cstMaterials.Logo
-  Logo.material = cstMaterials.MatCapMat
+  Logo.material = cstMaterials.MatCapDynMat
   Logo.position.set(0,0,6.2)
   scene.add(Logo);
   
@@ -453,7 +460,6 @@ const initCstLibrary = () => {
   Cable.material = cstMaterials.MatCapMat
   Cable.position.set(0,-1,1.0)
   CableShadow.position.set(0,0,0)
-  console.log(CableShadow.position)
   Cable.add(CableShadow);
   iPadContainer.add(Cable);
   
@@ -684,7 +690,16 @@ const setupThree = () => {
   // renderer.setClearColor(0x080808, 1);
   renderer.setClearColor(0x000000, 1);
   renderer.outputColorSpace = SRGBColorSpace;
-  renderer.toneMapping = NoToneMapping;
+  // renderer.outputColorSpace = LinearSRGBColorSpace
+  // renderer.toneMapping = NoToneMapping;
+  
+  // renderer.toneMapping = ReinhardToneMapping;
+  // renderer.toneMapping = CineonToneMapping;
+  // renderer.toneMapping = ACESFilmicToneMapping;
+//   renderer.toneMapping = LinearToneMapping;
+// renderer.toneMappingExposure = 15;
+// renderer.toneMapping = AgXToneMapping;
+// renderer.toneMapping = NeutralToneMapping;
 
   scene.add(cstGroup);
   scene.add(cstContainer);

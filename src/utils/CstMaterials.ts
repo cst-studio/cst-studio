@@ -11,6 +11,7 @@ import CableShadow_texture_url from "@/assets/bitmap/texture/BakeCable.png?url";
 import { hexToVec3Srgb } from "@/utils/utils";
 import matcapVertexShader from "../shader/matcapMaterial.vert?raw";
 import matcapFragmentShader from "../shader/matcapMaterial.frag?raw";
+import matcapDynFragmentShader from "../shader/matcapDynMaterial.frag?raw";
 import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
 import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
 import { hexToVec3Linear } from "./utils";
@@ -32,6 +33,7 @@ export class CstMaterials {
   public Screen: THREE.ShaderMaterial;
   public ScreenFrame: THREE.ShaderMaterial;
   public MatCapMat: THREE.ShaderMaterial;
+  public MatCapDynMat: THREE.ShaderMaterial;
   public CableShadowMat: THREE.ShaderMaterial;
   
   private cloud_Texture?: THREE.Texture;
@@ -55,6 +57,7 @@ export class CstMaterials {
     this.Screen = this.makeScreenMaterial();
     this.ScreenFrame = this.makeScreenFrameMaterial();
     this.MatCapMat = this.makeMatcapMaterial();
+    this.MatCapDynMat = this.makeMatcapDynMaterial();
     this.CableShadowMat = this.makeTransparentBitmapMaterial();
 
     this.video = document.createElement("video");
@@ -121,6 +124,7 @@ const loader = new THREE.TextureLoader(manager);
       this.screen_Texture = texture5;
       this.concrete_Texture = texture6;
       this.MatCapMat.uniforms.uMatcap.value = texture7;
+      this.MatCapDynMat.uniforms.uMatcap.value = texture7;
       this.CableShadowMat.uniforms.uTexture.value = texture8;
       this.setTextures();
       eventBus.emit("textureReady", true);
@@ -149,6 +153,7 @@ const loader = new THREE.TextureLoader(manager);
     this.SpotLeft.uniforms.uTime.value = 
     this.SpotRight.uniforms.uTime.value = 
     this.BgCurve.uniforms.uTime.value = 
+    this.MatCapDynMat.uniforms.uTime.value = 
     time;
   }
   public setTextures() {
@@ -473,7 +478,7 @@ const loader = new THREE.TextureLoader(manager);
           uvSmog.y = (uvSmog.y-0.5)*2.0+0.5;
           gl_FragColor.rgb = vec3(texture2D(uSmogTexture, uvSmog+flow*0.21).g);
           gl_FragColor.rgb *= vUv.y;
-          gl_FragColor.rgb *= 0.15;
+          gl_FragColor.rgb *= 0.2;
           // gl_FragColor.rgb = vec3(flow, 0.0);
       }
       `,
@@ -544,7 +549,8 @@ const loader = new THREE.TextureLoader(manager);
         // gl_FragColor.a = abs(cos(uTime*5.0));
         
         // gl_FragColor.rgb *= 1.0-uScroll;
-        gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.25));
+        gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.17));
+        // gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.25));
         gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.0, 1.0);
         // gl_FragColor.rgb = vec3(clamp(abs(vUv.y), 0.0, 1.0));
         // gl_FragColor.rgb = vec3(step((vUv.y), uScroll));
@@ -819,9 +825,23 @@ const loader = new THREE.TextureLoader(manager);
       fragmentShader: matcapFragmentShader,
       side: THREE.FrontSide,
       transparent: true,
-      // premultipliedAlpha: true,
-      // blending: THREE.MultiplyBlending,
-      // blending: THREE.MultiplyBlending,
+      depthWrite: false,
+      depthTest: false,
+    });
+    return customMaterial;
+  }
+  private makeMatcapDynMaterial(): THREE.ShaderMaterial {
+    const customMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uMatcap: {
+          value: null,
+        },
+        uTime: { value: 0.0 },
+      },
+      vertexShader: matcapVertexShader,
+      fragmentShader: matcapDynFragmentShader,
+      side: THREE.FrontSide,
+      transparent: true,
       depthWrite: false,
       depthTest: false,
     });
