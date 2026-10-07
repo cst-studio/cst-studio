@@ -44,10 +44,10 @@ import {
   MathUtils,
   Raycaster,
 } from "three";
-import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { mx_bilerp_1 } from "three/src/nodes/materialx/lib/mx_noise.js";
+// import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
+// import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+// import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+// import { mx_bilerp_1 } from "three/src/nodes/materialx/lib/mx_noise.js";
 
 const _isMobile = isMobile()
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -58,7 +58,7 @@ const canvas = ref<HTMLCanvasElement | null>(null);
   let cstLibrary: Group;
   const cstGroup: Group = new Group();
   const cstMaterials: CstMaterials = new CstMaterials();
-  let activePost: Boolean = true;
+  // let activePost: Boolean = true;
   
   
   
@@ -76,11 +76,11 @@ let scrollTimeout: ReturnType<typeof setTimeout>;
 const appState = useAppState();
 
 let renderer: WebGLRenderer;
-let composer: EffectComposer;
+// let composer: EffectComposer;
 
 let camera: PerspectiveCamera
 const clock = new Clock();
-const cstPost = new CstPost();
+// const cstPost = new CstPost();
 
 let screenTopLeft: Vector3 = new Vector3(-1, 1, 0);
 let screenTopLeftAt2: Vector3 = new Vector3(-1, 1, 0);
@@ -114,7 +114,7 @@ function segmentedEase(progress, segments = 4) {
 const initScroll = () => {
   gsap.registerPlugin(ScrollTrigger)
   lenis.on('scroll', (val)=>{
-    cstPost.updateScroll(val.animatedScroll);
+    // cstPost.updateScroll(val.animatedScroll);
     ScrollTrigger.update()
     isScrolling = true;
     clearTimeout(scrollTimeout);
@@ -333,7 +333,7 @@ function loadCstLibrary(url, onProgress) {
 let SpotLeft : Mesh;
 let SpotRight : Mesh;
 let SmokeFloor : Mesh;
-let SmokeOver : Mesh;
+// let SmokeOver : Mesh;
 let Logo : Mesh;
 let BgCurve : Mesh;
 let iPad : Mesh;
@@ -399,10 +399,10 @@ const initCstLibrary = () => {
   // iPad.scale.setScalar(1.6)
   scene.add(SmokeFloor);
   
-  SmokeOver = cstLibrary.getObjectByName("SmokeOver")! as Mesh
-  SmokeOver.material = cstMaterials.SmogFloor
-  SmokeOver.position.set(0,0,0)
-  scene.add(SmokeOver);
+  // SmokeOver = cstLibrary.getObjectByName("SmokeOver")! as Mesh
+  // SmokeOver.material = cstMaterials.SmogFloor
+  // SmokeOver.position.set(0,0,0)
+  // scene.add(SmokeOver);
   
   
   Logo = cstLibrary.getObjectByName("Logo")! as Mesh
@@ -472,7 +472,7 @@ const initCstLibrary = () => {
   SpotRight.renderOrder = 31
   SpotLeft.renderOrder = 30
   SmokeFloor.renderOrder = 4
-  SmokeOver.renderOrder = 5
+  // SmokeOver.renderOrder = 5
   Logo.renderOrder = 1
   BgCurve.renderOrder = 0
   Cable.renderOrder = 39
@@ -560,7 +560,7 @@ const resize = () => {
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
-  composer.setSize(width, height);
+  // composer.setSize(width, height);
 
 
 
@@ -623,7 +623,7 @@ const resize = () => {
   SmokeFloor.scale.setScalar(viewportW*0.28*0.5);
   SpotLeft.scale.setScalar(viewportH*0.28);
   SpotRight.scale.setScalar(viewportH*0.28);
-  SmokeOver.scale.setScalar(viewportM*0.1);
+  // SmokeOver.scale.setScalar(viewportM*0.1);
 
   camera.position.y = camY;
   camera.updateMatrixWorld();
@@ -639,11 +639,11 @@ function render(forceRender:boolean=false) {
         // return;
     }
   }
-  if (activePost) {
-    composer.render();
-  } else {
-    renderer.render(scene, camera);
-  }
+  // if (activePost) {
+  //   composer.render();
+  // } else {
+  // }
+  renderer.render(scene, camera);
 }
 const setupThree = () => {
   const canvasEl = canvas.value!;
@@ -663,21 +663,23 @@ const setupThree = () => {
   renderer = new WebGLRenderer({
     canvas: canvasEl,
     alpha: false,
-    antialias: false,
+    antialias: true,
     depth: false,
   });
 
   renderer.setSize(width, height, false);
+  /*
   composer = new EffectComposer(renderer);
   composer.setSize(width, height);
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
   composer.addPass(cstPost.cst_post);
+  */
 
   window.addEventListener("resize", resize);
-  renderer.setPixelRatio(1.0);
-  composer.setPixelRatio(1.5);
-  composer.setPixelRatio(0.75);
+  renderer.setPixelRatio(0.75);
+  // composer.setPixelRatio(1.5);
+  // composer.setPixelRatio(0.75);
   // renderer.setClearColor(0xf9f9fc, 1);
   // renderer.setClearColor(0x080808, 1);
   renderer.setClearColor(0x000000, 1);
@@ -714,7 +716,7 @@ const setupThree = () => {
     cstMaterials.Logo.uniforms.uLightDirection2.value.copy(light2Direction);
 
     cstMaterials.update(elapsedTime);
-    cstPost.update(elapsedTime);
+    // cstPost.update(elapsedTime);
     render();
   }
   requestAnimationFrame(animate);
