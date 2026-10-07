@@ -10,8 +10,7 @@ export default defineConfig({
   "base": "./",
   plugins: [
     vue(),
-    basicSsl(),
-    vueDevTools(),
+    // vueDevTools(),
   ],
   assetsInclude: ["usdz/*.usdz"],
   server: {
@@ -24,3 +23,4 @@ export default defineConfig({
     },
   },
 })
+
