@@ -199,15 +199,15 @@ en Image<span class="dot"></span></h1>
   left: 0;
   width: 10px;
   /* height: 350vh; */
-  background: #d006;
+  /* background: #d006; */
   #main-hero-p1{
     position: relative;
-    background: #00f6;
+    /* background: #00f6; */
     height: 300vh;
     width: 100%;
   }
   #main-hero-p2{
-    background: #0f06;
+    /* background: #0f06; */
     position: relative;
     height: 250px;
     width: 100%;
