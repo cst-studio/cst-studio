@@ -7,6 +7,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import gltfUrl from "@/assets/cst.glb?url";
 import { t } from "@/strings";
 import { gsap } from "gsap";
+import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { COLORS, COLORS_TUTO, COLORS_BG } from "../datas.ts";
 import { hexToVec3Linear, hexToVec3Srgb, mixHexColors } from "@/utils/utils.ts";
@@ -178,8 +179,11 @@ const updateScene1 = (value:number = 0) => {
   const progress = gsap.parseEase("power1.out")(value)
   const progress2 = gsap.parseEase("sine.out")(value)
   camera.position.y = 4+progress
+  // Scene1.position.y = -0.0-progress*2.0
   iPad.position.y = -0.0-progress*2.0
-  iPadFrame.position.y = -0.0-progress*2.0
+  iPadFrame.position.y = iPad.position.y
+  BgCurve.position.y = iPad.position.y+5
+  BgCurve.position.z = 1
   iPadContainer.position.z = -progress*(isPortrait?1.4:0.5)
   iPadContainer.scale.setScalar(1.0-progress*0.5)
   Projo1Container.position.x = (progress-1)*2
@@ -218,24 +222,34 @@ const initThree = () => {
           }
         }
       })
+      const easer = CustomEase.create("custom", "M0,0 C0.199,0 0.79,0.698 1,1 ");
       gsap.to({}, {
         scrollTrigger: {
           trigger: '#main-hero-p2',
-          start: 'top top',
+          start: 'bottom bottom',
           end: 'bottom top',
           markers: false,
           scrub: 1,
           onUpdate: (self) => {
             // console.log(cal.progress)
-            const progress = gsap.parseEase("circ.in")(self.progress)
-            Scene1.position.z = screenTopLeftAt2.z*progress*2.0
+            const progress = gsap.parseEase(easer)(self.progress)
+            // const progress = gsap.parseEase("sine.in")(self.progress)
+            // const progress = self.progress
+            Scene1.position.z = screenTopLeft.z*progress*2.0
+            Scene1.rotation.x = progress*1.0
             Scene1.position.y = 0
-            BgCurve.material.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
-            cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
-            if(self.progress>=0.75){
-              if(!cstMaterials.video.paused) cstMaterials.video.pause()
+            BgCurve.material.uniforms.uScroll.value = progress
+            // cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
+            if(self.progress>=0.95){
+              if(!cstMaterials.video.paused) {
+                cstMaterials.video.pause()
+                Scene1.visible = false
+              }
             } else {
-              if(cstMaterials.video.paused) cstMaterials.video.play()
+              if(cstMaterials.video.paused) {
+                cstMaterials.video.play()
+                Scene1.visible = true
+              } 
             }
             }
         }
@@ -329,6 +343,10 @@ let Projo1Container : Group;
 let Projo2Container : Group;
 let Projo1 : Mesh;
 let Projo2 : Mesh;
+let Cable : Mesh;
+let CableShadow : Mesh;
+// let Debug1 : Mesh;
+// let Debug2 : Mesh;
 let Scene1 : Group;
 
 
@@ -364,6 +382,7 @@ const initCstLibrary = () => {
   SpotRight = cstLibrary.getObjectByName("SpotRight")! as Mesh
   SpotRight.material = cstMaterials.SpotRight
   SpotRight.material.uniforms.uOffsetUV.value = 0.5
+  // SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xDD6666) 
   SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xDD6666) 
   // SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0x996666) 
   SpotRight.position.set(5,0,-4)
@@ -398,7 +417,7 @@ const initCstLibrary = () => {
   scene.add(Scene1);
   BgCurve = cstLibrary.getObjectByName("BgCurve")! as Mesh
   BgCurve.material = cstMaterials.BgCurve
-  BgCurve.position.set(0,0,0)
+  BgCurve.position.set(0,5,1)
   Scene1.add(BgCurve);
 
   iPadContainer = new Group()
@@ -428,16 +447,42 @@ const initCstLibrary = () => {
   Projo2Container.add(Projo2);
   Scene1.add(Projo2Container);
   
+  CableShadow = cstLibrary.getObjectByName("CableShadow")! as Mesh
+  CableShadow.material = cstMaterials.CableShadowMat
+  Cable = cstLibrary.getObjectByName("Cable")! as Mesh
+  Cable.material = cstMaterials.MatCapMat
+  Cable.position.set(0,-1,1.0)
+  CableShadow.position.set(0,0,0)
+  console.log(CableShadow.position)
+  Cable.add(CableShadow);
+  iPadContainer.add(Cable);
+  
+
+
+  // Debug1 = cstLibrary.getObjectByName("Debug")! as Mesh
+  // Debug2 = new Mesh(Debug1.geometry)
+  // Debug1.material = cstMaterials.MatCapMat
+  // Debug2.material = cstMaterials.MatCapMat
+  // Debug1.position.set(1,-1,0)
+  // Debug2.position.set(0,0,0)
+  // Scene1.add(Debug1);
+  // Scene1.add(Debug2);
+  
+
   SpotRight.renderOrder = 31
   SpotLeft.renderOrder = 30
   SmokeFloor.renderOrder = 4
   SmokeOver.renderOrder = 5
   Logo.renderOrder = 1
   BgCurve.renderOrder = 0
+  Cable.renderOrder = 39
+  CableShadow.renderOrder = 39
   iPad.renderOrder = 40
   iPadFrame.renderOrder = 41
   Projo2.renderOrder = 51
   Projo1.renderOrder = 52
+  // Debug1.renderOrder = 100
+  // Debug2.renderOrder = 100
   
   appState.colorCurrent.value = Math.round(Math.random() * (COLORS.length - 1));
 
@@ -528,9 +573,14 @@ const resize = () => {
   // screenTopLeftAt2 = screenTopLeft;
   // console.log("screenTopLeftAt2.x", screenTopLeftAt2.x)
   // console.log("screenTopLeft.x", screenTopLeft.x)
-  
-  Projo1.position.set(screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
-  Projo2.position.set(-screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
+  console.log(screenTopLeftAt2)
+  // Projo1.position.set(screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
+  Projo1.position.set(screenTopLeft.x, 0, 0);
+  Projo2.position.set(-screenTopLeft.x, 0, 0);
+  // Projo1.position.set(screenTopLeftAt2.x, -2, 0);
+  // Projo2.position.set(-screenTopLeftAt2.x, -2, 0);
+  // BgCurve.position.set(-screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
+  // BgCurve.position.y=-2
   SpotLeft.position.set(screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
   SpotRight.position.set(-screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
 
@@ -627,9 +677,10 @@ const setupThree = () => {
   window.addEventListener("resize", resize);
   renderer.setPixelRatio(1.0);
   composer.setPixelRatio(1.5);
-  composer.setPixelRatio(1.0);
+  composer.setPixelRatio(0.75);
   // renderer.setClearColor(0xf9f9fc, 1);
-  renderer.setClearColor(0x080808, 1);
+  // renderer.setClearColor(0x080808, 1);
+  renderer.setClearColor(0x000000, 1);
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping;
 

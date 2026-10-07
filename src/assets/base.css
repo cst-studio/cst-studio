@@ -48,9 +48,3 @@ html {
   background: var(--color-background);
 }
 
-/*
-*/
-
-#__vue-devtools-container__ {
-  display: none;
-}

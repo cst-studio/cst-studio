@@ -197,18 +197,19 @@ en Image<span class="dot"></span></h1>
   position: absolute;
   top: 0;
   left: 0;
-  width: 1px;
-  height: 400vh;
+  width: 10px;
+  /* height: 350vh; */
+  background: #d006;
   #main-hero-p1{
     position: relative;
-    /* background: #00f6; */
+    background: #00f6;
     height: 300vh;
     width: 100%;
   }
   #main-hero-p2{
-    /* background: #0f06; */
+    background: #0f06;
     position: relative;
-    height: 100vh;
+    height: 250px;
     width: 100%;
   }
 
@@ -221,7 +222,7 @@ main.main {
   display: flex;
   flex-direction: column;
   .main-hero-section{
-    height: 400vh;
+    height: calc(300vh + 250px);
     position: relative;
     top: 0;
     margin-bottom: 40vh;

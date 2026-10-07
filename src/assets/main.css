@@ -8,6 +8,7 @@
   /* --red: #D01C1C; */
   --red: rgb(255, 59, 48);
   --dark: #07070a;
+  --dark: #000;
   --w: #ffffff;
 }
 html,

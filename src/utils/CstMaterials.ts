@@ -6,6 +6,7 @@ import projo_texture_url from "@/assets/bitmap/texture/projo.png?url";
 import concrete_texture_url from "@/assets/bitmap/texture/concrete-wall.jpg?url";
 import screen_texture_url from "@/assets/bitmap/texture/screen.png?url";
 import MatCap_texture_url from "@/assets/bitmap/texture/MatCap.png?url";
+import CableShadow_texture_url from "@/assets/bitmap/texture/BakeCable.png?url";
 
 import { hexToVec3Srgb } from "@/utils/utils";
 import matcapVertexShader from "../shader/matcapMaterial.vert?raw";
@@ -31,6 +32,7 @@ export class CstMaterials {
   public Screen: THREE.ShaderMaterial;
   public ScreenFrame: THREE.ShaderMaterial;
   public MatCapMat: THREE.ShaderMaterial;
+  public CableShadowMat: THREE.ShaderMaterial;
   
   private cloud_Texture?: THREE.Texture;
   private smog_Texture?: THREE.Texture;
@@ -53,6 +55,7 @@ export class CstMaterials {
     this.Screen = this.makeScreenMaterial();
     this.ScreenFrame = this.makeScreenFrameMaterial();
     this.MatCapMat = this.makeMatcapMaterial();
+    this.CableShadowMat = this.makeTransparentBitmapMaterial();
 
     this.video = document.createElement("video");
 
@@ -102,8 +105,9 @@ const loader = new THREE.TextureLoader(manager);
       loader.loadAsync(screen_texture_url),
       loader.loadAsync(concrete_texture_url),
       loader.loadAsync(MatCap_texture_url),
-    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6, texture7]) => {
-      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6, texture7]) {
+      loader.loadAsync(CableShadow_texture_url),
+    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8]) => {
+      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8]) {
         texture.colorSpace = THREE.NoColorSpace;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -116,7 +120,8 @@ const loader = new THREE.TextureLoader(manager);
       this.projo_Texture = texture4;
       this.screen_Texture = texture5;
       this.concrete_Texture = texture6;
-      this.MatCapMat.uniforms.uMatcap.value=texture7;
+      this.MatCapMat.uniforms.uMatcap.value = texture7;
+      this.CableShadowMat.uniforms.uTexture.value = texture8;
       this.setTextures();
       eventBus.emit("textureReady", true);
     });
@@ -143,6 +148,7 @@ const loader = new THREE.TextureLoader(manager);
     this.Floor.uniforms.uTime.value = 
     this.SpotLeft.uniforms.uTime.value = 
     this.SpotRight.uniforms.uTime.value = 
+    this.BgCurve.uniforms.uTime.value = 
     time;
   }
   public setTextures() {
@@ -201,7 +207,7 @@ const loader = new THREE.TextureLoader(manager);
             fade = x -0.5;
             fade = abs(fade);
             fade = 1.0-fade;
-            fade = pow(fade, 5.0);
+            // fade = pow(fade, 5.0);
             noiseValue2 = texture2D(uCloudTexture, vec2(x, y2-uTime*0.020+uOffsetUV)).r;
           }
           {
@@ -221,7 +227,8 @@ const loader = new THREE.TextureLoader(manager);
           }  
           noiseValue2 = pow(noiseValue2, 1.5);
           colorOut.rgb = uColor1*noiseValue2;
-          gl_FragColor = vec4(colorOut, fade*5.0);
+          // gl_FragColor = vec4(colorOut, fade*1.0);
+          gl_FragColor = vec4(colorOut*fade, 1.0);
           // gl_FragColor = vec4(vec3(fade), 1.0);
       }
       `,
@@ -311,6 +318,7 @@ const loader = new THREE.TextureLoader(manager);
           // gl_FragColor.rgb += noise / 32.0;
           // gl_FragColor.rgb = vec3(texture2D(uSmogTexture, vUv+flow*0.21).g);
           gl_FragColor.rgb = vec3(texture2D(uCloudTexture, vUv+flow*0.21).g*0.14);
+          gl_FragColor.rgb *= 0.25;
       }
       `,
       precision: 'lowp',
@@ -527,8 +535,21 @@ const loader = new THREE.TextureLoader(manager);
         gl_FragColor.rgba = texture2D(uTexture, vUv*3.0).rgba;
         gl_FragColor.rgb *= gl_FragColor.r;
         gl_FragColor.rgb *= 0.1;
-        gl_FragColor.a = uScroll;
-        // gl_FragColor.a *= clamp(vUv.y*4.0, 0.0, 1.0);
+        // gl_FragColor.a = uScroll;
+        // gl_FragColor.a *= clamp((1.0-vUv.y)*(4.0+10.0*uScroll), 0.0, 1.0);
+        
+        // gl_FragColor.a = clamp((1.0-vUv.y)*(4.0-3.9*uScroll), 0.0, 1.0);
+        // gl_FragColor.a = clamp((1.0-vUv.y)*(cos(uTime)), 0.0, 1.0);
+        // gl_FragColor.a = clamp((1.0-vUv.y)*(abs(cos(uTime))), 0.0, 1.0);
+        // gl_FragColor.a = abs(cos(uTime*5.0));
+        
+        // gl_FragColor.rgb *= 1.0-uScroll;
+        gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.25));
+        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.0, 1.0);
+        // gl_FragColor.rgb = vec3(clamp(abs(vUv.y), 0.0, 1.0));
+        // gl_FragColor.rgb = vec3(step((vUv.y), uScroll));
+        // gl_FragColor.a = 1.0-step((vUv.y), uScroll);
+        // gl_FragColor.a = 1.0;
 
 /*
         vec2 grid = floor(vUv * 40.0);
@@ -549,7 +570,7 @@ const loader = new THREE.TextureLoader(manager);
         uColor3: { value: hexToVec3Srgb(0xDDDCFF) },
         uTime: { value: 0.0 },
         uTexture: { value: null },
-        uScroll: { value: 1.0 }
+        uScroll: { value: 0.0 }
       },
       side: THREE.FrontSide,
       transparent: true,
@@ -655,6 +676,41 @@ const loader = new THREE.TextureLoader(manager);
       depthTest: false,
       // blending: THREE.AdditiveBlending
       // blending: THREE.MultiplyBlending
+    });
+    return customMaterial;
+  }
+  private makeTransparentBitmapMaterial(): THREE.ShaderMaterial {
+    const customMaterial = new THREE.ShaderMaterial({
+      vertexShader: `
+      varying vec2 vUv;
+      varying vec3 vWorldPosition;
+      void main() {
+          vUv = 1.0-uv;
+          vUv.x = 1.0-vUv.x;
+          vec3 mPosition = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(mPosition, 1.0);
+      }
+      `,
+      fragmentShader: `
+      varying vec2 vUv;
+      uniform sampler2D uTexture;
+      void main() {
+        vec3 color = texture2D(uTexture, vUv).rgb;
+        gl_FragColor.a = 1.0;
+        gl_FragColor.rgb = color;
+      }
+      `,
+      precision: 'lowp',
+      uniforms: {
+        uTexture: { value: null },
+      },
+      side: THREE.FrontSide,
+      transparent: true,
+      premultipliedAlpha: true,
+      // blending: THREE.MultiplyBlending,
+      blending: THREE.MultiplyBlending,
+      depthWrite: false,
+      depthTest: false,
     });
     return customMaterial;
   }
