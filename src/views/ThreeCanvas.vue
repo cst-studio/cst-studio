@@ -288,7 +288,7 @@ const initThree = () => {
             Logo.rotation.x = -(1.0-progress)*Math.PI/2
             const logo_offset = -screenTopLeft.z*2
             Logo.position.z=logo_offset-logo_offset*progress-0.3
-            Scene1.rotation.x = progress*Math.PI/2+Math.PI/2
+            // Scene1.rotation.x = progress*Math.PI/2+Math.PI/2
             SmokeFloor.position.z=Logo.position.z+0.6
           }
           }
