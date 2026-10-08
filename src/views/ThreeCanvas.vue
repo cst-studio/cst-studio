@@ -276,24 +276,21 @@ const initThree = () => {
       //       }
       //   }
       // })
-      gsap.to(Logo.position, {
-        z: 0,
+      gsap.to({},{
         scrollTrigger: {
           trigger: '.contact-section',
           start: 'top bottom',
           end: 'bottom bottom',
           markers: false,
           scrub: 1,
+          onUpdate: (self) => {
+            const progress = gsap.parseEase(easer)(self.progress)
+            Logo.rotation.x = -(1.0-progress)*Math.PI/2
+            const logo_offset = -screenTopLeft.z*2
+            Logo.position.z=logo_offset-logo_offset*progress-0.3
+            Scene1.rotation.x = progress*Math.PI/2+Math.PI/2
+            SmokeFloor.position.z=Logo.position.z+0.6
           }
-      })
-    gsap.to(SmokeFloor.position, {
-      z: 0.9,
-      scrollTrigger: {
-          trigger: '.contact-section',
-          start: 'top bottom',
-          end: 'bottom bottom',
-          markers: false,
-          scrub: 1,
           }
       })
     // gsap.to(SmokeFloor.rotation, {

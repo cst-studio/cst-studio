@@ -177,15 +177,15 @@ en Image<span class="dot"></span></h1>
       <p>Une idée, un projet, une ambition : racontons-la avec des images qui marquent.</p>
     </header>
     <main>
+      
+    </main>
+    <footer>
       <div>
         <h2>Shoot us a line @</h2>
         <a href="mailto:contact@cst-studio.prod">👉 contact@cst-studio.prod</a>
         <h2>Ou un simple coup de téléphone</h2>
         <a href="tel:+33667035154">🤙 06 67 03 51 54</a>
       </div>
-    </main>
-    <footer>
-      <p class="quote">De la première idée à la dernière image, donnons vie à ce qui vous ressemble.</p>
     </footer>
   </section>
 
@@ -330,6 +330,13 @@ main.main {
         flex-direction: column;
         justify-content: center;
         /* background: linear-gradient(to bottom, #f0f6, #00f6); */
+        
+      }
+      footer{
+        /* background: linear-gradient(to bottom, #f0f6, #0f06); */
+        /* margin-left: 60px; */
+        margin-bottom: 60px;
+        text-align: center;
         &>div{
           display: flex;
           flex-direction: column;
@@ -343,12 +350,6 @@ main.main {
             font-weight: 900;
           }
         }
-      }
-      footer{
-        /* background: linear-gradient(to bottom, #f0f6, #0f06); */
-        /* margin-left: 60px; */
-        margin-bottom: 60px;
-            text-align: center;
       }
   }
 
