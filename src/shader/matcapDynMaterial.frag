@@ -23,7 +23,7 @@ void main() {
     */
 
     vec3 normal = normalize(vViewNormal);
-    float angle = uTime * 0.05;
+    float angle = uTime * 0.1;
     mat2 rotation = mat2(
         cos(angle), -sin(angle),
         sin(angle),  cos(angle)
