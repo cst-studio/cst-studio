@@ -24,11 +24,14 @@ onBeforeUnmount(() => {});
 </script>
 
 <template>
-  <main class="main">
-    <div id="main-hero">
-      <div id="main-hero-p1"></div>
-      <div id="main-hero-p2"></div>
+  <div id="scroller">
+      <div id="scroller-p1"></div>
+      <div id="scroller-p2"></div>
+      <div id="scroller-p3"></div>
+      <div id="scroller-p4"></div>
     </div>
+  
+  <main class="main">
     <section class="main-hero-section" >
       <div class="main-hero-section-sticky" >
       <header>
@@ -193,23 +196,29 @@ en Image<span class="dot"></span></h1>
 </template>
 
 <style scoped>
-#main-hero{
+#scroller{
   position: absolute;
   top: 0;
   left: 0;
   width: 10px;
   /* height: 350vh; */
   background: #d006;
-  #main-hero-p1{
+  #scroller-p1{
     position: relative;
     /* background: #00f6; */
     height: 300vh;
     width: 100%;
   }
-  #main-hero-p2{
-    /* background: #0f06; */
+  #scroller-p2{
     position: relative;
     height: 250px;
+    width: 100%;
+  }
+  #scroller-p3{
+    background: #0f06;
+    position: relative;
+    height: 1490vh;
+    /* margin-top: 40vh; */
     width: 100%;
   }
 

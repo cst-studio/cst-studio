@@ -211,42 +211,30 @@ const initThree = () => {
     setTimeout(()=>{
       gsap.to({}, {
         scrollTrigger: {
-          trigger: '#main-hero-p1',
+          trigger: '#scroller-p1',
           start: 'top top',
           end: 'bottom bottom',
           markers: false,
           scrub: 1,
-          // invalidateOnRefresh: true,
-          // onRefresh: () => {
-          //   resize()
-          // },
           onUpdate: (self) => {
             updateScene1(self.progress)
-            
-            // iPad.rotation.z = 0.1 * rotationProgress
-            // iPad.rotation.x = Math.PI * 2.0 * progress2
-            // iPad.rotation.z = Math.PI * 2.0 * progress2
           }
         }
       })
       const easer = CustomEase.create("custom", "M0,0 C0.199,0 0.79,0.698 1,1 ");
       gsap.to({}, {
         scrollTrigger: {
-          trigger: '#main-hero-p2',
+          trigger: '#scroller-p2',
           start: 'bottom bottom',
           end: 'bottom top',
           markers: false,
           scrub: 1,
           onUpdate: (self) => {
-            // console.log(cal.progress)
             const progress = gsap.parseEase(easer)(self.progress)
-            // const progress = gsap.parseEase("sine.in")(self.progress)
-            // const progress = self.progress
             Scene1.position.z = screenTopLeft.z*progress*2.0
             Scene1.rotation.x = progress*Math.PI/2
             Scene1.position.y = 0
             BgCurve.material.uniforms.uScroll.value = progress
-            // cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
             if(self.progress>=0.95){
               if(!cstMaterials.video.paused) {
                 cstMaterials.video.pause()
@@ -261,11 +249,28 @@ const initThree = () => {
             }
         }
       })
+      gsap.to({}, {
+        scrollTrigger: {
+          trigger: '#scroller-p3',
+          start: 'top top',
+          end: 'bottom top',
+          markers: false,
+          scrub: 1,
+          onUpdate: (self) => {
+            // const progress = gsap.parseEase(easer)(self.progress)
+            const progress = self.progress
+            Scene1.position.z = screenTopLeft.z*2.0+screenTopLeft.z*progress*12.0
+            // Scene1.rotation.x = progress*Math.PI/2
+            // Scene1.position.y = 0
+            // BgCurve.material.uniforms.uScroll.value = progress
+            }
+        }
+      })
 
       // gsap.to(Scene1.position, {
       //   z: -8,
       //   scrollTrigger: {
-      //     trigger: '#main-hero',
+      //     trigger: '#scroller',
       //     start: 'top top',
       //     end: 'bottom top',
       //     markers: false,
