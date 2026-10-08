@@ -69,6 +69,9 @@ this.video.playsInline = true;
 this.video.preload = "auto";
 
 this.videoTexture = new THREE.VideoTexture(this.video);
+this.videoTexture.minFilter = THREE.LinearFilter;
+this.videoTexture.magFilter = THREE.LinearFilter;
+this.videoTexture.generateMipmaps = false;
 this.videoTexture.colorSpace = THREE.SRGBColorSpace;
 
   this.video.addEventListener("loadeddata", () => {
@@ -551,7 +554,7 @@ const loader = new THREE.TextureLoader(manager);
         // gl_FragColor.rgb *= 1.0-uScroll;
         gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.17));
         // gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.25));
-        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.0, 1.0);
+        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.5, 1.0);
         // gl_FragColor.rgb = vec3(clamp(abs(vUv.y), 0.0, 1.0));
         // gl_FragColor.rgb = vec3(step((vUv.y), uScroll));
         // gl_FragColor.a = 1.0-step((vUv.y), uScroll);

@@ -69,13 +69,13 @@ const canvas = ref<HTMLCanvasElement | null>(null);
   
   
   
-  const lenis = new Lenis(
-    {
-      lerp: _isMobile?1.0:0.1,
-      syncTouch: !_isMobile,
-      autoRaf: true,
-    }
-  )
+  // const lenis = new Lenis(
+  //   {
+  //     lerp: _isMobile?1.0:0.1,
+  //     syncTouch: !_isMobile,
+  //     autoRaf: true,
+  //   }
+  // )
   
 let isScrolling = false;
 let scrollTimeout: ReturnType<typeof setTimeout>;
@@ -120,19 +120,19 @@ function segmentedEase(progress, segments = 4) {
 
 const initScroll = () => {
   gsap.registerPlugin(ScrollTrigger)
-  lenis.on('scroll', (val)=>{
-    // cstPost.updateScroll(val.animatedScroll);
-    ScrollTrigger.update()
-    isScrolling = true;
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      isScrolling = false;
-      // onResize(); // do one final resize after scrolling stops
-    }, 100);
-  })
-  gsap.ticker.add((time) => {
-    lenis.raf(time * 1000)
-  })
+  // lenis.on('scroll', (val)=>{
+  //   // cstPost.updateScroll(val.animatedScroll);
+  //   ScrollTrigger.update()
+  //   isScrolling = true;
+  //   clearTimeout(scrollTimeout);
+  //   scrollTimeout = setTimeout(() => {
+  //     isScrolling = false;
+  //     // onResize(); // do one final resize after scrolling stops
+  //   }, 100);
+  // })
+  // gsap.ticker.add((time) => {
+  //   lenis.raf(time * 1000)
+  // })
   gsap.ticker.lagSmoothing(0)
 
 
@@ -243,14 +243,14 @@ const initThree = () => {
             // const progress = gsap.parseEase("sine.in")(self.progress)
             // const progress = self.progress
             Scene1.position.z = screenTopLeft.z*progress*2.0
-            Scene1.rotation.x = progress*1.0
+            Scene1.rotation.x = progress*Math.PI/2
             Scene1.position.y = 0
             BgCurve.material.uniforms.uScroll.value = progress
             // cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (progress*4))
             if(self.progress>=0.95){
               if(!cstMaterials.video.paused) {
                 cstMaterials.video.pause()
-                Scene1.visible = false
+                // Scene1.visible = false
               }
             } else {
               if(cstMaterials.video.paused) {

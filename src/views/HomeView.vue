@@ -199,7 +199,7 @@ en Image<span class="dot"></span></h1>
   left: 0;
   width: 10px;
   /* height: 350vh; */
-  /* background: #d006; */
+  background: #d006;
   #main-hero-p1{
     position: relative;
     /* background: #00f6; */
