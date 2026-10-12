@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import videoProdImage from '@/assets/images/CST-video-prod.jpeg'
-import droneImage from '@/assets/images/CST-drone.jpeg'
-import photoImage from '@/assets/images/CST-photo.jpeg'
-import eventImage from '@/assets/images/CST-event.jpeg'
-import socialImage from '@/assets/images/CST-social.jpeg'
-import wipImage from '@/assets/images/work-in-progress.jpeg'
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import { eventBus } from "@/eventBus";
 import config from '@/config/config.json';
