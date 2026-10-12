@@ -37,7 +37,8 @@ eventBus.on('loadTexture', onLoadTexture)
   <div v-if="!sceneIsReady" class="loader">
     <div class="loader-bar">
       <span></span>
-      <span :style="`width:${Math.round((percentGLB + percentTexture) / 2)}%`"></span>
+      <span :style="`width:calc((100% - 20px) * ${(percentGLB + percentTexture) / 200} + 10px)`"></span>
+      <span :style="`left:calc((100% - 20px) * ${(percentGLB + percentTexture) / 200})`"></span>
     </div>
     <!-- <div class="loader-digit" v-html="`${Math.round((percentGLB + percentTexture) / 2)}%`"></div> -->
   </div>
@@ -91,12 +92,20 @@ header {
       height: 100%;
       &:nth-child(1){
         width: 100%;
-        background-color: var(--red);
+        background-color: white;
         opacity: 0.2;
+        border-radius: 10px;
       }
       &:nth-child(2){
-        background-color: var(--red);
+        background-color: white;
+        opacity: 0.2;
         width: 0%;
+        border-radius: 10px;
+      }
+      &:nth-child(3){
+        background-color: var(--red);
+        width: 20px;
+        border-radius: 10px;
       }
     }
   }

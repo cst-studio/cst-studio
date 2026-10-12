@@ -23,15 +23,22 @@
     body{
       background-color: black;
     }
-    #cst--app.loading:after{
+    #cst--app.loading:after, #cst--app.loading:before{
       content: '';
       position: absolute;
       height: 20px;
-      width: 50vw;
-      background-color: rgb(255, 59, 48);
-      opacity: 0.2;
+      border-radius: 10px;
       top: calc(50% - 10px);
       left: 25vw;
+    }
+    #cst--app.loading:after{
+      background-color: rgb(255, 59, 48);
+      width: 20px;
+    }
+    #cst--app.loading:before{
+      background-color: white;
+      opacity: 0.2;
+      width: 50vw;
     }
   </style>
 </body>
