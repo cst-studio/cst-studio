@@ -15,7 +15,7 @@ import matcapFragmentShader from "../shader/matcapMaterial.frag?raw";
 import matcapDynFragmentShader from "../shader/matcapDynMaterial.frag?raw";
 import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
 import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
-import config from '@/config/videoConfig.json';
+import config from '@/config/config.json';
 
 import { eventBus } from "@/eventBus";
 
@@ -27,8 +27,8 @@ export interface CstMaterialsOpts {
 
 const videoUrl = computed(() => {
   const hash = window.location.hash;
-  return config.videos[hash as keyof typeof config.videos]
-    || config.default;
+  return config.videos.bytype[hash as keyof typeof config.videos]
+    || config.videos.default;
 });
 
 export class CstMaterials {
@@ -132,8 +132,8 @@ const loader = new THREE.TextureLoader(manager);
       texture2.wrapS = THREE.ClampToEdgeWrapping;
       texture2.wrapT = THREE.ClampToEdgeWrapping;
       texture5.generateMipmaps = false;
-texture5.minFilter = THREE.LinearFilter;
-texture5.magFilter = THREE.LinearFilter;
+      texture5.minFilter = THREE.LinearFilter;
+      texture5.magFilter = THREE.LinearFilter;
       this.cloud_Texture = texture1;
       this.smog_Texture = texture2;
       this.swirl_Texture = texture3;
@@ -595,8 +595,8 @@ texture5.magFilter = THREE.LinearFilter;
         gl_FragColor.rgba = texture2D(uTexture, vUv*3.0).rgba;
         gl_FragColor.rgb *= gl_FragColor.r;
         gl_FragColor.rgb *= 0.1;
-        gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.17));
-        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.75, 1.0);
+        // gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.17));
+        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.5, 1.0);
       }
       `,
       precision: 'lowp',
