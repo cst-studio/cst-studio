@@ -10,7 +10,6 @@ const sceneIsReady = ref<Boolean | null>(null)
 const percentGLB = ref<number>(0)
 const percentTexture = ref<number>(0)
 const checkLoading = () => {
-  console.log(percentGLB.value, percentTexture.value)
   if(percentGLB.value==100 && percentTexture.value==100){
     document.querySelector("#cst--app")?.classList.remove('loading')
     setTimeout(()=>{
