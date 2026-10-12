@@ -7,14 +7,18 @@ import { eventBus } from '@/eventBus'
 import { ref } from 'vue'
 
 const sceneIsReady = ref<Boolean | null>(null)
+const hasLoader = ref<Boolean>(true)
 const percentGLB = ref<number>(0)
 const percentTexture = ref<number>(0)
+const percenAll = ref<number>(0)
 const checkLoading = () => {
+  percenAll.value = (percentGLB.value + percentTexture.value)*1.1
   if(percentGLB.value==100 && percentTexture.value==100){
     document.querySelector("#cst--app")?.classList.remove('loading')
+    hasLoader.value = false
     setTimeout(()=>{
       sceneIsReady.value = true
-    }, 1000)
+    }, 2000)
   }
 }
 const onLoadTexture = (progress:number) => {
@@ -34,7 +38,7 @@ eventBus.on('loadTexture', onLoadTexture)
 </script>
 
 <template>
-  <div v-if="!sceneIsReady" class="loader">
+  <div v-if="hasLoader" class="loader">
     <div class="loader-bar">
       <span></span>
       <span :style="`width:calc((100% - 20px) * ${(percentGLB + percentTexture) / 200} + 10px)`"></span>
