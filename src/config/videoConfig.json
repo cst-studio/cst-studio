@@ -1,8 +1,8 @@
 {
   "videos": {
-    "#voyage": "/video/LAPLAND_2025.mp4",
-    "#pub": "/video/CST_PUB.mp4",
-    "#pizza": "/video/CST_PIZZA.mp4"
+    "#voyage": "./video/LAPLAND_2025.mp4",
+    "#pub": "./video/CST_PUB.mp4",
+    "#pizza": "./video/CST_PIZZA.mp4"
   },
-  "default": "/video/CST_reel_2026.mp4"
+  "default": "./video/CST_reel_2026.mp4"
 }
