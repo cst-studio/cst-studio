@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { eventBus } from "@/eventBus";
 import config from '@/config/config.json';
 
-
+const hasScolled = ref(false)
+const handleScroll = () => {
+  if(window.scrollY > 0) {
+    hasScolled.value = true
+  }
+}
 onMounted(() => {
   eventBus.emit("introCst");
-});
+  window.addEventListener('scroll', handleScroll, { passive: true })
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 
-onBeforeUnmount(() => {});
 </script>
 
 <template>
+  <div v-if="!hasScolled" id="scroll-down">﹀</div>
   <div id="scroller">
       <div id="scroller-p1"></div>
       <div id="scroller-p2"></div>
@@ -119,6 +128,28 @@ en Image<span class="dot"></span></h1>
 </template>
 
 <style scoped>
+#scroll-down{
+  position: fixed;
+  bottom: -5px;
+  font-size: 1.0rem;
+  text-align: center;
+  width: 100%;
+  color:#FFF;
+  filter: drop-shadow(2px 2px 4px black);
+  animation: moveUpDown 3s ease-in-out infinite;
+}
+
+@keyframes moveUpDown {
+  0%, 10%, 90%, 100% {
+    transform: translateY(20px);
+  }
+  30% {
+    transform: translateY(0px);
+  }
+  70% {
+    transform: translateY(0px);
+  }
+}
 #scroller{
   position: absolute;
   top: 0;
