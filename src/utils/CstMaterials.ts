@@ -26,12 +26,10 @@ export interface CstMaterialsOpts {
 
 const videoUrl = computed(() => {
   const path = window.location.pathname;
-  const videos: Record<string, string> = {
-    '/voyage': '/video/LAPLAND_2025.mp4',
-    '/pub': '/video/CST_PUB.mp4',
-    '/pizza': '/video/CST_PIZZA.mp4'
-  };
-  return videos[path] || './video/CST_reel_2026.mp4';
+  if (path.includes('/voyage')) return '/video/LAPLAND_2025.mp4';
+  if (path.includes('/pub')) return '/video/CST_PUB.mp4';
+  if (path.includes('/pizza')) return '/video/CST_PIZZA.mp4';
+  return './video/CST_reel_2026.mp4';
 });
 
 export class CstMaterials {
