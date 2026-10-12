@@ -2,59 +2,32 @@
 import { isMobile } from "../utils/utils.ts";
 import { useAppState } from "../utils/State.ts";
 import { CstMaterials } from "../utils/CstMaterials.ts";
-import { CstPost } from "../utils/PostProcess.ts";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import gltfUrl from "@/assets/cst.glb?url";
 import { t } from "@/strings";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { COLORS, COLORS_TUTO, COLORS_BG } from "../datas.ts";
-import { hexToVec3Linear, hexToVec3Srgb, mixHexColors } from "@/utils/utils.ts";
-import Lenis from 'lenis'
+import { hexToVec3Srgb } from "@/utils/utils.ts";
 import {
   ref,
   onMounted,
   onBeforeUnmount,
 } from "vue";
-import { useRoute } from "vue-router";
 
 import { eventBus } from "@/eventBus";
 import {
   Scene,
   Group,
-  Matrix4,
-  MeshBasicMaterial,
   WebGLRenderer,
   PerspectiveCamera,
   Clock,
   Vector3,
-  Vector2,
   SRGBColorSpace,
-  LinearSRGBColorSpace,
-  NoToneMapping,
   Mesh,
-  InstancedMesh,
   Object3D,
-  InstancedBufferAttribute,
-  ShaderMaterial,
-  BufferAttribute,
-  MeshStandardMaterial,
-  PlaneGeometry,
-  BoxGeometry,
   MathUtils,
-  Raycaster,
-  LinearToneMapping,
-ReinhardToneMapping,
-CineonToneMapping,
-ACESFilmicToneMapping,
-AgXToneMapping,
-NeutralToneMapping
 } from "three";
-// import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
-// import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-// import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-// import { mx_bilerp_1 } from "three/src/nodes/materialx/lib/mx_noise.js";
 
 const _isMobile = isMobile()
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -65,34 +38,25 @@ const canvas = ref<HTMLCanvasElement | null>(null);
   let cstLibrary: Group;
   const cstGroup: Group = new Group();
   const cstMaterials: CstMaterials = new CstMaterials();
-  // let activePost: Boolean = true;
   
-  
-  
-  // const lenis = new Lenis(
-  //   {
-  //     lerp: _isMobile?1.0:0.1,
-  //     syncTouch: !_isMobile,
-  //     autoRaf: true,
-  //   }
-  // )
   
 let isScrolling = false;
-let scrollTimeout: ReturnType<typeof setTimeout>;
 
 const appState = useAppState();
 
 let renderer: WebGLRenderer;
-// let composer: EffectComposer;
 
 let camera: PerspectiveCamera
 const clock = new Clock();
-// const cstPost = new CstPost();
 
 let screenTopLeft: Vector3 = new Vector3(-1, 1, 0);
 let screenTopLeftAt2: Vector3 = new Vector3(-1, 1, 0);
 let isPortrait: Boolean = false
 
+let heightService:number = 1
+let heightProds:number = 1
+let heightServiceRound:number = 1
+let heightProdsRound:number = 1
 
 function getiOSVersion() {
   const match = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
@@ -118,47 +82,45 @@ function segmentedEase(progress, segments = 4) {
   }
 }
 
+
+type SectionTrack = {
+  section: HTMLElement
+  track: HTMLElement
+}
+const tracks:SectionTrack[]=[]
+const updateHeight = () => {
+  tracks.forEach((trackSection) => {
+    const track = trackSection.track
+    const section = trackSection.section
+    const distance = track.scrollWidth - document.documentElement.clientWidth
+    const height = distance + window.innerHeight
+    section.style.height = `${height}px`
+    if(section.className.includes('services')) {
+      heightService = height
+    }
+    if(section.className.includes('prods')) {
+      heightProds = height
+    }
+    heightServiceRound = Math.round(heightService/document.documentElement.clientHeight)
+    heightProdsRound = Math.round(heightProds/document.documentElement.clientHeight)
+  }
+);
+}
+
 const initScroll = () => {
   gsap.registerPlugin(ScrollTrigger)
-  // lenis.on('scroll', (val)=>{
-  //   // cstPost.updateScroll(val.animatedScroll);
-  //   ScrollTrigger.update()
-  //   isScrolling = true;
-  //   clearTimeout(scrollTimeout);
-  //   scrollTimeout = setTimeout(() => {
-  //     isScrolling = false;
-  //     // onResize(); // do one final resize after scrolling stops
-  //   }, 100);
-  // })
-  // gsap.ticker.add((time) => {
-  //   lenis.raf(time * 1000)
-  // })
   gsap.ticker.lagSmoothing(0)
-
-
-
-
-
-
 
 
 document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) => {
   const track = section.querySelector<HTMLElement>('.horizontal-track')
+  tracks.push({section:section, track:track!})
   if (_isMobile) return
   if (!track) return
-  const updateHeight = () => {
-    const distance =
-      track.scrollWidth - document.documentElement.clientWidth
-    section.style.height = `${distance + window.innerHeight}px`
-  }
+  
 
   updateHeight()
 
-  // gsap.to(track, {
-  //   x: () => {
-  //     return -(track.scrollWidth - document.documentElement.clientWidth)
-  //   },
-  //   ease: 'power1.inOut',
   gsap.to({}, {
     scrollTrigger: {
       trigger: section,
@@ -177,7 +139,7 @@ document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) 
     },
   })
 
-  window.addEventListener('resize', updateHeight)
+
 })
 
 }
@@ -189,8 +151,8 @@ const updateScene1 = (value:number = 0) => {
   // Scene1.position.y = -0.0-progress*2.0
   iPad.position.y = -0.0-progress*2.0
   iPadFrame.position.y = iPad.position.y
-  BgCurve.position.y = iPad.position.y+5
-  BgCurve.position.z = 1
+  BgCurveContainer.position.y = iPad.position.y+5
+  BgCurveContainer.position.z = 1
   iPadContainer.position.z = -progress*(isPortrait?1.4:0.5)
   iPadContainer.scale.setScalar(1.0-progress*0.5)
   Projo1Container.position.x = (progress-1)*2
@@ -232,9 +194,13 @@ const initThree = () => {
           onUpdate: (self) => {
             const progress = gsap.parseEase(easer)(self.progress)
             Scene1.position.z = screenTopLeft.z*progress*2.0
+            // Scene1.position.z = 0
             Scene1.rotation.x = progress*Math.PI/2
             Scene1.position.y = 0
-            BgCurve.material.uniforms.uScroll.value = progress
+            
+            // BgCurve.rotation.z = 0
+            // BgCurve.position.y = 50.8016
+            // BgCurve.material.uniforms.uScroll.value = progress //TODO
             if(self.progress>=0.95){
               if(!cstMaterials.video.paused) {
                 cstMaterials.video.pause()
@@ -249,20 +215,36 @@ const initThree = () => {
             }
         }
       })
+      const speedScroll = 2.0
       gsap.to({}, {
         scrollTrigger: {
-          trigger: '#scroller-p3',
+          trigger: '#scroller-services',
           start: 'top top',
-          end: 'bottom top',
+          end: 'bottom bottom',
           markers: false,
           scrub: 1,
           onUpdate: (self) => {
-            // const progress = gsap.parseEase(easer)(self.progress)
             const progress = self.progress
-            Scene1.position.z = screenTopLeft.z*2.0+screenTopLeft.z*progress*12.0
-            // Scene1.rotation.x = progress*Math.PI/2
-            // Scene1.position.y = 0
-            // BgCurve.material.uniforms.uScroll.value = progress
+            // Scene1.position.z = screenTopLeft.z*2.0+screenTopLeft.z*progress*12.0
+            BgCurveContainer.position.y = 3+screenTopLeft.z*0.0+screenTopLeft.z*progress*heightServiceRound*speedScroll
+            // BgCurveEnd.position.y=-BgCurveContainer.position.y
+            // BgCurveEnd.position.y=-BgCurveContainer.position.y+3
+            // Debug1.position.y = -BgCurveContainer.position.y+3
+            // BgCurveEnd.position.y = 3.18
+            }
+        }
+      })
+      gsap.to({}, {
+        scrollTrigger: {
+          trigger: '#scroller-prods',
+          start: 'top bottom',
+          end: 'bottom bottom',
+          markers: false,
+          scrub: 1,
+          onUpdate: (self) => {
+            const progress = self.progress
+            BgCurveContainer.position.y = 3+screenTopLeft.z*(heightServiceRound*speedScroll)+screenTopLeft.z*progress*heightProdsRound*speedScroll
+            // BgCurveEnd.position.y=-BgCurveContainer.position.y+3
             }
         }
       })
@@ -283,18 +265,45 @@ const initThree = () => {
       // })
       gsap.to({},{
         scrollTrigger: {
-          trigger: '.contact-section',
+          trigger: '#scroller-contact',
           start: 'top bottom',
           end: 'bottom bottom',
           markers: false,
           scrub: 1,
+          invalidateOnRefresh: true,
+          onRefresh: () => {
+          },
           onUpdate: (self) => {
-            const progress = gsap.parseEase(easer)(self.progress)
-            Logo.rotation.x = -(1.0-progress)*Math.PI/2
+            const progress = self.progress
+            const progress2 = gsap.parseEase(easer)(self.progress)
+            Logo.rotation.x = -(1.0-progress2)*Math.PI/2
             const logo_offset = -screenTopLeft.z*2
+            // console.log(scene)
             Logo.position.z=logo_offset-logo_offset*progress-0.3
-            // Scene1.rotation.x = progress*Math.PI/2+Math.PI/2
-            SmokeFloor.position.z=Logo.position.z+0.6
+            // BgCurveContainer.rotation.x = progress*Math.PI/2
+            // BgCurveContainer.position.y = screenTopLeft.z*progress*2.0
+            BgCurveContainer.position.y = 3+screenTopLeft.z*(heightServiceRound*speedScroll+heightProdsRound*speedScroll)+screenTopLeft.z*progress*speedScroll
+            // BgCurveEnd.position.y = (3+screenTopLeft.z*(heightServiceRound*speedScroll+heightProdsRound*speedScroll))+3
+            
+            // BgCurveContainer.position.z = -progress*10.0
+            
+            // BgCurve.position.y = -screenTopLeft.z*(2.0+heightServiceRound*speedScroll+heightProdsRound*speedScroll)-screenTopLeft.z*speedScroll*2
+
+            // BgCurveContainer.position.y = iPad.position.y+5
+            // BgCurveContainer.position.z = 1
+            // BgCurveContainer.visible=false
+            // BgCurve.rotation.z = Math.PI
+            // BgCurveEnd.position.y = 3+screenTopLeft.z*(heightServiceRound*speedScroll+heightProdsRound*speedScroll)+screenTopLeft.z*progress*speedScroll*0
+            // BgCurveEnd.position.z = -screenTopLeft.z+screenTopLeft.z*2*progress+screenTopLeft.z*2.0
+            // BgCurveEnd.position.z = Logo.position.z+screenTopLeft.z
+            // BgCurveEnd.position.y = -1+progress*6.0
+            // BgCurveEnd.position.y = 3.18
+            // BgCurveEnd.rotation.x=Logo.rotation.x-Math.PI
+            // BgCurveEnd.rotation.x=progress*Math.PI*0.5
+
+            
+            
+            // SmokeFloor.position.z=Logo.position.z+0.6
           }
           }
       })
@@ -344,7 +353,10 @@ let SpotRight : Mesh;
 let SmokeFloor : Mesh;
 // let SmokeOver : Mesh;
 let Logo : Mesh;
+let BgCurveContainer : Group;
 let BgCurve : Mesh;
+let BgCurveFloor : Mesh;
+// let BgCurveEnd : Mesh;
 let iPad : Mesh;
 let iPadFrame : Mesh;
 let iPadContainer : Group;
@@ -397,16 +409,23 @@ const initCstLibrary = () => {
   SpotRight.position.set(5,0,-4)
   scene.add(SpotRight);
   
+  Logo = cstLibrary.getObjectByName("Logo")! as Mesh
+  // Logo.material = cstMaterials.Logo
+  // Logo.material = cstMaterials.MatCapDynMat
+  Logo.material = cstMaterials.MatCapDynMat
+  Logo.position.set(0,0,6.2)
+  scene.add(Logo);
+
   SmokeFloor = cstLibrary.getObjectByName("SmokeFloor")! as Mesh
   SmokeFloor.material = cstMaterials.Floor
   // SmokeFloor.material = cstMaterials.SmogFloor
   // SmokeFloor.material = cstMaterials.SmogFloor
   // SmokeFloor.position.set(0,0,6.2)
-  SmokeFloor.position.set(0,0,6.2)
+  SmokeFloor.position.set(0,0,0.8)
   SmokeFloor.rotation.set(Math.PI/4,0,0)
   // SmokeFloor.position.set(0,0,0)
   // iPad.scale.setScalar(1.6)
-  scene.add(SmokeFloor);
+  Logo.add(SmokeFloor);
   
   // SmokeOver = cstLibrary.getObjectByName("SmokeOver")! as Mesh
   // SmokeOver.material = cstMaterials.SmogFloor
@@ -414,22 +433,37 @@ const initCstLibrary = () => {
   // scene.add(SmokeOver);
   
   
-  Logo = cstLibrary.getObjectByName("Logo")! as Mesh
-  // Logo.material = cstMaterials.Logo
-  Logo.material = cstMaterials.MatCapDynMat
-  Logo.position.set(0,0,6.2)
-  scene.add(Logo);
   
 
 
   Scene1 = new Group()
+  Scene1.name="Scene1"
   scene.add(Scene1);
+  
+  // BgCurveEnd = cstLibrary.getObjectByName("BgCurveEnd")! as Mesh
+  BgCurveFloor = cstLibrary.getObjectByName("BgCurveFloor")! as Mesh
   BgCurve = cstLibrary.getObjectByName("BgCurve")! as Mesh
   BgCurve.material = cstMaterials.BgCurve
-  BgCurve.position.set(0,5,1)
-  Scene1.add(BgCurve);
+  BgCurveFloor.material = cstMaterials.BgCurve
+  // BgCurve.material = cstMaterials.checker_Mat
+  // BgCurveFloor.material = cstMaterials.checker_Mat
+  // BgCurveEnd.material = cstMaterials.BgCurve
+  BgCurveContainer = new Group()
+  BgCurveContainer.name="BgCurveContainer"
+  BgCurveContainer.position.set(0,5,1)
+  BgCurve.position.set(0,0,0)
+  // BgCurveEnd.position.set(0,1,1)
+  // BgCurveEnd.scale.setScalar(0.3) // todo
+
+  // BgCurveFloor.scale.y=0.1
+  BgCurveFloor.position.set(0,0,0)
+  Scene1.add(BgCurveContainer);
+  // scene.add(BgCurveEnd);
+  BgCurveContainer.add(BgCurve);
+  BgCurveContainer.add(BgCurveFloor);
 
   iPadContainer = new Group()
+  iPadContainer.name="iPadContainer"
   iPadFrame = cstLibrary.getObjectByName("iPadFrame")! as Mesh
   // iPadFrame.material = cstMaterials.ScreenFrame
   iPadFrame.material = cstMaterials.MatCapMat
@@ -471,18 +505,20 @@ const initCstLibrary = () => {
   // Debug2 = new Mesh(Debug1.geometry)
   // Debug1.material = cstMaterials.MatCapMat
   // Debug2.material = cstMaterials.MatCapMat
-  // Debug1.position.set(1,-1,0)
+  // Debug1.position.set(1,0,0)
   // Debug2.position.set(0,0,0)
-  // Scene1.add(Debug1);
-  // Scene1.add(Debug2);
+  // BgCurveContainer.add(Debug1);
+  // scene.add(Debug2);
   
 
   SpotRight.renderOrder = 31
   SpotLeft.renderOrder = 30
   SmokeFloor.renderOrder = 4
   // SmokeOver.renderOrder = 5
-  Logo.renderOrder = 1
+  Logo.renderOrder = 2
   BgCurve.renderOrder = 0
+  BgCurveFloor.renderOrder = 0
+  // BgCurveEnd.renderOrder = 1
   Cable.renderOrder = 39
   CableShadow.renderOrder = 39
   iPad.renderOrder = 40
@@ -492,25 +528,7 @@ const initCstLibrary = () => {
   // Debug1.renderOrder = 100
   // Debug2.renderOrder = 100
   
-  appState.colorCurrent.value = Math.round(Math.random() * (COLORS.length - 1));
-
-
-
   
-  // ScrollTrigger.create({
-  //   trigger: '#section1',
-  //   start: 'top top',
-  //   end: 'bottom top',
-    
-  //   onUpdate: (self) => {
-  //     const progress = self.progress
-  //     console.log(progress)
-      
-  //     // mesh.position.y = progress * 3
-  //     // mesh.rotation.z = progress * Math.PI
-  //     },
-  //     })
-
 };
 
 const screenCoord = (ndc:Vector3 = new Vector3(1, 1, 0), positionY: number = 0): Vector3 => {
@@ -546,6 +564,17 @@ const scaleToViewportHeight = () => {
 };
 // let height = window.innerHeight
 const resize = () => {
+  updateHeight()
+
+  
+  // BgCurveFloor.scale.y=-((heightServiceRound+heightProdsRound)*screenTopLeftAt2.z*2)/50
+  
+  // console.log((-(heightServiceRound+heightProdsRound)*screenTopLeft.z*2)/50)
+  // console.log("Scene1.position", Scene1.position)
+  // console.log("BgCurveContainer.position", BgCurveContainer.position)
+  // console.log("BgCurveEnd.position", BgCurveEnd.position)
+  // console.log("BgCurveFloor.position", BgCurveFloor.position)
+  // console.log("BgCurveFloor.scale", BgCurveFloor.scale)
   if (isScrolling) return;
   // const height = window.visualViewport?.height ?? window.innerHeight;
   const height = document.documentElement.clientHeight+100;
@@ -556,6 +585,7 @@ const resize = () => {
   const iPadAspect = 1.7;
   
   const objWidth = 10.0;
+  // const objWidth = 40.0;
   const cameraZ = 8;
   const hFov = 2 * Math.atan((objWidth / 2) / cameraZ);
   const vFov = 2 * Math.atan(Math.tan(hFov / 2) / aspect);

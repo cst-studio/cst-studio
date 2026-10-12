@@ -6,6 +6,7 @@ import projo_texture_url from "@/assets/bitmap/texture/projo.png?url";
 import concrete_texture_url from "@/assets/bitmap/texture/concrete-wall.jpg?url";
 import screen_texture_url from "@/assets/bitmap/texture/screen.png?url";
 import MatCap_texture_url from "@/assets/bitmap/texture/MatCap.png?url";
+import MatCapRed_texture_url from "@/assets/bitmap/texture/MatCapRed.png?url";
 import CableShadow_texture_url from "@/assets/bitmap/texture/BakeCable.png?url";
 
 import { hexToVec3Srgb } from "@/utils/utils";
@@ -17,9 +18,21 @@ import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
 import { hexToVec3Linear } from "./utils";
 import { eventBus } from "@/eventBus";
 
+import { computed } from 'vue';
+
 export interface CstMaterialsOpts {
   initialProgress?: number; // 0..1
 }
+
+const videoUrl = computed(() => {
+  const path = window.location.pathname;
+  const videos: Record<string, string> = {
+    '/voyage': '/video/LAPLAND_2025.mp4',
+    '/pub': '/video/CST_PUB.mp4',
+    '/pizza': '/video/CST_PIZZA.mp4'
+  };
+  return videos[path] || './video/CST_reel_2026.mp4';
+});
 
 export class CstMaterials {
   public cst_BG_Mat: THREE.ShaderMaterial;
@@ -35,6 +48,7 @@ export class CstMaterials {
   public MatCapMat: THREE.ShaderMaterial;
   public MatCapDynMat: THREE.ShaderMaterial;
   public CableShadowMat: THREE.ShaderMaterial;
+  public checker_Mat: THREE.ShaderMaterial;
   
   private cloud_Texture?: THREE.Texture;
   private smog_Texture?: THREE.Texture;
@@ -45,7 +59,12 @@ export class CstMaterials {
   private video: HTMLVideoElement;
   private videoTexture: THREE.VideoTexture;
 
+  private loadVideo(){
+    this.video.src = videoUrl.value;
+  }
+
   constructor(opts: CstMaterialsOpts = {}) {
+    this.checker_Mat = this.makeCheckerMaterial();
     this.cst_BG_Mat = this.makeSpotMaterial();
     this.SpotLeft = this.makeSpotMaterial();
     this.SpotRight = this.makeSpotMaterial();
@@ -62,7 +81,9 @@ export class CstMaterials {
 
     this.video = document.createElement("video");
 
-this.video.src = "./video/CST_reel_2026.mp4";
+// this.video.src = "./video/CST_reel_2026.mp4";
+
+
 this.video.muted = true;
 this.video.loop = true;
 this.video.playsInline = true;
@@ -76,6 +97,8 @@ this.videoTexture.colorSpace = THREE.SRGBColorSpace;
 
   this.video.addEventListener("loadeddata", () => {
   console.log("Video loaded", this.video.videoWidth, this.video.videoHeight);
+  eventBus.emit("textureReady", true);
+  eventBus.emit("loadTexture", 100);
   // this.video.play()
   //   .then(() => {
   //     console.log("Video playing");
@@ -98,7 +121,7 @@ this.videoTexture.colorSpace = THREE.SRGBColorSpace;
   manager.onProgress = (url, loaded, total) => {
 
   const progress = loaded / total;
-  eventBus.emit("loadTexture", Math.round(progress * 100));
+  eventBus.emit("loadTexture", Math.round(progress * 90));
 
 };
 
@@ -111,9 +134,10 @@ const loader = new THREE.TextureLoader(manager);
       loader.loadAsync(screen_texture_url),
       loader.loadAsync(concrete_texture_url),
       loader.loadAsync(MatCap_texture_url),
+      loader.loadAsync(MatCapRed_texture_url),
       loader.loadAsync(CableShadow_texture_url),
-    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8]) => {
-      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8]) {
+    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8, texture9]) => {
+      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8, texture9]) {
         texture.colorSpace = THREE.NoColorSpace;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -126,11 +150,12 @@ const loader = new THREE.TextureLoader(manager);
       this.projo_Texture = texture4;
       this.screen_Texture = texture5;
       this.concrete_Texture = texture6;
-      this.MatCapMat.uniforms.uMatcap.value = texture7;
-      this.MatCapDynMat.uniforms.uMatcap.value = texture7;
-      this.CableShadowMat.uniforms.uTexture.value = texture8;
+      this.MatCapMat.uniforms.uMatcap.value = texture8;
+      this.MatCapDynMat.uniforms.uMatcap.value = texture8;
+      this.CableShadowMat.uniforms.uTexture.value = texture9;
       this.setTextures();
-      eventBus.emit("textureReady", true);
+      this.loadVideo()
+      
     });
 
 
@@ -184,6 +209,7 @@ const loader = new THREE.TextureLoader(manager);
     this.Screen.uniforms.uTextureOverlay.value = this.screen_Texture;
     this.BgCurve.uniforms.uTexture.value = this.concrete_Texture;
   }
+  
   private makeSpotMaterial(): THREE.ShaderMaterial {
     const customMaterial = new THREE.ShaderMaterial({
       vertexShader: `
@@ -502,6 +528,42 @@ const loader = new THREE.TextureLoader(manager);
     });
     return customMaterial;
   }
+  private makeCheckerMaterial(): THREE.ShaderMaterial {
+    const customMaterial = new THREE.ShaderMaterial({
+      vertexShader: `
+      varying vec2 vUv;
+      varying vec3 vWorldPosition;
+      void main() {
+          vUv = 1.0-uv;
+          vec3 mPosition = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(mPosition, 1.0);
+      }
+      `,
+      fragmentShader: `
+      varying vec2 vUv;
+      uniform sampler2D uTexture;
+      void main() {
+      
+          vec2 grid = floor(vUv * 40.0);
+        float checker = mod(grid.x + grid.y, 2.0);
+        vec3 color = mix(
+            vec3(0.0),
+            vec3(0.01),
+            checker
+        );
+        gl_FragColor = vec4(color, 1.0);
+      }
+      `,
+      precision: 'lowp',
+      uniforms: {
+      },
+      side: THREE.FrontSide,
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+    });
+    return customMaterial;
+  }
   private makeBgCurveMaterial(): THREE.ShaderMaterial {
     const customMaterial = new THREE.ShaderMaterial({
       vertexShader: `
@@ -543,33 +605,8 @@ const loader = new THREE.TextureLoader(manager);
         gl_FragColor.rgba = texture2D(uTexture, vUv*3.0).rgba;
         gl_FragColor.rgb *= gl_FragColor.r;
         gl_FragColor.rgb *= 0.1;
-        // gl_FragColor.a = uScroll;
-        // gl_FragColor.a *= clamp((1.0-vUv.y)*(4.0+10.0*uScroll), 0.0, 1.0);
-        
-        // gl_FragColor.a = clamp((1.0-vUv.y)*(4.0-3.9*uScroll), 0.0, 1.0);
-        // gl_FragColor.a = clamp((1.0-vUv.y)*(cos(uTime)), 0.0, 1.0);
-        // gl_FragColor.a = clamp((1.0-vUv.y)*(abs(cos(uTime))), 0.0, 1.0);
-        // gl_FragColor.a = abs(cos(uTime*5.0));
-        
-        // gl_FragColor.rgb *= 1.0-uScroll;
         gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.17));
-        // gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.25));
-        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.5, 1.0);
-        // gl_FragColor.rgb = vec3(clamp(abs(vUv.y), 0.0, 1.0));
-        // gl_FragColor.rgb = vec3(step((vUv.y), uScroll));
-        // gl_FragColor.a = 1.0-step((vUv.y), uScroll);
-        // gl_FragColor.a = 1.0;
-
-/*
-        vec2 grid = floor(vUv * 40.0);
-        float checker = mod(grid.x + grid.y, 2.0);
-        vec3 color = mix(
-            vec3(0.0),
-            vec3(0.01),
-            checker
-        );
-        gl_FragColor = vec4(color, 1.0);
-        */
+        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.75, 1.0);
       }
       `,
       precision: 'lowp',

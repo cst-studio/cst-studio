@@ -4,17 +4,9 @@ import droneImage from '@/assets/images/CST-drone.jpeg'
 import photoImage from '@/assets/images/CST-photo.jpeg'
 import eventImage from '@/assets/images/CST-event.jpeg'
 import socialImage from '@/assets/images/CST-social.jpeg'
-import wipImage from '@/assets/images/work-in-progress.jpg'
-import { RouterLink } from "vue-router";
+import wipImage from '@/assets/images/work-in-progress.jpeg'
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import { eventBus } from "@/eventBus";
-import { hexToCSS } from "../utils/utils.ts";
-import { useAppState } from "../utils/State.ts";
-
-import { t } from "@/strings";
-
-const gradientStart = ref("#D80084");
-const gradientEnd = ref("#FF8F66");
 
 onMounted(() => {
   eventBus.emit("introCst");
@@ -27,8 +19,6 @@ onBeforeUnmount(() => {});
   <div id="scroller">
       <div id="scroller-p1"></div>
       <div id="scroller-p2"></div>
-      <div id="scroller-p3"></div>
-      <div id="scroller-p4"></div>
     </div>
   
   <main class="main">
@@ -50,6 +40,7 @@ en Image<span class="dot"></span></h1>
 
 
 <section class="horizontal-section services-section">
+<div id="scroller-services"></div>
   <div class="horizontal-sticky">
     <header>
       <h1>Nos Services<span class="dot"></span></h1>
@@ -119,6 +110,7 @@ en Image<span class="dot"></span></h1>
 
 
 <section class="horizontal-section prods-section">
+  <div id="scroller-prods"></div>
   <div class="horizontal-sticky">
     <header>
       <h1>Dernieres Prods<span class="dot"></span></h1>
@@ -175,7 +167,8 @@ en Image<span class="dot"></span></h1>
 
 
 <section class="contact-section">
-      <header>
+  <div id="scroller-contact"></div>
+    <header>
       <h1>Faisons quelque de grand ensemble<span class="dot"></span></h1>
       <p>Une idée, un projet, une ambition : racontons-la avec des images qui marquent.</p>
     </header>
@@ -202,7 +195,7 @@ en Image<span class="dot"></span></h1>
   left: 0;
   width: 10px;
   /* height: 350vh; */
-  background: #d006;
+  /* background: #d006;*/
   #scroller-p1{
     position: relative;
     /* background: #00f6; */
@@ -213,19 +206,32 @@ en Image<span class="dot"></span></h1>
     position: relative;
     height: 250px;
     width: 100%;
+    /* background: #d006; */
   }
-  #scroller-p3{
-    background: #0f06;
-    position: relative;
-    height: 1490vh;
-    /* margin-top: 40vh; */
-    width: 100%;
-  }
-
-}
-.main-hero{
   
 }
+#scroller-services, #scroller-prods, #scroller-contact{
+  position: absolute;
+  width: 30px;
+  
+}
+#scroller-services{
+  top:-40vh;
+  height: calc(100% + 40vh);
+  /* background: linear-gradient(to bottom, #f0f6, #0f06); */
+}
+#scroller-prods{
+  top:-10vh;
+  height: calc(100% + 10vh);
+  /* background: linear-gradient(to bottom, #f0f6, #00f6); */
+}
+#scroller-contact{
+  top:-10vh;
+  width: 40px;
+  height: calc(100% + 10vh);
+  /* background: linear-gradient(to bottom, #f0f6, #00f6); */
+}
+
 main.main {
   position: relative;
   display: flex;
@@ -235,7 +241,6 @@ main.main {
     position: relative;
     top: 0;
     margin-bottom: 40vh;
-    /* background: linear-gradient(to bottom, #f0f6, #0f06); */
     .main-hero-section-sticky{
       position: sticky;
       top: 0;
@@ -300,6 +305,8 @@ main.main {
             height: 200px;
             width: 600px;
             height: 400px;
+            max-width:30vw;
+            max-height:40vh;
             border-radius: 10px;
             margin-left: 20px;
           }
@@ -318,20 +325,14 @@ main.main {
   }
   
   .contact-section{
-    top: 0;
+      top: 0;
+      position: relative;
       height: 100vh;
-      /* padding-top: 100px; */
       padding-bottom: 20px;
-      /* margin-left: 60px; */
       display: flex;
       flex-direction: column;
       justify-content: center;
-      /* background: linear-gradient(to bottom, #f0f6, #0f06); */
-
-      /* align-items: center; */
       header{
-        /* flex: 1; */
-        /* background: linear-gradient(to bottom, #f0f6, #f006); */
       }
       main{
         flex: 1;

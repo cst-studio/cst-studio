@@ -27,7 +27,12 @@ body {
 
   }
 }
-
+html{
+  scroll-behavior: smooth;
+}
+body.nav-opened{
+  overflow: hidden;
+}
 #cst--app {
   /*
   max-width: 1280px;

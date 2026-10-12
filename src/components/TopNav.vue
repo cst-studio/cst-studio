@@ -5,7 +5,7 @@ import Logo from "../components/icons/IconLogo.vue";
 import Close from "../components/icons/IconClose.vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 import { eventBus } from "@/eventBus";
 
 const router = useRouter();
@@ -13,22 +13,13 @@ const route = useRoute();
 
 const isBurgerActive = ref<Boolean>(false);
 const showBurger = ref<Boolean>(true);
-const showClose = ref<Boolean>(true);
-onMounted(() => {
-  watch(
-    () => route.path,
-    (newPath) => {
-      if (newPath == "/") {
-        // showClose.value = false;
-        // showBurger.value = false;
-      } else {
-        // showClose.value = true;
-        // showBurger.value = true;
-      }
-    },
-    { immediate: true },
-  );
-});
+
+const sections = [
+  ["Accueil",".main-hero-section"],
+  ["Services",".services-section"],
+  ["Porductions",".prods-section"],
+  ["Contact",".contact-section"],
+]
 
 function onCloseClick() {
   if (route.path.includes("/draw")) {
@@ -43,8 +34,21 @@ function onCloseClick() {
     router.push(`/`);
   }
 }
+function ScrollTo(selector : string) {
+  isBurgerActive.value = false
+  document.body.classList.remove("nav-opened")
+  document.querySelector(selector)!.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+}
 function onBurgerClick() {
   isBurgerActive.value = !isBurgerActive.value
+  if(isBurgerActive.value){
+    document.body.classList.add("nav-opened")
+  } else {
+    document.body.classList.remove("nav-opened")
+  }
   // async function shareLink() {
   //   try {
   //     await navigator.share({
@@ -65,8 +69,8 @@ function onBurgerClick() {
     <div>
       <div>
         <transition name="fade">
-          <button v-if="showClose" @click="onCloseClick" class="icon-btn">
-            <Logo :active=isBurgerActive />
+          <button @click="ScrollTo(sections[0][1])" class="icon-btn">
+            <Logo />
           </button>
         </transition>
       </div>
@@ -79,9 +83,57 @@ function onBurgerClick() {
       </div>
     </div>
   </header>
+  <main :class="{ 'opened': isBurgerActive }" v-on:click="isBurgerActive=false">
+    <ul>
+      <li v-for="section in sections" :key="section">
+        <a v-on:click="ScrollTo(section[1])">
+          {{ section[0] }}<span class="dot"></span>
+        </a>
+    </li>      
+    </ul>
+  </main>
 </template>
 
 <style scoped>
+main{
+  position: fixed;
+  z-index: 98;
+  inset: 0;
+  background-color: #000E;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  &.opened{
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+
+  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    li{
+      font-family: var(--font-display);
+      font-size: 4.5rem;
+      font-weight: 300;
+      line-height: .87;
+      letter-spacing: 2px;
+      transition: transform 0.15s ease;
+      &:hover{
+        transform: translateX(10px);
+      }
+      a{
+        cursor: pointer;
+      }
+    }
+  }
+}
 button {
   -webkit-tap-highlight-color: transparent;
 }
@@ -107,11 +159,12 @@ header {
       transparent 100%
       );
       */
-
-background: linear-gradient(to bottom, #080808FF, #08080800);
-
-
-  z-index: 10;
+      
+      background: linear-gradient(to bottom, #080808FF, #08080800);
+      
+      
+      z-index: 10;
+      z-index: 99;
   & > div {
     display: flex;
     justify-content: space-between;
