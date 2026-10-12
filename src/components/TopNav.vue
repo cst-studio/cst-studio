@@ -5,21 +5,36 @@ import Logo from "../components/icons/IconLogo.vue";
 import Close from "../components/icons/IconClose.vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+
 import { eventBus } from "@/eventBus";
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const router = useRouter();
 const route = useRoute();
 
+const isScrolling = ref(false)
+
 const isBurgerActive = ref<Boolean>(false);
 const showBurger = ref<Boolean>(true);
 
+const handleScroll = () => {
+  isScrolling.value = window.scrollY > 500
+  console.log(window.scrollY)
+}
 const sections = [
   ["Accueil",".main-hero-section"],
   ["Services",".services-section"],
   ["Porductions",".prods-section"],
   ["Contact",".contact-section"],
 ]
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 
 function onCloseClick() {
   if (route.path.includes("/draw")) {
@@ -65,7 +80,7 @@ function onBurgerClick() {
 </script>
 
 <template>
-  <header>
+  <header :class="{'top' : !isScrolling}"">
     <div>
       <div>
         <transition name="fade">
@@ -108,7 +123,6 @@ main{
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
-
   }
   display: flex;
   flex-direction: column;
@@ -143,25 +157,19 @@ header {
   height: 100px;
   padding-left: 20px;
   padding-right: 20px;
-  /* backdrop-filter: blur(130px); */
-  /* -webkit-backdrop-filter: blur(130px); */
-  /* background-color: #080808DD; */
-  /*
-  mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    transparent 100%
-    );
-    
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      transparent 100%
-      );
-      */
-      
-      background: linear-gradient(to bottom, #080808FF, #08080800);
-      
+      &:before{
+        z-index: -1;
+        transition: opacity 1s ease;
+        content: '';
+        position: absolute;
+        inset:0;
+        background: linear-gradient(to bottom, #080808FF, #08080800);
+      }
+      &.top{
+        &:before{
+          opacity: 0;
+        }
+      }      
       
       z-index: 10;
       z-index: 99;
