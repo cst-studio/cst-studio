@@ -715,7 +715,8 @@ const setupThree = () => {
   */
 
   window.addEventListener("resize", resize);
-  renderer.setPixelRatio(0.75);
+  // renderer.setPixelRatio(0.75);
+  renderer.setPixelRatio(1.0);
   // composer.setPixelRatio(1.5);
   // composer.setPixelRatio(0.75);
   // renderer.setClearColor(0xf9f9fc, 1);
@@ -843,7 +844,7 @@ const ariaAltText = ref<string>(t("homeAltText"));
   <main :class="mainClassName">
   <canvas ref="canvas" role="img" :aria-label="ariaAltText"></canvas>
   </main>
-  <span class="footdark"></span>
+  <!-- <span class="footdark"></span> -->
 </template>
 
 <style scoped>
