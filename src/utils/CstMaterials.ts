@@ -91,26 +91,18 @@ this.videoTexture.minFilter = THREE.LinearFilter;
 this.videoTexture.magFilter = THREE.LinearFilter;
 this.videoTexture.generateMipmaps = false;
 this.videoTexture.colorSpace = THREE.SRGBColorSpace;
+this.videoTexture.wrapS = THREE.ClampToEdgeWrapping;
+ this.videoTexture.wrapT = THREE.ClampToEdgeWrapping;
 
-  this.video.addEventListener("loadeddata", () => {
+this.video.addEventListener("loadeddata", () => {
   console.log("Video loaded", this.video.videoWidth, this.video.videoHeight);
   eventBus.emit("textureReady", true);
   eventBus.emit("loadTexture", 100);
-  // this.video.play()
-  //   .then(() => {
-  //     console.log("Video playing");
-  //   })
-  //   .catch((error) => {
-  //     console.error("Video play failed:", error);
-  //   });
+  this.video.play();
 });
-    // VideoTexture
 
-  this.videoTexture = new THREE.VideoTexture(this.video);
-  this.videoTexture.colorSpace = THREE.SRGBColorSpace;
-  this.videoTexture.minFilter = THREE.LinearFilter;
-  this.videoTexture.magFilter = THREE.LinearFilter;
-    this.video.play();
+  
+    
     // const loader = new THREE.TextureLoader();
 
     const manager = new THREE.LoadingManager();
@@ -139,6 +131,9 @@ const loader = new THREE.TextureLoader(manager);
       }
       texture2.wrapS = THREE.ClampToEdgeWrapping;
       texture2.wrapT = THREE.ClampToEdgeWrapping;
+      texture5.generateMipmaps = false;
+texture5.minFilter = THREE.LinearFilter;
+texture5.magFilter = THREE.LinearFilter;
       this.cloud_Texture = texture1;
       this.smog_Texture = texture2;
       this.swirl_Texture = texture3;
@@ -673,7 +668,6 @@ const loader = new THREE.TextureLoader(manager);
         vUv.x = 1.0-vUv.x;
         vUv = rotateUV(vUv, -rotation * 3.1415 / 2.0);
         vUv.x /= 1.0+rotation;
-
           vec3 mPosition = position;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(mPosition, 1.0);
       }
@@ -688,14 +682,14 @@ const loader = new THREE.TextureLoader(manager);
       uniform float uScroll;
       uniform sampler2D uTexture;
       uniform sampler2D uTextureOverlay;
-      
       void main() {
-      vec2 uv = vUv;
-      // uv = vec2(uv.y, 1.0 - uv.x);
-      // uv.x/=1920.0/1080.0*2.0;
+        vec2 uv = vUv;
         vec4 overlay = texture2D(uTextureOverlay, uv).rgba;
+        uv.x*= 1.0+0.075*uScroll;
+        uv.y-= 0.075*uScroll;
+        uv.y*= 1.0+0.175*uScroll;
         gl_FragColor.rgba = texture2D(uTexture, uv).rgba;
-        // gl_FragColor.rgb=mix(gl_FragColor.rgb, gl_FragColor.rgb*overlay.rgb, uScroll);
+        gl_FragColor.rgb = mix(vec3(0.0), gl_FragColor.rgb, step(uv.x,1.0)*step(uv.y,1.0)*step(0.0, uv.y));
         gl_FragColor.rgb=mix(gl_FragColor.rgb, overlay.rgb, clamp(-rotation+uScroll*overlay.a, 0.0, 1.0)*0.5);
       }
       `,
