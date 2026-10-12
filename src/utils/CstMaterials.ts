@@ -15,7 +15,8 @@ import matcapFragmentShader from "../shader/matcapMaterial.frag?raw";
 import matcapDynFragmentShader from "../shader/matcapDynMaterial.frag?raw";
 import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
 import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
-import { hexToVec3Linear } from "./utils";
+import config from '@/config/videoConfig.json';
+
 import { eventBus } from "@/eventBus";
 
 import { computed } from 'vue';
@@ -25,11 +26,9 @@ export interface CstMaterialsOpts {
 }
 
 const videoUrl = computed(() => {
-  const path = window.location.pathname;
-  if (path.includes('/voyage')) return '/video/LAPLAND_2025.mp4';
-  if (path.includes('/pub')) return '/video/CST_PUB.mp4';
-  if (path.includes('/pizza')) return '/video/CST_PIZZA.mp4';
-  return './video/CST_reel_2026.mp4';
+  const hash = window.location.hash;
+  return config.videos[hash as keyof typeof config.videos]
+    || config.default;
 });
 
 export class CstMaterials {
