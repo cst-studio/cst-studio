@@ -117,7 +117,7 @@ this.videoTexture.colorSpace = THREE.SRGBColorSpace;
     const manager = new THREE.LoadingManager();
 
   manager.onProgress = (url, loaded, total) => {
-
+console.log('manager.onProgress', url, loaded , total)
   const progress = loaded / total;
   eventBus.emit("loadTexture", Math.round(progress * 90));
 

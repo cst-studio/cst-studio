@@ -19,11 +19,11 @@ const checkLoading = () => {
   }
 }
 const onLoadTexture = (progress:number) => {
-  percentTexture.value = progress
+  percentTexture.value = Math.min(100, progress)
   checkLoading()
 }
 const onLoadGLB = (progress:number) => {
-  percentGLB.value = progress
+  percentGLB.value = Math.min(100, progress)
   checkLoading()
 }
 // const sceneReady = (isReady:boolean) => {
