@@ -38,7 +38,7 @@ eventBus.on('loadTexture', onLoadTexture)
 </script>
 
 <template>
-  <div v-if="hasLoader" class="loader">
+  <div v-if="!sceneIsReady" class="loader" :class="{'hide' : !hasLoader}">
     <div class="loader-bar">
       <span></span>
       <span :style="`width:calc((100% - 20px) * ${(percentGLB + percentTexture) / 200} + 10px)`"></span>
@@ -86,6 +86,11 @@ header {
   justify-content: center;
   align-items: center;
   font-family: var(--font-display);
+  opacity: 1;
+  transition: opacity 2s ease;
+  &.hide{
+    opacity: 0;
+  }
   .loader-bar{
     position: relative;
     height: 20px;
