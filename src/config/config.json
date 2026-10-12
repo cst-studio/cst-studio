@@ -1,0 +1,66 @@
+{
+  "videos": {
+    "bytype": {
+      "#voyage": "./video/LAPLAND_2025.mp4",
+      "#pub": "./video/CST_PUB.mp4",
+      "#pizza": "./video/CST_PIZZA.mp4"
+    },
+    "default": "./video/CST_reel_2026.mp4"
+  },
+  "services": {
+    "title": "Nos Services",
+    "eyebrow": "Production audiovisuelle clé en main, de la conception à la diffusion.",
+    "footer": "Chaque projet reçoit l'exigence d'un film et la précision d'un brief stratégique.",
+    "content": [
+      {
+        "title": "PRODUCTION VIDÉO",
+        "eyebrow": "Vidéo d'Entreprise",
+        "desc": "Films institutionnels, publicités digitales, interviews corporate, reportages événementiels. L'exigence du cinéma au service de votre message.",
+        "img": "images/CST-video-prod.jpeg"
+      },
+      {
+        "title": "IMAGERIE AÉRIENNE",
+        "eyebrow": "Drone & Aérien",
+        "desc": "Drone certifié catégorie A1/A3, prises de vue 4K à 360°, time-lapse aériens. Des angles impossibles qui subliment vos espaces et événements.",
+        "img": "images/CST-drone.jpeg"
+      },
+      {
+        "title": "PHOTOGRAPHIE",
+        "eyebrow": "Photo Corporate",
+        "desc": "Portraits corporate, shooting événementiel, photographie d'architecture et de produit. Des images qui renforcent votre identité visuelle.",
+        "img": "images/CST-photo.jpeg"
+      },
+      {
+        "title": "ÉVÉNEMENTIEL",
+        "eyebrow": "Couverture & Interviews",
+        "desc": "Captation d'événements, interviews sur le vif, aftermovies et contenus immersifs. Nous racontons l'énergie de vos événements à travers des images spontanées et authentiques.",
+        "img": "images/CST-event.jpeg"
+      },
+      {
+        "title": "RÉSEAUX SOCIAUX",
+        "eyebrow": "Social Media Content",
+        "desc": "Reels, vidéos courtes, interviews et contenus verticaux pensés pour les réseaux sociaux. Du tournage à la publication, des formats qui captent l'attention et font vivre votre actualité.",
+        "img": "images/CST-social.jpeg"
+      }
+    ]
+  },
+  "prods": {
+    "title": "Dernieres Prods",
+    "eyebrow": "Les dernières histoires que nous avons imaginées, produites et mises en images.",
+    "footer": "Du premier brief au dernier plan, chaque image compte.",
+    "content": [
+      {
+        "title": "PRODUCTION #1",
+        "eyebrow": "Vidéo d'Entreprise",
+        "desc": "Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.",
+        "img": "images/work-in-progress.jpeg"
+      },
+      {
+        "title": "PRODUCTION #2",
+        "eyebrow": "Vidéo d'Entreprise",
+        "desc": "Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.",
+        "img": "images/work-in-progress.jpeg"
+      }
+    ]
+  }
+}
