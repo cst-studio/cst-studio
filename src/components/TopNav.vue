@@ -19,7 +19,6 @@ const showBurger = ref<Boolean>(true);
 
 const handleScroll = () => {
   isScrolling.value = window.scrollY > 500
-  console.log(window.scrollY)
 }
 const sections = [
   ["Accueil",".main-hero-section"],
