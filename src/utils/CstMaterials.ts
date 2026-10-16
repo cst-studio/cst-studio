@@ -142,7 +142,7 @@ const loader = new THREE.TextureLoader(manager);
       this.projo_Texture = texture4;
       this.screen_Texture = texture5;
       this.concrete_Texture = texture6;
-      this.MatCapMat.uniforms.uMatcap.value = texture8;
+      this.MatCapMat.uniforms.uMatcap.value = texture7;
       this.MatCapDynMat.uniforms.uMatcap.value = texture8;
       this.CableShadowMat.uniforms.uTexture.value = texture9;
       this.Screen.uniforms.uTextTexture.value = texture10;
@@ -589,8 +589,8 @@ const loader = new THREE.TextureLoader(manager);
         
         
         gl_FragColor = vec4(color, distance(vec2(0.5,0.0), vUv));
-        // color = mix(vec3(0.95,0.95,0.95), vec3(0.2,0.2,0.3), clamp(vUv.y*2.0-0.5, 0.0,1.0));
-        // color = mix(vec3(0.1,0.1,0.1), color, clamp(vUv.y*2.0, 0.0,1.0));
+        gl_FragColor = vec4(color, 1.0);
+        
         color = mix(vec3(0.0,0.95,0.95), vec3(1.0,0.2,0.3), clamp(vUv.y*2.0-0.5, 0.0,1.0));
         color = mix(vec3(0.1,0.1,1.0), color, clamp(vUv.y*2.0, 0.0,1.0));
         color *= 0.2;
@@ -599,8 +599,9 @@ const loader = new THREE.TextureLoader(manager);
         gl_FragColor.rgba = texture2D(uTexture, vUv*3.0).rgba;
         gl_FragColor.rgb *= gl_FragColor.r;
         gl_FragColor.rgb *= 0.1;
-        // gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.17));
         gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.5, 1.0);
+
+        // gl_FragColor.r += 0.5;
       }
       `,
       precision: 'lowp',
@@ -612,11 +613,11 @@ const loader = new THREE.TextureLoader(manager);
         uTexture: { value: null },
         uScroll: { value: 0.0 }
       },
-      side: THREE.FrontSide,
+      // side: THREE.FrontSide,
       transparent: true,
       // premultipliedAlpha: true,
-      depthWrite: false,
-      depthTest: false,
+      // depthWrite: false,
+      // depthTest: false,
       // blending: THREE.AdditiveBlending
       // blending: THREE.MultiplyBlending
     });
@@ -647,8 +648,8 @@ const loader = new THREE.TextureLoader(manager);
       },
       side: THREE.FrontSide,
       transparent: true,
-      depthWrite: false,
-      depthTest: false,
+      // depthWrite: false,
+      // depthTest: false,
     });
     return customMaterial;
   }
@@ -671,7 +672,9 @@ const loader = new THREE.TextureLoader(manager);
         vUv = 1.0-uv;
         vUv.x = 1.0-vUv.x;
         vUv = rotateUV(vUv, -rotation * 3.1415 / 2.0);
-        vUv.x /= 1.0+rotation;
+        vUv.x -= 0.5;
+        vUv.x /= 1.0+rotation*1.777;
+        vUv.x += 0.5;
           vec3 mPosition = position;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(mPosition, 1.0);
       }
@@ -682,6 +685,7 @@ const loader = new THREE.TextureLoader(manager);
       uniform vec3 uColor2;
       uniform vec3 uColor3;
       uniform float uTime;
+      uniform float uPortrait;
       uniform float rotation;
       uniform float uScroll;
       uniform sampler2D uTexture;
@@ -696,60 +700,64 @@ const loader = new THREE.TextureLoader(manager);
       void main() {
         vec2 uv = vUv;
         vec4 overlay = texture2D(uTextureOverlay, uv).rgba;
-        uv.x*= 1.0+0.075*uScroll;
-        uv.y-= 0.075*uScroll;
-        uv.y*= 1.0+0.175*uScroll;
+        uv.x*= 1.0+0.075*uScroll*(1.0-uPortrait);
+        uv.y-= 0.075*uScroll*(1.0-uPortrait);
+        uv.y*= 1.0+0.175*uScroll*(1.0-uPortrait);
         gl_FragColor.rgba = texture2D(uTexture, uv).rgba;
         gl_FragColor.rgb = mix(vec3(0.0), gl_FragColor.rgb, step(uv.x,1.0)*step(uv.y,1.0)*step(0.0, uv.y));
         gl_FragColor.rgb=mix(gl_FragColor.rgb, overlay.rgb, clamp(-rotation+uScroll*overlay.a, 0.0, 1.0)*0.5);
-        vec2 uvTxt = uv;
-        uvTxt.x*=1.77777;
-        uvTxt-=0.5;
-        uvTxt.y-=0.545;
-        uvTxt.x+=0.45;
-        uvTxt*=10.0;
-        uvTxt+=0.5;
-        float cs = 0.0;
-        float decalage = 0.0;
-        int tim;
-        tim = int(uTime*0.0001)%10+48;
-        float c = _char(uTextTexture, uvTxt, tim);
-        cs+=c;
-        decalage+=0.5;
-        tim = int(uTime*0.001)%10+48;
-        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
-        cs+=c;
-        decalage+=0.4;
-        cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
-        decalage+=0.4;
-        tim = int(uTime*0.01)%10+48;
-        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
-        cs+=c;
-        tim = int(uTime*0.1)%10+48;
-        decalage+=0.5;
-        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
-        cs+=c;
-        decalage+=0.4;
-        cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
-        decalage+=0.4;
-        tim = int(uTime*1.0)%10+48;
-        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
-        cs+=c;
-        tim = int(uTime*10.0)%10+48;
-        decalage+=0.5;
-        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
-        cs+=c;
-        decalage+=0.4;
-        cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
-        tim = int((uTime*0.2)*100.0)%10+48;
-        decalage+=0.4;
-        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
-        cs+=c;
-        tim = int((uTime*0.4+5.0)*100.0)%10+48;
-        decalage+=0.5;
-        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
-        cs+=c;
-        gl_FragColor.rgb += cs*0.5;
+        
+        {
+            vec2 uvTxt = uv;
+            uvTxt.x*=1.77777;
+            uvTxt-=0.5;
+            uvTxt.y-=0.545;
+            uvTxt.x+=0.45;
+            uvTxt*=10.0;
+            uvTxt+=0.5;
+
+            float cs = 0.0;
+            float decalage = 0.0;
+            int tim;
+            tim = int(uTime*0.0001)%10+48;
+            float c = _char(uTextTexture, uvTxt, tim);
+            cs+=c;
+            decalage+=0.5;
+            tim = int(uTime*0.001)%10+48;
+            c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+            cs+=c;
+            decalage+=0.4;
+            cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
+            decalage+=0.4;
+            tim = int(uTime*0.01)%10+48;
+            c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+            cs+=c;
+            tim = int(uTime*0.1)%10+48;
+            decalage+=0.5;
+            c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+            cs+=c;
+            decalage+=0.4;
+            cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
+            decalage+=0.4;
+            tim = int(uTime*1.0)%10+48;
+            c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+            cs+=c;
+            tim = int(uTime*10.0)%10+48;
+            decalage+=0.5;
+            c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+            cs+=c;
+            decalage+=0.4;
+            cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
+            tim = int((uTime*0.2)*100.0)%10+48;
+            decalage+=0.4;
+            c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+            cs+=c;
+            tim = int((uTime*0.4+5.0)*100.0)%10+48;
+            decalage+=0.5;
+            c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+            cs+=c;
+            gl_FragColor.rgb += cs*0.5;
+        }
       }
       `,
       precision: 'lowp',
@@ -762,13 +770,14 @@ const loader = new THREE.TextureLoader(manager);
         uTextTexture: { value: null },
         rotation: { value: 0.0 },
         uTime: { value: 0.0 },
+        uPortrait: { value: 0.0 },
         uScroll: { value: 1.0 }
       },
       side: THREE.FrontSide,
       transparent: true,
       // premultipliedAlpha: true,
-      depthWrite: false,
-      depthTest: false,
+      // depthWrite: false,
+      // depthTest: false,
       // blending: THREE.AdditiveBlending
       // blending: THREE.MultiplyBlending
     });
@@ -931,8 +940,8 @@ const loader = new THREE.TextureLoader(manager);
       fragmentShader: matcapDynFragmentShader,
       side: THREE.FrontSide,
       transparent: true,
-      depthWrite: false,
-      depthTest: false,
+      // depthWrite: false,
+      // depthTest: false,
     });
     return customMaterial;
   }
