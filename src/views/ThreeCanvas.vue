@@ -8,13 +8,9 @@ import gltfUrl from "@/assets/cst.glb?url";
 import { t } from "@/strings";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { hexToVec3Srgb } from "@/utils/utils.ts";
-import {
-  ref,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 import { eventBus } from "@/eventBus";
 import {
@@ -30,30 +26,29 @@ import {
   MathUtils,
 } from "three";
 
-const _isMobile = isMobile()
-const domScroll: DomScroll = new DomScroll()
+const _isMobile = isMobile();
+const domScroll: DomScroll = new DomScroll();
 const canvas = ref<HTMLCanvasElement | null>(null);
-  const scene = new Scene();
-  const introTL = gsap.timeline();
-  let backgroundPlane: Mesh;
-  const cstContainer: Group = new Group();
-  let cstLibrary: Group;
-  const cstGroup: Group = new Group();
-  const cstMaterials: CstMaterials = new CstMaterials();
-  
-  
+const scene = new Scene();
+const introTL = gsap.timeline();
+let backgroundPlane: Mesh;
+const cstContainer: Group = new Group();
+let cstLibrary: Group;
+const cstGroup: Group = new Group();
+const cstMaterials: CstMaterials = new CstMaterials();
+
 let isScrolling = false;
 
 const appState = useAppState();
 
 let renderer: WebGLRenderer;
 
-let camera: PerspectiveCamera
+let camera: PerspectiveCamera;
 const clock = new Clock();
 
 let screenTopLeft: Vector3 = new Vector3(-1, 1, 0);
 let screenTopLeftAt2: Vector3 = new Vector3(-1, 1, 0);
-let isPortrait: Boolean = false
+let isPortrait: Boolean = false;
 
 function getiOSVersion() {
   const match = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
@@ -67,193 +62,172 @@ function getiOSVersion() {
 const iosVersion = getiOSVersion();
 
 const initScroll = () => {
-  gsap.registerPlugin(ScrollTrigger)
-  gsap.ticker.lagSmoothing(0)
-  domScroll.init()
-
-}
-const updateScene1 = (value:number = 0) => {
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.ticker.lagSmoothing(0);
+  domScroll.init();
+};
+const updateScene1 = (value: number = 0) => {
   // const progress = gsap.parseEase("power1.out")(value)
-  const progress = gsap.parseEase("power1.out")(value)
-  const progress2 = gsap.parseEase("sine.out")(value)
-  camera.position.y = 4+progress
+  const progress = gsap.parseEase("power1.out")(value);
+  const progress2 = gsap.parseEase("sine.out")(value);
+  camera.position.y = 4 + progress;
+
   // Scene1.position.y = -0.0-progress*2.0
-  iPad.position.y = -0.0-progress*2.0
-  iPadFrame.position.y = iPad.position.y
-  BgCurveContainer.position.y = iPad.position.y+5
-  BgCurveContainer.position.z = 1
-  iPadContainer.position.z = -progress*(isPortrait?1.4:0.5)
-  iPadContainer.scale.setScalar(1.0-progress*0.5)
-  Projo1Container.position.x = (progress-1)*2
-  Projo2Container.position.x = -Projo1Container.position.x
+  iPad.position.y = -0.0 - progress * 2.0;
+  iPadFrame.position.y = iPad.position.y;
+  iPadFramePole.position.y = iPad.position.y;
+  BgCurveContainer.position.y = iPad.position.y + 5;
+  BgCurveContainer.position.z = 1;
+  iPadContainer.position.z = -progress * (isPortrait ? 1.4 : 0.5);
+  iPadContainer.scale.setScalar(1.0 - progress * 0.5);
+  Projo1Container.position.x = (progress - 1) * 2;
+  Projo2Container.position.x = -Projo1Container.position.x;
   // iPad.rotation.x = Math.PI * 2.0 * Math.max(0.0, Math.min(progress*4.0-2.0, 1.0))
-  cstMaterials.Screen.uniforms.uScroll.value = Math.max(0.0, Math.min(progress*4.0-3.0, 1.0))
-  const rotationProgress = Math.sin(progress2*Math.PI*2.0-Math.PI*0.5)+1.0
-  iPadContainer.rotation.x = -0.1 * rotationProgress
-}
+  cstMaterials.Screen.uniforms.uScroll.value = Math.max(
+    0.0,
+    Math.min(progress * 4.0 - 3.0, 1.0),
+  );
+  const rotationProgress =
+    Math.sin(progress2 * Math.PI * 2.0 - Math.PI * 0.5) + 1.0;
+  iPadContainer.rotation.x = -0.1 * rotationProgress;
+};
 const initThree = () => {
   loadCstLibrary(gltfUrl, (xhr) => {
-    eventBus.emit("loadGLB", Math.round(xhr.loaded / xhr.total * 100));
+    eventBus.emit("loadGLB", Math.round((xhr.loaded / xhr.total) * 100));
   }).then((gltf) => {
     cstLibrary = gltf.scene;
     eventBus.emit("sceneReady", true);
     initCstLibrary();
-    updateScene1(0)
-    setTimeout(()=>{
-      gsap.to({}, {
-        scrollTrigger: {
-          trigger: '#scroller-p1',
-          start: 'top top',
-          end: 'bottom bottom',
-          markers: false,
-          scrub: 1,
-          onUpdate: (self) => {
-            updateScene1(self.progress)
-          }
-        }
-      })
-      const easer = CustomEase.create("custom", "M0,0 C0.199,0 0.79,0.698 1,1 ");
-      gsap.to({}, {
-        scrollTrigger: {
-          trigger: '#scroller-p2',
-          start: 'bottom bottom',
-          end: 'bottom top',
-          markers: false,
-          scrub: 1,
-          onUpdate: (self) => {
-            const progress = gsap.parseEase(easer)(self.progress)
-            Scene1.position.z = screenTopLeft.z*progress*2.0
-            // Scene1.position.z = 0
-            Scene1.rotation.x = progress*Math.PI/2
-            Scene1.position.y = 0
-            
-            // BgCurve.rotation.z = 0
-            // BgCurve.position.y = 50.8016
-            // BgCurve.material.uniforms.uScroll.value = progress //TODO
-            if(self.progress>=0.95){
-              if(!cstMaterials.video.paused) {
-                cstMaterials.video.pause()
-                // Scene1.visible = false
-              }
-            } else {
-              if(cstMaterials.video.paused) {
-                cstMaterials.video.play()
-                Scene1.visible = true
-              } 
-            }
-            }
-        }
-      })
-      const speedScroll = 2.0
-      gsap.to({}, {
-        scrollTrigger: {
-          trigger: '#scroller-services',
-          start: 'top top',
-          end: 'bottom bottom',
-          markers: false,
-          scrub: 1,
-          onUpdate: (self) => {
-            const progress = self.progress
-            // Scene1.position.z = screenTopLeft.z*2.0+screenTopLeft.z*progress*12.0
-            BgCurveContainer.position.y = 3+screenTopLeft.z*0.0+screenTopLeft.z*progress*domScroll.heightServiceRound*speedScroll
-            // BgCurveEnd.position.y=-BgCurveContainer.position.y
-            // BgCurveEnd.position.y=-BgCurveContainer.position.y+3
-            // Debug1.position.y = -BgCurveContainer.position.y+3
-            // BgCurveEnd.position.y = 3.18
-            }
-        }
-      })
-      gsap.to({}, {
-        scrollTrigger: {
-          trigger: '#scroller-prods',
-          start: 'top bottom',
-          end: 'bottom bottom',
-          markers: false,
-          scrub: 1,
-          onUpdate: (self) => {
-            const progress = self.progress
-            BgCurveContainer.position.y = 3+screenTopLeft.z*(domScroll.heightServiceRound*speedScroll)+screenTopLeft.z*progress*domScroll.heightProdsRound*speedScroll
-            // BgCurveEnd.position.y=-BgCurveContainer.position.y+3
-            }
-        }
-      })
-
-      // gsap.to(Scene1.position, {
-      //   z: -8,
-      //   scrollTrigger: {
-      //     trigger: '#scroller',
-      //     start: 'top top',
-      //     end: 'bottom top',
-      //     markers: false,
-      //     scrub: 1,
-      //     onUpdate: (cal) => {
-      //       BgCurve.material.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
-      //       cstMaterials.Projo.uniforms.uScroll.value = 1.0-Math.min(1.0, (cal.progress*9))
-      //       }
-      //   }
-      // })
-      gsap.to({},{
-        scrollTrigger: {
-          trigger: '#scroller-contact',
-          start: 'top bottom',
-          end: 'bottom bottom',
-          markers: false,
-          scrub: 1,
-          invalidateOnRefresh: true,
-          onRefresh: () => {
+    updateScene1(0);
+    setTimeout(() => {
+      gsap.to(
+        {},
+        {
+          scrollTrigger: {
+            trigger: "#scroller-p1",
+            start: "top top",
+            end: "bottom bottom",
+            markers: false,
+            scrub: 1,
+            onUpdate: (self) => {
+              updateScene1(self.progress);
+            },
           },
-          onUpdate: (self) => {
-            const progress = self.progress
-            const progress2 = gsap.parseEase(easer)(self.progress)
-            Logo.rotation.x = -(1.0-progress2)*Math.PI/2
-            const logo_offset = -screenTopLeft.z*2
-            // console.log(scene)
-            Logo.position.z=logo_offset-logo_offset*progress-0.3
-            // BgCurveContainer.rotation.x = progress*Math.PI/2
-            // BgCurveContainer.position.y = screenTopLeft.z*progress*2.0
-            BgCurveContainer.position.y = 3+screenTopLeft.z*(domScroll.heightServiceRound*speedScroll+domScroll.heightProdsRound*speedScroll)+screenTopLeft.z*progress*speedScroll
-            // BgCurveEnd.position.y = (3+screenTopLeft.z*(heightServiceRound*speedScroll+heightProdsRound*speedScroll))+3
-            
-            // BgCurveContainer.position.z = -progress*10.0
-            
-            // BgCurve.position.y = -screenTopLeft.z*(2.0+heightServiceRound*speedScroll+heightProdsRound*speedScroll)-screenTopLeft.z*speedScroll*2
-
-            // BgCurveContainer.position.y = iPad.position.y+5
-            // BgCurveContainer.position.z = 1
-            // BgCurveContainer.visible=false
-            // BgCurve.rotation.z = Math.PI
-            // BgCurveEnd.position.y = 3+screenTopLeft.z*(heightServiceRound*speedScroll+heightProdsRound*speedScroll)+screenTopLeft.z*progress*speedScroll*0
-            // BgCurveEnd.position.z = -screenTopLeft.z+screenTopLeft.z*2*progress+screenTopLeft.z*2.0
-            // BgCurveEnd.position.z = Logo.position.z+screenTopLeft.z
-            // BgCurveEnd.position.y = -1+progress*6.0
-            // BgCurveEnd.position.y = 3.18
-            // BgCurveEnd.rotation.x=Logo.rotation.x-Math.PI
-            // BgCurveEnd.rotation.x=progress*Math.PI*0.5
-
-            
-            
-            // SmokeFloor.position.z=Logo.position.z+0.6
-          }
-          }
-      })
-    // gsap.to(SmokeFloor.rotation, {
-    //   x: 0.0,
-    //   scrollTrigger: {
-    //       trigger: '#footer',
-    //       start: 'top bottom',
-    //       end: 'bottom bottom',
-    //       markers: false,
-    //       scrub: 1,
-    //       }
-    //       })
-
-
-    }, 500)
-
-
+        },
+      );
+      const easer = CustomEase.create(
+        "custom",
+        "M0,0 C0.199,0 0.79,0.698 1,1 ",
+      );
+      gsap.to(
+        {},
+        {
+          scrollTrigger: {
+            trigger: "#scroller-p2",
+            start: "bottom bottom",
+            end: "bottom top",
+            markers: false,
+            scrub: 1,
+            onUpdate: (self) => {
+              const progress = gsap.parseEase(easer)(self.progress);
+              // Scene1.position.z = screenTopLeft.z * progress * 2.0;
+              Scene1.position.z = screenTopLeft.z * self.progress * 2.0*1.0;
+              // BgCurveContainer.position.y = 3 + self.progress*10
+              // BgCurveContainer.position.z = 2;
+              // Scene1.position.z = 0
+              Scene1.rotation.x = (self.progress * Math.PI) / 2;
+              Scene1.position.y = 0;
+              if (self.progress >= 0.95) {
+                if (!cstMaterials.video.paused) {
+                  cstMaterials.video.pause();
+                  // Scene1.visible = false
+                }
+              } else {
+                if (cstMaterials.video.paused) {
+                  cstMaterials.video.play();
+                  Scene1.visible = true;
+                }
+              }
+            },
+          },
+        },
+      );
+      const speedScroll = 2.0;
+      gsap.to(
+        {},
+        {
+          scrollTrigger: {
+            trigger: "#scroller-services",
+            start: "top top",
+            end: "bottom bottom",
+            markers: false,
+            scrub: 1,
+            onUpdate: (self) => {
+              const progress = self.progress;
+              // BgCurveContainer.position.y =
+              //   3 +
+              //   screenTopLeft.z * 0.0 +
+              //   screenTopLeft.z *
+              //     progress *
+              //     domScroll.heightServiceRound *
+              //     speedScroll;
+            },
+          },
+        },
+      );
+      gsap.to(
+        {},
+        {
+          scrollTrigger: {
+            trigger: "#scroller-prods",
+            start: "top bottom",
+            end: "bottom bottom",
+            markers: false,
+            scrub: 1,
+            onUpdate: (self) => {
+              const progress = self.progress;
+              
+              // BgCurveContainer.position.y =
+              //   3 +
+              //   screenTopLeft.z * (domScroll.heightServiceRound * speedScroll) +
+              //   screenTopLeft.z *
+              //     progress *
+              //     domScroll.heightProdsRound *
+              //     speedScroll;
+            },
+          },
+        },
+      );
+      gsap.to(
+        {},
+        {
+          scrollTrigger: {
+            trigger: "#scroller-contact",
+            start: "top bottom",
+            end: "bottom bottom",
+            markers: false,
+            scrub: 1,
+            invalidateOnRefresh: true,
+            onRefresh: () => {},
+            onUpdate: (self) => {
+              const progress = self.progress;
+              const progress2 = gsap.parseEase(easer)(self.progress);
+              Logo.rotation.x = (-(1.0 - progress2) * Math.PI) / 2;
+              const logo_offset = -screenTopLeft.z * 2;
+              Logo.position.z = logo_offset - logo_offset * progress - 0.3;
+              // BgCurveContainer.position.y =
+              //   3 +
+              //   screenTopLeft.z *
+              //     (domScroll.heightServiceRound * speedScroll +
+              //       domScroll.heightProdsRound * speedScroll) +
+              //   screenTopLeft.z * progress * speedScroll;
+            },
+          },
+        },
+      );
+    }, 500);
   });
 };
-
 
 const busy = (): boolean => {
   let flag: boolean = false;
@@ -265,7 +239,7 @@ const tweenTo = (
   progress: number,
   duration: number = 0.5,
 ) => {
-  if(tween?.vars.progress==progress) return ;
+  if (tween?.vars.progress == progress) return;
   tween?.kill();
   tween.duration(duration);
   tween.vars.progress = progress;
@@ -277,160 +251,165 @@ function loadCstLibrary(url, onProgress) {
     return gltf;
   });
 }
-let SpotLeft : Mesh;
-let SpotRight : Mesh;
-let SmokeFloor : Mesh;
+let SpotLeft: Mesh;
+let SpotRight: Mesh;
+let SmokeFloor: Mesh;
 // let SmokeOver : Mesh;
-let Logo : Mesh;
-let BgCurveContainer : Group;
-let BgCurve : Mesh;
-let BgCurveFloor : Mesh;
+let Logo: Mesh;
+let BgCurveContainer: Group;
+let BgCurve: Mesh;
+let BgCurveFloor: Mesh;
 // let BgCurveEnd : Mesh;
-let iPad : Mesh;
-let iPadFrame : Mesh;
-let iPadContainer : Group;
-let Projo1Container : Group;
-let Projo2Container : Group;
-let Projo1 : Mesh;
-let Projo2 : Mesh;
-let Cable : Mesh;
-let CableShadow : Mesh;
+let iPad: Mesh;
+let iPadFrame: Mesh;
+let iPadFramePole: Mesh;
+let iPadContainer: Group;
+let iPadContainerInner: Group;
+let Projo1Container: Group;
+let Projo2Container: Group;
+let Projo1: Mesh;
+let Projo2: Mesh;
+let Cable: Mesh;
+let CableShadow: Mesh;
 // let Debug1 : Mesh;
 // let Debug2 : Mesh;
-let Scene1 : Group;
+let Scene1: Group;
 
-
-const iPadRotationTween = { progress: 0, tween: null as unknown as gsap.core.Tween };
+const iPadRotationTween = {
+  progress: 0,
+  tween: null as unknown as gsap.core.Tween,
+};
 iPadRotationTween.tween = gsap.to(iPadRotationTween, {
   progress: 0,
   duration: 0,
   ease: "power1.inOut",
-  onUpdate:()=>{
-    if(iPad){
-      iPadContainer.rotation.y = Math.PI/2 * Math.min(iPadRotationTween.progress*8.0, 1.0)
+  onUpdate: () => {
+    if (iPad) {
+      iPadContainerInner.rotation.y =
+        (Math.PI / 2) * Math.min(iPadRotationTween.progress * 8.0, 1.0);
+      iPadFramePole.position.z = -3 * iPadRotationTween.progress;
+      Cable.position.z = 1 + 2.8 * iPadRotationTween.progress;
+      // BgCurveContainer.position.z = 1 + 2.8 * iPadRotationTween.progress;
       // iPad.scale.setScalar(1.6 + 1.2 * Math.min(Math.max(iPadRotationTween.progress*8.0-7.0, 0.0), 1.0))
-      cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress
+      cstMaterials.Screen.uniforms.rotation.value = iPadRotationTween.progress;
     }
-  }
+  },
 });
 
-
-
-
 const initCstLibrary = () => {
-  console.log(cstLibrary)
+  console.log(cstLibrary);
   // logo?.rotation.set(0,0,0)
-  
-  
-  SpotLeft = cstLibrary.getObjectByName("SpotLeft")! as Mesh
-  SpotLeft.material = cstMaterials.SpotLeft
-  SpotLeft.position.set(-3,0,-4)
-  // SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xc3c8db) 
-  SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xb3b8db) 
+
+  SpotLeft = cstLibrary.getObjectByName("SpotLeft")! as Mesh;
+  SpotLeft.material = cstMaterials.SpotLeft;
+  SpotLeft.position.set(-3, 0, -4);
+  // SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xc3c8db)
+  SpotLeft.material.uniforms.uColor1.value = hexToVec3Srgb(0xb3b8db);
   scene.add(SpotLeft);
-  
-  SpotRight = cstLibrary.getObjectByName("SpotRight")! as Mesh
-  SpotRight.material = cstMaterials.SpotRight
-  SpotRight.material.uniforms.uOffsetUV.value = 0.5
-  // SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xDD6666) 
-  SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xDD6666) 
-  // SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0x996666) 
-  SpotRight.position.set(5,0,-4)
+
+  SpotRight = cstLibrary.getObjectByName("SpotRight")! as Mesh;
+  SpotRight.material = cstMaterials.SpotRight;
+  SpotRight.material.uniforms.uOffsetUV.value = 0.5;
+  // SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xDD6666)
+  SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0xdd6666);
+  // SpotRight.material.uniforms.uColor1.value = hexToVec3Srgb(0x996666)
+  SpotRight.position.set(5, 0, -4);
   scene.add(SpotRight);
-  
-  Logo = cstLibrary.getObjectByName("Logo")! as Mesh
+
+  Logo = cstLibrary.getObjectByName("Logo")! as Mesh;
   // Logo.material = cstMaterials.Logo
   // Logo.material = cstMaterials.MatCapDynMat
-  Logo.material = cstMaterials.MatCapDynMat
-  Logo.position.set(0,0,6.2)
+  Logo.material = cstMaterials.MatCapDynMat;
+  Logo.position.set(0, 0, 6.2);
   scene.add(Logo);
 
-  SmokeFloor = cstLibrary.getObjectByName("SmokeFloor")! as Mesh
-  SmokeFloor.material = cstMaterials.Floor
+  SmokeFloor = cstLibrary.getObjectByName("SmokeFloor")! as Mesh;
+  SmokeFloor.material = cstMaterials.Floor;
   // SmokeFloor.material = cstMaterials.SmogFloor
   // SmokeFloor.material = cstMaterials.SmogFloor
   // SmokeFloor.position.set(0,0,6.2)
-  SmokeFloor.position.set(0,0,0.8)
-  SmokeFloor.rotation.set(Math.PI/4,0,0)
+  SmokeFloor.position.set(0, 0, 0.8);
+  SmokeFloor.rotation.set(Math.PI / 4, 0, 0);
   // SmokeFloor.position.set(0,0,0)
   // iPad.scale.setScalar(1.6)
   Logo.add(SmokeFloor);
-  
+
   // SmokeOver = cstLibrary.getObjectByName("SmokeOver")! as Mesh
   // SmokeOver.material = cstMaterials.SmogFloor
   // SmokeOver.position.set(0,0,0)
   // scene.add(SmokeOver);
-  
-  
-  
 
-
-  Scene1 = new Group()
-  Scene1.name="Scene1"
+  Scene1 = new Group();
+  Scene1.name = "Scene1";
   scene.add(Scene1);
-  
+
   // BgCurveEnd = cstLibrary.getObjectByName("BgCurveEnd")! as Mesh
-  BgCurveFloor = cstLibrary.getObjectByName("BgCurveFloor")! as Mesh
-  BgCurve = cstLibrary.getObjectByName("BgCurve")! as Mesh
-  BgCurve.material = cstMaterials.BgCurve
-  BgCurveFloor.material = cstMaterials.BgCurve
+  BgCurveFloor = cstLibrary.getObjectByName("BgCurveFloor")! as Mesh;
+  BgCurve = cstLibrary.getObjectByName("BgCurve")! as Mesh;
+  BgCurve.material = cstMaterials.BgCurve;
+  BgCurveFloor.material = cstMaterials.BgCurve;
   // BgCurve.material = cstMaterials.checker_Mat
   // BgCurveFloor.material = cstMaterials.checker_Mat
   // BgCurveEnd.material = cstMaterials.BgCurve
-  BgCurveContainer = new Group()
-  BgCurveContainer.name="BgCurveContainer"
-  BgCurveContainer.position.set(0,5,1)
-  BgCurve.position.set(0,0,0)
+  BgCurveContainer = new Group();
+  BgCurveContainer.name = "BgCurveContainer";
+  BgCurveContainer.position.set(0, 5, 1);
+  BgCurve.position.set(0, 0, 0);
   // BgCurveEnd.position.set(0,1,1)
   // BgCurveEnd.scale.setScalar(0.3) // todo
 
   // BgCurveFloor.scale.y=0.1
-  BgCurveFloor.position.set(0,0,0)
+  BgCurveFloor.position.set(0, 0, 0);
   Scene1.add(BgCurveContainer);
   // scene.add(BgCurveEnd);
   BgCurveContainer.add(BgCurve);
   BgCurveContainer.add(BgCurveFloor);
 
-  iPadContainer = new Group()
-  iPadContainer.name="iPadContainer"
-  iPadFrame = cstLibrary.getObjectByName("iPadFrame")! as Mesh
+  iPadContainer = new Group();
+  iPadContainerInner = new Group();
+  iPadContainer.name = "iPadContainer";
+  iPadContainerInner.name = "iPadContainerInner";
+  iPadFrame = cstLibrary.getObjectByName("iPadFrame")! as Mesh;
   // iPadFrame.material = cstMaterials.ScreenFrame
-  iPadFrame.material = cstMaterials.MatCapMat
-  iPadFrame.scale.setScalar(1.5)
-  iPad = cstLibrary.getObjectByName("iPad")! as Mesh
-  iPad.material = cstMaterials.Screen
-  iPad.position.set(0,0,-0.0)
-  iPad.scale.setScalar(1.5)
-  iPadContainer.add(iPad);
-  iPadContainer.add(iPadFrame);
+  iPadFrame.material = cstMaterials.MatCapMat;
+  iPadFrame.scale.setScalar(1.5);
+  iPad = cstLibrary.getObjectByName("iPad")! as Mesh;
+  iPad.material = cstMaterials.Screen;
+  iPad.position.set(0, 0, -0.0);
+  iPad.scale.setScalar(1.5);
+  iPadContainerInner.add(iPad);
+  iPadContainerInner.add(iPadFrame);
+  iPadContainer.add(iPadContainerInner);
   Scene1.add(iPadContainer);
-  
 
-  Projo1Container = new Group()
-  Projo2Container = new Group()
-  Projo1 = cstLibrary.getObjectByName("Projo1")! as Mesh
-  Projo1.material = cstMaterials.Projo
-  Projo1.position.set(0,-2,-0.0)
+  Projo1Container = new Group();
+  Projo2Container = new Group();
+  Projo1 = cstLibrary.getObjectByName("Projo1")! as Mesh;
+  Projo1.material = cstMaterials.Projo;
+  Projo1.position.set(0, -2, -0.0);
   Projo1Container.add(Projo1);
   Scene1.add(Projo1Container);
-  Projo1Container.visible = false
-  Projo2Container.visible = false
-  
-  Projo2 = cstLibrary.getObjectByName("Projo2")! as Mesh
-  Projo2.material = cstMaterials.Projo
+  Projo1Container.visible = false;
+  Projo2Container.visible = false;
+
+  Projo2 = cstLibrary.getObjectByName("Projo2")! as Mesh;
+  Projo2.material = cstMaterials.Projo;
   Projo2Container.add(Projo2);
   Scene1.add(Projo2Container);
-  
-  CableShadow = cstLibrary.getObjectByName("CableShadow")! as Mesh
-  CableShadow.material = cstMaterials.CableShadowMat
-  Cable = cstLibrary.getObjectByName("Cable")! as Mesh
-  Cable.material = cstMaterials.MatCapMat
-  Cable.position.set(0,-1,1.0)
-  CableShadow.position.set(0,0,0)
+
+  CableShadow = cstLibrary.getObjectByName("CableShadow")! as Mesh;
+  CableShadow.material = cstMaterials.CableShadowMat;
+  Cable = cstLibrary.getObjectByName("Cable")! as Mesh;
+  Cable.material = cstMaterials.MatCapMat;
+  Cable.position.set(0, -2.5, 1.0);
+  CableShadow.position.set(0, 0, 0);
   Cable.add(CableShadow);
   iPadContainer.add(Cable);
-  
 
+  iPadFramePole = cstLibrary.getObjectByName("iPadFramePole")! as Mesh;
+  iPadFramePole.material = cstMaterials.MatCapMat;
+  iPadFramePole.scale.setScalar(1.5);
+  iPadContainer.add(iPadFramePole);
 
   // Debug1 = cstLibrary.getObjectByName("Debug")! as Mesh
   // Debug2 = new Mesh(Debug1.geometry)
@@ -440,172 +419,134 @@ const initCstLibrary = () => {
   // Debug2.position.set(0,0,0)
   // BgCurveContainer.add(Debug1);
   // scene.add(Debug2);
-  
 
-  SpotRight.renderOrder = 31
-  SpotLeft.renderOrder = 30
-  SmokeFloor.renderOrder = 4
+  SpotRight.renderOrder = 31;
+  SpotLeft.renderOrder = 30;
+  SmokeFloor.renderOrder = 4;
   // SmokeOver.renderOrder = 5
-  Logo.renderOrder = 2
-  BgCurve.renderOrder = 0
-  BgCurveFloor.renderOrder = 0
+  Logo.renderOrder = 2;
+  BgCurve.renderOrder = 0 + 0;
+  BgCurveFloor.renderOrder = 0;
   // BgCurveEnd.renderOrder = 1
-  Cable.renderOrder = 39
-  CableShadow.renderOrder = 39
-  iPad.renderOrder = 40
-  iPadFrame.renderOrder = 41
-  Projo2.renderOrder = 51
-  Projo1.renderOrder = 52
+  Cable.renderOrder = 39;
+  CableShadow.renderOrder = 39;
+  iPad.renderOrder = 40;
+  iPadFrame.renderOrder = 41;
+  iPadFramePole.renderOrder = 41;
+  Projo2.renderOrder = 51;
+  Projo1.renderOrder = 52;
   // Debug1.renderOrder = 100
   // Debug2.renderOrder = 100
-  
-  
 };
 
-const screenCoord = (ndc:Vector3 = new Vector3(1, 1, 0), positionY: number = 0): Vector3 => {
+const screenCoord = (
+  ndc: Vector3 = new Vector3(1, 1, 0),
+  positionY: number = 0,
+): Vector3 => {
   ndc.unproject(camera);
   const direction = ndc.sub(camera.position).normalize();
   const distance = (positionY - camera.position.y) / direction.y;
-  const ret: Vector3 = camera.position.clone().add(direction.multiplyScalar(distance))
+  const ret: Vector3 = camera.position
+    .clone()
+    .add(direction.multiplyScalar(distance));
   return ret;
-}
-const placeObject = (object: Object3D, ndc:Vector3 = new Vector3(1, 1, 0)) => {
+};
+const placeObject = (object: Object3D, ndc: Vector3 = new Vector3(1, 1, 0)) => {
   ndc.unproject(camera);
   const direction = ndc.sub(camera.position).normalize();
   const distance = (object.position.y - camera.position.y) / direction.y;
   object.position.copy(
-    camera.position.clone().add(direction.multiplyScalar(distance))
+    camera.position.clone().add(direction.multiplyScalar(distance)),
   );
 };
 const scaleToViewportWidth = () => {
   const distance = camera.position.y;
   const vFov = MathUtils.degToRad(camera.fov);
-  const visibleHeight =
-    2 * Math.tan(vFov / 2) * distance;
-  const visibleWidth =
-    visibleHeight * camera.aspect;
+  const visibleHeight = 2 * Math.tan(vFov / 2) * distance;
+  const visibleWidth = visibleHeight * camera.aspect;
   return visibleWidth;
 };
 const scaleToViewportHeight = () => {
   const distance = camera.position.y;
   const vFov = MathUtils.degToRad(camera.fov);
-  const visibleHeight =
-    2 * Math.tan(vFov / 2) * distance;
+  const visibleHeight = 2 * Math.tan(vFov / 2) * distance;
   return visibleHeight;
 };
 // let height = window.innerHeight
 const resize = () => {
-  domScroll.updateHeight()
-
-  
-  // BgCurveFloor.scale.y=-((heightServiceRound+heightProdsRound)*screenTopLeftAt2.z*2)/50
-  
-  // console.log((-(heightServiceRound+heightProdsRound)*screenTopLeft.z*2)/50)
-  // console.log("Scene1.position", Scene1.position)
-  // console.log("BgCurveContainer.position", BgCurveContainer.position)
-  // console.log("BgCurveEnd.position", BgCurveEnd.position)
-  // console.log("BgCurveFloor.position", BgCurveFloor.position)
-  // console.log("BgCurveFloor.scale", BgCurveFloor.scale)
+  domScroll.updateHeight();
   if (isScrolling) return;
-  // const height = window.visualViewport?.height ?? window.innerHeight;
-  const height = document.documentElement.clientHeight+100;
+  const height = document.documentElement.clientHeight + 100;
   const width = window.visualViewport?.width ?? window.innerWidth;
-  // const height = window.innerHeight;
-  // const width = window.innerWidth;
   const aspect = width / height;
   const iPadAspect = 1.7;
-  
+
   const objWidth = 10.0;
-  // const objWidth = 40.0;
   const cameraZ = 8;
-  const hFov = 2 * Math.atan((objWidth / 2) / cameraZ);
+  const hFov = 2 * Math.atan(objWidth / 2 / cameraZ);
   const vFov = 2 * Math.atan(Math.tan(hFov / 2) / aspect);
-  if(!camera) {
-    setTimeout(resize, 500)
-    return
+  if (!camera) {
+    setTimeout(resize, 500);
+    return;
   }
-  // console.log("vFov", vFov, "aspect", aspect, "width", width, "height", height)
   camera.fov = MathUtils.radToDeg(vFov);
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
-  // composer.setSize(width, height);
-
-
-
 
   const camY = camera.position.y;
   camera.position.y = 5;
   camera.updateMatrixWorld();
   screenTopLeft = screenCoord(new Vector3(-1, 1, 0), 0);
   screenTopLeftAt2 = screenCoord(new Vector3(-1, 1, 0), -2);
-  // screenTopLeftAt2 = screenTopLeft;
-  // console.log("screenTopLeftAt2.x", screenTopLeftAt2.x)
-  // console.log("screenTopLeft.x", screenTopLeft.x)
-  console.log(screenTopLeftAt2)
-  // Projo1.position.set(screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
   Projo1.position.set(screenTopLeft.x, 0, 0);
   Projo2.position.set(-screenTopLeft.x, 0, 0);
-  // Projo1.position.set(screenTopLeftAt2.x, -2, 0);
-  // Projo2.position.set(-screenTopLeftAt2.x, -2, 0);
-  // BgCurve.position.set(-screenTopLeftAt2.x, screenTopLeftAt2.y, 0);
-  // BgCurve.position.y=-2
   SpotLeft.position.set(screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
   SpotRight.position.set(-screenTopLeft.x, screenTopLeft.y, screenTopLeft.z);
 
-
-  if(_isMobile){
+  if (_isMobile) {
     Projo1.scale.setScalar(4);
     Projo2.scale.setScalar(4);
   } else {
-    Projo1.scale.setScalar(1+(1/aspect)*0.75);
-    Projo2.scale.setScalar(1+(1/aspect)*0.75);
-
+    Projo1.scale.setScalar(1 + (1 / aspect) * 0.75);
+    Projo2.scale.setScalar(1 + (1 / aspect) * 0.75);
   }
 
-
-  
-  if(aspect<1.7){
-    // iPadContainer.scale.setScalar(1.5 + (1.7-aspect)*2.0)
-    iPad.scale.setScalar(1.5 + (1.7-aspect)*2.0)
-    iPadFrame.scale.setScalar(1.5 + (1.7-aspect)*2.0)
+  if (aspect < 1.7) {
+    iPad.scale.setScalar(1.5 + (1.7 - aspect) * 2.0);
+    iPadFrame.scale.setScalar(1.5 + (1.7 - aspect) * 2.0);
+    iPadFramePole.scale.setScalar(1.5 + (1.7 - aspect) * 2.0);
+    Cable.scale.setScalar(1.0 + (1.7 - aspect) * 1.0);
   }
-  isPortrait = aspect<1
-  if(!isPortrait) {
-    if(iPadRotationTween.tween?.vars.progress!=0){
-      tweenTo(iPadRotationTween.tween, 0, 0.6)
+  isPortrait = aspect < 1;
+  if (!isPortrait) {
+    cstMaterials.Screen.uniforms.uPortrait.value = 0;
+    if (iPadRotationTween.tween?.vars.progress != 0) {
+      tweenTo(iPadRotationTween.tween, 0, 0.6);
     }
   } else {
-    if(iPadRotationTween.tween?.vars.progress!=1){
-      tweenTo(iPadRotationTween.tween, 1, 0.6)
+    cstMaterials.Screen.uniforms.uPortrait.value = 1;
+    if (iPadRotationTween.tween?.vars.progress != 1) {
+      tweenTo(iPadRotationTween.tween, 1, 0.6);
     }
   }
-  
-  // placeObject(SmokeFloor, new Vector3(0.0001, -1.0, 0));
-  // const scaleSpot = 1/aspect * 0.5
-  // const scaleSpot = height/390*aspect
-  const scaleSpot = width/230
-  // SmokeFloor.scale.set(scaleSpot, scaleSpot, scaleSpot)
-  const viewportW = scaleToViewportWidth()
-  const viewportH = scaleToViewportHeight()
+
+  const viewportW = scaleToViewportWidth();
+  const viewportH = scaleToViewportHeight();
   const viewportM = Math.max(viewportW, viewportH);
-  SmokeFloor.scale.setScalar(viewportW*0.28*0.5);
-  SpotLeft.scale.setScalar(viewportH*0.28);
-  SpotRight.scale.setScalar(viewportH*0.28);
-  // SmokeOver.scale.setScalar(viewportM*0.1);
+  SmokeFloor.scale.setScalar(viewportW * 0.28 * 0.5);
+  SpotLeft.scale.setScalar(viewportH * 0.28);
+  SpotRight.scale.setScalar(viewportH * 0.28);
 
   camera.position.y = camY;
   camera.updateMatrixWorld();
-  // alert("resize")
-  // render(true);
-  // SmokeOver.position.x = Projo1.position.x = Projo2.position.x = SpotLeft.position.x = SpotRight.position.x = 100
   eventBus.emit("resize", { width, height });
 };
 
-function render(forceRender:boolean=false) {
+function render(forceRender: boolean = false) {
   if (!forceRender) {
     if (!busy()) {
-        // return;
+      // return;
     }
   }
   // if (activePost) {
@@ -617,18 +558,18 @@ function render(forceRender:boolean=false) {
 const setupThree = () => {
   const canvasEl = canvas.value!;
   const width = document.documentElement.clientWidth;
+
   const height = document.documentElement.clientHeight;
   const aspect = width / height;
 
   const viewSize = 2;
 
-  camera = new PerspectiveCamera(75, aspect, 0.1, 1000)
-  camera.position.z = 0
-  camera.position.y = 5
+  camera = new PerspectiveCamera(75, aspect, 0.1, 100);
+  camera.position.z = 0;
+  camera.position.y = 5;
   const target = new Vector3(0, 0, 0);
   camera.lookAt(target);
 
-  
   renderer = new WebGLRenderer({
     canvas: canvasEl,
     alpha: false,
@@ -656,14 +597,14 @@ const setupThree = () => {
   renderer.outputColorSpace = SRGBColorSpace;
   // renderer.outputColorSpace = LinearSRGBColorSpace
   // renderer.toneMapping = NoToneMapping;
-  
+
   // renderer.toneMapping = ReinhardToneMapping;
   // renderer.toneMapping = CineonToneMapping;
   // renderer.toneMapping = ACESFilmicToneMapping;
-//   renderer.toneMapping = LinearToneMapping;
-// renderer.toneMappingExposure = 15;
-// renderer.toneMapping = AgXToneMapping;
-// renderer.toneMapping = NeutralToneMapping;
+  //   renderer.toneMapping = LinearToneMapping;
+  // renderer.toneMappingExposure = 15;
+  // renderer.toneMapping = AgXToneMapping;
+  // renderer.toneMapping = NeutralToneMapping;
 
   scene.add(cstGroup);
   scene.add(cstContainer);
@@ -678,18 +619,20 @@ const setupThree = () => {
     // iPad.rotation.z = Math.cos(elapsedTime*0.5)*0.1
     // iPad.rotation.x = Math.sin(elapsedTime*0.5)*0.02
     // console.log(SpotLeft.rotation.y)
-    SpotLeft.rotation.y = Math.cos(elapsedTime*0.5)*0.3+Math.PI*0.25
-    SpotRight.rotation.y = Math.sin(elapsedTime*0.5)*0.3-Math.PI*0.25
+    SpotLeft.rotation.y = Math.cos(elapsedTime * 0.5) * 0.3 + Math.PI * 0.25;
+    SpotRight.rotation.y = Math.sin(elapsedTime * 0.5) * 0.3 - Math.PI * 0.25;
     SpotLeft.getWorldDirection(light1Direction);
     SpotRight.getWorldDirection(light2Direction);
     // light1Direction.x*=-1.0;
-    light1Direction.z*=-1.0;
-    light1Direction.y=-0.5;
+    light1Direction.z *= -1.0;
+    light1Direction.y = -0.5;
     // light2Direction.x*=-1.0;
-    light2Direction.z*=-1.0;
-    light2Direction.y=-0.5;
-    SpotLeft.rotation.y = Math.cos(elapsedTime*0.5)*0.1+Math.PI*0.25-Math.PI*0.07
-    SpotRight.rotation.y = Math.sin(elapsedTime*0.5)*0.1-Math.PI*0.25+Math.PI*0.07
+    light2Direction.z *= -1.0;
+    light2Direction.y = -0.5;
+    SpotLeft.rotation.y =
+      Math.cos(elapsedTime * 0.5) * 0.1 + Math.PI * 0.25 - Math.PI * 0.07;
+    SpotRight.rotation.y =
+      Math.sin(elapsedTime * 0.5) * 0.1 - Math.PI * 0.25 + Math.PI * 0.07;
     // console.log(light1Direction)
     cstMaterials.Logo.uniforms.uLightDirection1.value.copy(light1Direction);
     cstMaterials.Logo.uniforms.uLightDirection2.value.copy(light2Direction);
@@ -699,18 +642,14 @@ const setupThree = () => {
     render();
   }
   requestAnimationFrame(animate);
-  setTimeout(()=>{
+  setTimeout(() => {
     resize();
-
-  }, 1000)
+  }, 1000);
   // resize();
 };
 
-const startIntro = () => {
-};
-const stopIntro = () => {
-};
-
+const startIntro = () => {};
+const stopIntro = () => {};
 
 const initCst = () => {
   gsap.globalTimeline.timeScale(1.15);
@@ -773,7 +712,7 @@ const ariaAltText = ref<string>(t("homeAltText"));
 
 <template>
   <main :class="mainClassName">
-  <canvas ref="canvas" role="img" :aria-label="ariaAltText"></canvas>
+    <canvas ref="canvas" role="img" :aria-label="ariaAltText"></canvas>
   </main>
   <!-- <span class="footdark"></span> -->
 </template>
@@ -785,8 +724,8 @@ main {
   /* width: 100%; */
   /* height: 100%; */
 }
-.footdark{
-  background: linear-gradient(to bottom, #08080800, #080808FF);
+.footdark {
+  background: linear-gradient(to bottom, #08080800, #080808ff);
   width: 100%;
   height: 50px;
   position: fixed;
