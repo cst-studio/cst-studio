@@ -6,6 +6,7 @@ import projo_texture_url from "@/assets/bitmap/texture/projo.png?url";
 import concrete_texture_url from "@/assets/bitmap/texture/concrete-wall.jpg?url";
 import screen_texture_url from "@/assets/bitmap/texture/screen.png?url";
 import MatCap_texture_url from "@/assets/bitmap/texture/MatCap.png?url";
+import Text_texture_url from "@/assets/bitmap/texture/text.png?url";
 import MatCapRed_texture_url from "@/assets/bitmap/texture/MatCapRed.png?url";
 import CableShadow_texture_url from "@/assets/bitmap/texture/BakeCable.png?url";
 
@@ -123,8 +124,9 @@ const loader = new THREE.TextureLoader(manager);
       loader.loadAsync(MatCap_texture_url),
       loader.loadAsync(MatCapRed_texture_url),
       loader.loadAsync(CableShadow_texture_url),
-    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8, texture9]) => {
-      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8, texture9]) {
+      loader.loadAsync(Text_texture_url),
+    ]).then(([texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8, texture9, texture10]) => {
+      for (const texture of [texture1, texture2, texture3, texture4, texture5, texture6, texture7, texture8, texture9, texture10]) {
         texture.colorSpace = THREE.NoColorSpace;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -143,6 +145,7 @@ const loader = new THREE.TextureLoader(manager);
       this.MatCapMat.uniforms.uMatcap.value = texture8;
       this.MatCapDynMat.uniforms.uMatcap.value = texture8;
       this.CableShadowMat.uniforms.uTexture.value = texture9;
+      this.Screen.uniforms.uTextTexture.value = texture10;
       this.setTextures();
       this.loadVideo()
       
@@ -166,6 +169,7 @@ const loader = new THREE.TextureLoader(manager);
     this.cst_BG_Mat.uniforms.uTime.value = 
     this.Floor.uniforms.uTime.value = 
     this.Logo.uniforms.uTime.value = 
+    this.Screen.uniforms.uTime.value = 
     // this.SmogFloor.uniforms.uTime.value = 
     this.Floor.uniforms.uTime.value = 
     this.SpotLeft.uniforms.uTime.value = 
@@ -682,6 +686,13 @@ const loader = new THREE.TextureLoader(manager);
       uniform float uScroll;
       uniform sampler2D uTexture;
       uniform sampler2D uTextureOverlay;
+      uniform sampler2D uTextTexture;
+      float _char(sampler2D s, vec2 u, int id) {
+          vec2 p = vec2(id%16, 15. - floor(float(id)/16.));
+              p = (u + p) / 16.;
+              u = step(abs(u-.5), vec2(.5));
+          return texture(s, p).r * u.x * u.y;
+      }
       void main() {
         vec2 uv = vUv;
         vec4 overlay = texture2D(uTextureOverlay, uv).rgba;
@@ -691,6 +702,54 @@ const loader = new THREE.TextureLoader(manager);
         gl_FragColor.rgba = texture2D(uTexture, uv).rgba;
         gl_FragColor.rgb = mix(vec3(0.0), gl_FragColor.rgb, step(uv.x,1.0)*step(uv.y,1.0)*step(0.0, uv.y));
         gl_FragColor.rgb=mix(gl_FragColor.rgb, overlay.rgb, clamp(-rotation+uScroll*overlay.a, 0.0, 1.0)*0.5);
+        vec2 uvTxt = uv;
+        uvTxt.x*=1.77777;
+        uvTxt-=0.5;
+        uvTxt.y-=0.545;
+        uvTxt.x+=0.45;
+        uvTxt*=10.0;
+        uvTxt+=0.5;
+        float cs = 0.0;
+        float decalage = 0.0;
+        int tim;
+        tim = int(uTime*0.0001)%10+48;
+        float c = _char(uTextTexture, uvTxt, tim);
+        cs+=c;
+        decalage+=0.5;
+        tim = int(uTime*0.001)%10+48;
+        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+        cs+=c;
+        decalage+=0.4;
+        cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
+        decalage+=0.4;
+        tim = int(uTime*0.01)%10+48;
+        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+        cs+=c;
+        tim = int(uTime*0.1)%10+48;
+        decalage+=0.5;
+        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+        cs+=c;
+        decalage+=0.4;
+        cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
+        decalage+=0.4;
+        tim = int(uTime*1.0)%10+48;
+        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+        cs+=c;
+        tim = int(uTime*10.0)%10+48;
+        decalage+=0.5;
+        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+        cs+=c;
+        decalage+=0.4;
+        cs+=_char(uTextTexture, uvTxt-vec2(decalage, 0.0), 58);
+        tim = int((uTime*0.2)*100.0)%10+48;
+        decalage+=0.4;
+        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+        cs+=c;
+        tim = int((uTime*0.4+5.0)*100.0)%10+48;
+        decalage+=0.5;
+        c = _char(uTextTexture, uvTxt-vec2(decalage, 0.0), tim);
+        cs+=c;
+        gl_FragColor.rgb += cs*0.5;
       }
       `,
       precision: 'lowp',
@@ -700,6 +759,7 @@ const loader = new THREE.TextureLoader(manager);
         uColor3: { value: hexToVec3Srgb(0xDDDCFF) },
         uTexture: { value: null },
         uTextureOverlay: { value: null },
+        uTextTexture: { value: null },
         rotation: { value: 0.0 },
         uTime: { value: 0.0 },
         uScroll: { value: 1.0 }

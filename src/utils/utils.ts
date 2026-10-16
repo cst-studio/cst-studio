@@ -1,3 +1,5 @@
+import { gsap } from "gsap";
+
 // src/utils/geometry.ts
 import { ShaderMaterial, Group } from "three";
 
@@ -54,4 +56,17 @@ export function mapRange(
 }
 export function isMobile(): boolean {
   return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+const ease = gsap.parseEase("circ.inOut")
+export function segmentedEase(progress: number, segments = 4) {
+  const segment = Math.min(
+    Math.floor(progress * segments),
+    segments - 1
+  )
+  const localProgress = (progress * segments) - segment
+  return {
+    segment,
+    progress: ease(localProgress)
+  }
 }

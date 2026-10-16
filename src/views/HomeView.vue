@@ -92,7 +92,10 @@ en Image<span class="dot"></span></h1>
             <h3> {{ prod.eyebrow }} </h3>
             <p> {{ prod.desc }} </p>
           </div>
-          <img :src="`./${prod.img}`" :alt="prod.title" />
+          <video v-if="prod.video" class="video" controls loop="true" muted="true" loading="lazy" :poster="`./${prod.img}`" >
+            <source :src="`./${prod.video}`" type="video/mp4" />
+          </video>
+          <img v-else :src="`./${prod.img}`" :alt="prod.title" />
         </div>
       </article>
       
@@ -108,7 +111,7 @@ en Image<span class="dot"></span></h1>
 <section class="contact-section">
   <div id="scroller-contact"></div>
     <header>
-      <h1>Faisons quelque de grand ensemble<span class="dot"></span></h1>
+      <h1>Faisons quelque chose<br> de grand ensemble<span class="dot"></span></h1>
       <p>Une idée, un projet, une ambition : racontons-la avec des images qui marquent.</p>
     </header>
     <main>
@@ -259,7 +262,7 @@ main.main {
               flex-direction: column;
             }
           }
-          img{
+          img, video{
             object-fit: cover;
             object-position: center;
             width: 350px;

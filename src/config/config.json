@@ -50,16 +50,25 @@
     "footer": "Du premier brief au dernier plan, chaque image compte.",
     "content": [
       {
-        "title": "PRODUCTION #1",
-        "eyebrow": "Vidéo d'Entreprise",
-        "desc": "Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.",
-        "img": "images/work-in-progress.jpeg"
+        "title": "Sylvain Kastendeuch vous lance un défi!",
+        "eyebrow": "Socila media content",
+        "desc": "Jouez, grimpez au classement et cumulez un maximum de tickets pour tenter de remporter les récompenses débloquées par la communauté.",
+        "img": "images/Sylvain.Kastendeuch.jpg",
+        "video": "video/sylvain.kastendeuch.mp4"
       },
       {
-        "title": "PRODUCTION #2",
-        "eyebrow": "Vidéo d'Entreprise",
-        "desc": "Plongez dans nos dernières réalisations : films d'entreprise, événements, interviews et contenus pour les réseaux sociaux. Un aperçu de notre savoir-faire et de nos projets récents.",
-        "img": "images/work-in-progress.jpeg"
+        "title": "E.Leclerc FAMECK",
+        "eyebrow": "Vidéo promo",
+        "desc": "Conception et réalisation d'un film publicitaire pour E.Leclerc Fameck, pensé pour le grand écran et diffusé en salle avant les projections.",
+        "img": "images/work-in-progress.jpeg",
+        "video": "video/CST_PUB.mp4"
+      },
+      {
+        "title": "Tereny",
+        "eyebrow": "Vidéo promo",
+        "desc": "Conception et réalisation d'un film de marque pour Tereny, mettant en lumière leur savoir-faire et leur vision de l'aménagement extérieur à travers une approche visuelle soignée, au service de leur univers et de leur identité.",
+        "img": "images/work-in-progress.jpeg",
+        "video": "video/Tereny.mp4"
       }
     ]
   }

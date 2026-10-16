@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { isMobile } from "../utils/utils.ts";
+import { DomScroll } from "../utils/DomScroll.ts";
 import { useAppState } from "../utils/State.ts";
 import { CstMaterials } from "../utils/CstMaterials.ts";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -30,6 +31,7 @@ import {
 } from "three";
 
 const _isMobile = isMobile()
+const domScroll: DomScroll = new DomScroll()
 const canvas = ref<HTMLCanvasElement | null>(null);
   const scene = new Scene();
   const introTL = gsap.timeline();
@@ -53,11 +55,6 @@ let screenTopLeft: Vector3 = new Vector3(-1, 1, 0);
 let screenTopLeftAt2: Vector3 = new Vector3(-1, 1, 0);
 let isPortrait: Boolean = false
 
-let heightService:number = 1
-let heightProds:number = 1
-let heightServiceRound:number = 1
-let heightProdsRound:number = 1
-
 function getiOSVersion() {
   const match = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
   if (!match) return null;
@@ -69,78 +66,10 @@ function getiOSVersion() {
 }
 const iosVersion = getiOSVersion();
 
-const ease = gsap.parseEase("circ.inOut")
-function segmentedEase(progress, segments = 4) {
-  const segment = Math.min(
-    Math.floor(progress * segments),
-    segments - 1
-  )
-  const localProgress = (progress * segments) - segment
-  return {
-    segment,
-    progress: ease(localProgress)
-  }
-}
-
-
-type SectionTrack = {
-  section: HTMLElement
-  track: HTMLElement
-}
-const tracks:SectionTrack[]=[]
-const updateHeight = () => {
-  tracks.forEach((trackSection) => {
-    const track = trackSection.track
-    const section = trackSection.section
-    const distance = track.scrollWidth - document.documentElement.clientWidth
-    const height = distance + window.innerHeight
-    section.style.height = `${height}px`
-    if(section.className.includes('services')) {
-      heightService = height
-    }
-    if(section.className.includes('prods')) {
-      heightProds = height
-    }
-    heightServiceRound = Math.round(heightService/document.documentElement.clientHeight)
-    heightProdsRound = Math.round(heightProds/document.documentElement.clientHeight)
-  }
-);
-}
-
 const initScroll = () => {
   gsap.registerPlugin(ScrollTrigger)
   gsap.ticker.lagSmoothing(0)
-
-
-document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) => {
-  const track = section.querySelector<HTMLElement>('.horizontal-track')
-  tracks.push({section:section, track:track!})
-  if (_isMobile) return
-  if (!track) return
-  
-
-  updateHeight()
-
-  gsap.to({}, {
-    scrollTrigger: {
-      trigger: section,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: true,
-      invalidateOnRefresh: true,
-      // onRefresh: () => {
-      //   resize()
-      // },
-      onUpdate: (self) => {
-      const { segment, progress } = segmentedEase(self.progress, track.children.length-1)
-      const p = (segment+progress)/(track.children.length-1)
-      track.style.transform = `translateX(${- (track.scrollWidth - document.documentElement.clientWidth) * p}px)`
-    }
-    },
-  })
-
-
-})
+  domScroll.init()
 
 }
 const updateScene1 = (value:number = 0) => {
@@ -226,7 +155,7 @@ const initThree = () => {
           onUpdate: (self) => {
             const progress = self.progress
             // Scene1.position.z = screenTopLeft.z*2.0+screenTopLeft.z*progress*12.0
-            BgCurveContainer.position.y = 3+screenTopLeft.z*0.0+screenTopLeft.z*progress*heightServiceRound*speedScroll
+            BgCurveContainer.position.y = 3+screenTopLeft.z*0.0+screenTopLeft.z*progress*domScroll.heightServiceRound*speedScroll
             // BgCurveEnd.position.y=-BgCurveContainer.position.y
             // BgCurveEnd.position.y=-BgCurveContainer.position.y+3
             // Debug1.position.y = -BgCurveContainer.position.y+3
@@ -243,7 +172,7 @@ const initThree = () => {
           scrub: 1,
           onUpdate: (self) => {
             const progress = self.progress
-            BgCurveContainer.position.y = 3+screenTopLeft.z*(heightServiceRound*speedScroll)+screenTopLeft.z*progress*heightProdsRound*speedScroll
+            BgCurveContainer.position.y = 3+screenTopLeft.z*(domScroll.heightServiceRound*speedScroll)+screenTopLeft.z*progress*domScroll.heightProdsRound*speedScroll
             // BgCurveEnd.position.y=-BgCurveContainer.position.y+3
             }
         }
@@ -282,7 +211,7 @@ const initThree = () => {
             Logo.position.z=logo_offset-logo_offset*progress-0.3
             // BgCurveContainer.rotation.x = progress*Math.PI/2
             // BgCurveContainer.position.y = screenTopLeft.z*progress*2.0
-            BgCurveContainer.position.y = 3+screenTopLeft.z*(heightServiceRound*speedScroll+heightProdsRound*speedScroll)+screenTopLeft.z*progress*speedScroll
+            BgCurveContainer.position.y = 3+screenTopLeft.z*(domScroll.heightServiceRound*speedScroll+domScroll.heightProdsRound*speedScroll)+screenTopLeft.z*progress*speedScroll
             // BgCurveEnd.position.y = (3+screenTopLeft.z*(heightServiceRound*speedScroll+heightProdsRound*speedScroll))+3
             
             // BgCurveContainer.position.z = -progress*10.0
@@ -484,6 +413,8 @@ const initCstLibrary = () => {
   Projo1.position.set(0,-2,-0.0)
   Projo1Container.add(Projo1);
   Scene1.add(Projo1Container);
+  Projo1Container.visible = false
+  Projo2Container.visible = false
   
   Projo2 = cstLibrary.getObjectByName("Projo2")! as Mesh
   Projo2.material = cstMaterials.Projo
@@ -564,7 +495,7 @@ const scaleToViewportHeight = () => {
 };
 // let height = window.innerHeight
 const resize = () => {
-  updateHeight()
+  domScroll.updateHeight()
 
   
   // BgCurveFloor.scale.y=-((heightServiceRound+heightProdsRound)*screenTopLeftAt2.z*2)/50
