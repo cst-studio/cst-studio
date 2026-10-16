@@ -10,14 +10,13 @@ import Text_texture_url from "@/assets/bitmap/texture/text.png?url";
 import MatCapRed_texture_url from "@/assets/bitmap/texture/MatCapRed.png?url";
 import CableShadow_texture_url from "@/assets/bitmap/texture/BakeCable.png?url";
 
-import { hexToVec3Srgb } from "@/utils/utils";
+import { hexToVec3Srgb, isMobile } from "@/utils/utils";
 import matcapVertexShader from "../shader/matcapMaterial.vert?raw";
 import matcapFragmentShader from "../shader/matcapMaterial.frag?raw";
 import matcapDynFragmentShader from "../shader/matcapDynMaterial.frag?raw";
 import cstMaterialVertexShader from "../shader/CstMaterial.vert?raw";
 import cstMaterialFragmentShader from "../shader/CstMaterial.frag?raw";
 import config from '@/config/config.json';
-
 import { eventBus } from "@/eventBus";
 
 import { computed } from 'vue';
@@ -56,9 +55,14 @@ export class CstMaterials {
   private concrete_Texture?: THREE.Texture;
   private video: HTMLVideoElement;
   private videoTexture: THREE.VideoTexture;
+  private _isMobile = isMobile()
 
   private loadVideo(){
     this.video.src = videoUrl.value;
+    if(this._isMobile){
+      eventBus.emit("textureReady", true);
+      eventBus.emit("loadTexture", 100);
+    }
   }
 
   constructor(opts: CstMaterialsOpts = {}) {
@@ -96,10 +100,11 @@ this.videoTexture.wrapS = THREE.ClampToEdgeWrapping;
  this.videoTexture.wrapT = THREE.ClampToEdgeWrapping;
 
 this.video.addEventListener("loadeddata", () => {
-  console.log("Video loaded", this.video.videoWidth, this.video.videoHeight);
-  eventBus.emit("textureReady", true);
-  eventBus.emit("loadTexture", 100);
   this.video.play();
+  if(!this._isMobile){
+    eventBus.emit("textureReady", true);
+    eventBus.emit("loadTexture", 100);
+  }
 });
 
   
