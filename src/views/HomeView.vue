@@ -159,17 +159,19 @@ en Image<span class="dot"></span></h1>
   left: 0;
   width: 10px;
   /* height: 350vh; */
-  /* background: #d006;*/
+  /* background: #d006; */
   #scroller-p1{
     position: relative;
     /* background: #00f6; */
     height: 300vh;
     width: 100%;
+    width: 5px;
   }
   #scroller-p2{
     position: relative;
     height: 250px;
     width: 100%;
+    width: 5px;
     /* background: #d006; */
   }
   
@@ -355,9 +357,10 @@ main.main {
   main.main {
     & .services-section, & .prods-section {
       height: auto; 
+      margin-bottom: 0px;
       & .horizontal-sticky {
         position: relative;
-        padding-top: 70px;
+        padding-top: 0px;
         height: auto; 
           & .horizontal-track {
             flex-direction: column;
@@ -382,8 +385,9 @@ main.main {
               width: 80vw;              
             }
           }
-          img{
-            width: 350px;
+          img, video{
+            width: 80vw;
+            max-width: 80vw;
             height: 200px;
             margin-left: 0px;
             margin-top: 20px;
