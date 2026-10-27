@@ -481,33 +481,21 @@ const loader = new THREE.TextureLoader(manager);
           }  
           noiseValue2 = pow(noiseValue2, 1.5);
           colorOut.rgb = uColor1*noiseValue2;
-          // float noise = dither0(gl_FragCoord.xy);
-          // colorOut.rgb += noise / 32.0;
           gl_FragColor = vec4(colorOut, fade);
-          // gl_FragColor = texture2D(uSwirlTexture, vUv);
           vec2 flow = texture2D(uSwirlTexture, vUv*2.0+vec2(uTime*0.02, -uTime*0.03)).rg;
           vec3 smogs = texture2D(uCloudTexture, vUv+flow*0.51).rgb;
-          // float smog = mix(smogs.r, smogs.b, abs(cos(uTime*0.1)));
           float smog = smogs.r*0.33+smogs.g*0.33+smogs.b*0.33;
-          // gl_FragColor = vec4(vec3(smog)*0.02, 1.0);
-          // colorOut.rgb = uColor1*smog*0.1;
           colorOut.rgb = uColor1*smog*0.821;
-          // gl_FragColor = vec4(vec3(smog)*0.05, 1.0);
           gl_FragColor = vec4(colorOut.rgb, 1.0);
-          // float noise = dither0(gl_FragCoord.xy);
-          // gl_FragColor.rgb += noise / 32.0;
           gl_FragColor.rgb = vec3(vUv.y);
           gl_FragColor.rgb = vec3(smog);
-          // colorOut.a = smog*0.5;
-          // colorOut.a = 0.95;
-          // gl_FragColor = texture2D(uSwirlTexture, vUv*5.0);
           vec2 uvSmog = vUv;
           uvSmog.x = (uvSmog.x-0.5)*1.0+0.5;
           uvSmog.y = (uvSmog.y-0.5)*2.0+0.5;
           gl_FragColor.rgb = vec3(texture2D(uSmogTexture, uvSmog+flow*0.21).g);
           gl_FragColor.rgb *= vUv.y;
           gl_FragColor.rgb *= 0.2;
-          // gl_FragColor.rgb = vec3(flow, 0.0);
+          // gl_FragColor.r = 1.0;
       }
       `,
       precision: 'lowp',
@@ -604,9 +592,9 @@ const loader = new THREE.TextureLoader(manager);
         gl_FragColor.rgba = texture2D(uTexture, vUv*3.0).rgba;
         gl_FragColor.rgb *= gl_FragColor.r;
         gl_FragColor.rgb *= 0.1;
-        gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.5, 1.0);
+        // gl_FragColor.rgb *= clamp(vUv.y*8.0, 0.5, 1.0);
 
-        // gl_FragColor.r += 0.5;
+        // gl_FragColor.b = 1.0;
       }
       `,
       precision: 'lowp',
