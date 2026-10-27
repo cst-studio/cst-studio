@@ -32,6 +32,7 @@ export class DomScroll {
     
     
     document.querySelectorAll('video.video').forEach((video) => {
+      if (this._isMobile) return
       observer.observe(video);
     });
 
@@ -40,9 +41,9 @@ export class DomScroll {
 
 
   document.querySelectorAll<HTMLElement>('.horizontal-section').forEach((section) => {
+    if (this._isMobile) return
     const track = section.querySelector<HTMLElement>('.horizontal-track')
     this.tracks.push({section:section, track:track!})
-    if (this._isMobile) return
     if (!track) return
     
 
