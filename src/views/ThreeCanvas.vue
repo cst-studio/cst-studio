@@ -130,7 +130,9 @@ const initThree = () => {
             scrub: 1,
             onUpdate: (self) => {
               const progress = gsap.parseEase(easer)(self.progress);
+              const progress2 = gsap.parseEase("power3.in")(Math.max(0, self.progress*3.0-2.0));
               // Scene1.position.z = screenTopLeft.z * progress * 2.0;
+              // BgCurveContainer.position.z = 1-progress2*6.0
               Scene1.position.z = screenTopLeft.z * self.progress * 2.0;
               // BgCurveContainer.position.y = 3 + self.progress*10
               // BgCurveContainer.position.z = 2;
@@ -138,6 +140,9 @@ const initThree = () => {
               Scene1.rotation.x = (self.progress * Math.PI) / 2;
               Scene1.position.y = 0;
               Scene1.position.y = screenTopLeft.z * self.progress * 1.0;
+              if(_isMobile){
+                iPadContainer.position.y = -self.progress * 7
+              }
               if (self.progress >= 0.95) {
                 if (!cstMaterials.video.paused) {
                   cstMaterials.video.pause();
@@ -165,6 +170,10 @@ const initThree = () => {
             scrub: 1,
             onUpdate: (self) => {
               const progress = self.progress;
+              // BgCurveContainer.position.z = 1-6.0
+              if(_isMobile){
+                iPadContainer.position.y = -7
+              }
               BgCurveContainer.position.y =
                 3 +
                 screenTopLeft.z * 0.0 +
@@ -187,7 +196,9 @@ const initThree = () => {
             scrub: 1,
             onUpdate: (self) => {
               const progress = self.progress;
-              
+              if(_isMobile){
+                iPadContainer.position.y = -7
+              }
               BgCurveContainer.position.y =
                 3 +
                 screenTopLeft.z * (domScroll.heightServiceRound * speedScroll) +
