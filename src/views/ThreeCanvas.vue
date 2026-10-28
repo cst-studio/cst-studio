@@ -333,6 +333,9 @@ const initCstLibrary = () => {
   // Logo.material = cstMaterials.MatCapDynMat
   Logo.material = cstMaterials.MatCapDynMat;
   Logo.position.set(0, 0, 6.2);
+  if(_isMobile){
+    Logo.scale.setScalar(2.0)
+  }
   scene.add(Logo);
 
   SmokeFloor = cstLibrary.getObjectByName("SmokeFloor")! as Mesh;
