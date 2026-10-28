@@ -159,10 +159,10 @@ en Image<span class="dot"></span></h1>
   left: 0;
   width: 10px;
   /* height: 350vh; */
-  /* background: #d006; */
+  background: #d006;
   #scroller-p1{
     position: relative;
-    /* background: #00f6; */
+    background: #00f6;
     height: 300vh;
     width: 100%;
     width: 5px;
@@ -172,24 +172,20 @@ en Image<span class="dot"></span></h1>
     height: 250px;
     width: 100%;
     width: 5px;
-    /* background: #d006; */
+    background: #d006;
   }
-  
 }
 #scroller-services, #scroller-prods, #scroller-contact{
   position: absolute;
   width: 30px;
-  
 }
 #scroller-services{
   top:-40vh;
   height: calc(100% + 40vh);
-  /* background: linear-gradient(to bottom, #f0f6, #0f06); */
 }
 #scroller-prods{
   top:-10vh;
   height: calc(100% + 10vh);
-  /* background: linear-gradient(to bottom, #f0f6, #00f6); */
 }
 #scroller-contact{
   top:-10vh;
@@ -365,12 +361,12 @@ main.main {
           & .horizontal-track {
             flex-direction: column;
             article{
-              margin: 30px 0;
+              margin: 50px 0;
               &:first-child{
-                margin-top: 60px;
+                /* margin-top: 60px; */
               }
               &:last-child{
-                margin-bottom: 60px;
+                /* margin-bottom: 60px; */
               }
             }
           }
@@ -380,19 +376,18 @@ main.main {
             & main {
                 & article {
                   &>div{
-            flex-direction: column;
-            &>div{
-              width: 80vw;              
-            }
-          }
-          img, video{
-            width: 80vw;
-            max-width: 80vw;
-            height: 200px;
-            margin-left: 0px;
-            margin-top: 20px;
-          }
-                  
+                    flex-direction: column;
+                    &>div{
+                      width: 90vw;              
+                    }
+                  }
+                  img, video{
+                    width: 90vw;
+                    max-width: 90vw;
+                    height: 200px;
+                    margin-left: 0px;
+                    margin-top: 20px;
+                  }
                 }
             }
         }
@@ -404,24 +399,38 @@ main.main {
       }
     }
 
-
-.main-hero-section{
-    .main-hero-section-sticky{
-      header{
-        flex: 1;
-        /* background: linear-gradient(to bottom, #f0f6, #f006); */
-      }
-      main{
-        /* flex: 1; */
-        /* background: linear-gradient(to bottom, #f0f6, #00f6); */
-      }
-      footer{
-        margin-left: 10px;
-        margin-bottom: 90px;
+    .main-hero-section{
+      margin-bottom: 0vh;
+      .main-hero-section-sticky{
+        header{
+          flex: 1;
+          /* background: linear-gradient(to bottom, #f0f6, #f006); */
+        }
+        main{
+          /* flex: 1; */
+          /* background: linear-gradient(to bottom, #f0f6, #00f6); */
+        }
+        footer{
+          margin-bottom: 10px;
+          margin-top: 30px;
+        }
       }
     }
   }
 
+
+  #scroller{
+    #scroller-p1{
+      height: 200vh;
+    }
+    #scroller-p2{
+      height: 150px;
+    }
+  }
+  main.main {
+    .main-hero-section{
+      height: calc(200vh + 250px);
+    }
   }
 }
 </style>
