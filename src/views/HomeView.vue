@@ -363,7 +363,7 @@ main.main {
             article{
               margin: 50px 0;
               &:first-child{
-                /* margin-top: 60px; */
+                margin-top: 80px;
               }
               &:last-child{
                 /* margin-bottom: 60px; */
