@@ -172,7 +172,7 @@ en Image<span class="dot"></span></h1>
     height: 250px;
     width: 100%;
     width: 5px;
-    background: #d006;
+    /* background: #d006; */
   }
 }
 #scroller-services, #scroller-prods, #scroller-contact{
