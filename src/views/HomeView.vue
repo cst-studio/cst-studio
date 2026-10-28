@@ -36,7 +36,7 @@ onUnmounted(() => {
       <footer class="full-width">
         <h1 class="font-display">Votre vision<br>
 en Image<span class="dot"></span></h1>
-        <p>Du concept à la livraison, nous transformons vos idées <br>en contenus visuels qui captivent, convertissent et marquent les esprits.</p>
+        <p>Du concept à la livraison, nous transformons vos idées en contenus visuels qui captivent, convertissent et marquent les esprits.</p>
 
       </footer>
       </div>
@@ -111,7 +111,7 @@ en Image<span class="dot"></span></h1>
 <section class="contact-section">
   <div id="scroller-contact"></div>
     <header>
-      <h1>Faisons quelque chose<br> de grand ensemble<span class="dot"></span></h1>
+      <h1>Faisons quelque chose de grand ensemble<span class="dot"></span></h1>
       <p>Une idée, un projet, une ambition : racontons-la avec des images qui marquent.</p>
     </header>
     <main>
@@ -213,16 +213,19 @@ main.main {
       /* align-items: center; */
       header{
         flex: 1;
-        /* background: linear-gradient(to bottom, #f0f6, #f006); */
+        /* p{
+          width: 55%;
+        } */
       }
       main{
         /* flex: 1; */
         /* background: linear-gradient(to bottom, #f0f6, #00f6); */
       }
       footer{
-        /* background: linear-gradient(to bottom, #f0f6, #0f06); */
-        /* margin-left: 60px; */
         margin-bottom: 60px;
+        p{
+          width: 55%;
+        }
       }
     }
   }
@@ -413,6 +416,9 @@ main.main {
         footer{
           margin-bottom: 10px;
           margin-top: 30px;
+          p{
+            width: 100%;
+          }
         }
       }
     }
