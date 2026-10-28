@@ -100,6 +100,7 @@ this.videoTexture.wrapS = THREE.ClampToEdgeWrapping;
  this.videoTexture.wrapT = THREE.ClampToEdgeWrapping;
 
 this.video.addEventListener("loadeddata", () => {
+  this.Screen.uniforms.uIsVideoReady.value = 1.0;
   this.video.play();
   if(!this._isMobile){
     eventBus.emit("textureReady", true);
@@ -151,6 +152,7 @@ const loader = new THREE.TextureLoader(manager);
       this.MatCapDynMat.uniforms.uMatcap.value = texture8;
       this.CableShadowMat.uniforms.uTexture.value = texture9;
       this.Screen.uniforms.uTextTexture.value = texture10;
+      this.Screen.uniforms.uIsVideoReady.value = 0.0;
       this.setTextures();
       this.loadVideo()
       
@@ -683,6 +685,7 @@ const loader = new THREE.TextureLoader(manager);
       uniform float uScroll;
       uniform sampler2D uTexture;
       uniform sampler2D uTextureOverlay;
+      uniform float uIsVideoReady;
       uniform sampler2D uTextTexture;
       float _char(sampler2D s, vec2 u, int id) {
           vec2 p = vec2(id%16, 15. - floor(float(id)/16.));
@@ -697,6 +700,7 @@ const loader = new THREE.TextureLoader(manager);
         uv.y-= 0.075*uScroll*(1.0-uPortrait);
         uv.y*= 1.0+0.175*uScroll*(1.0-uPortrait);
         gl_FragColor.rgba = texture2D(uTexture, uv).rgba;
+        gl_FragColor.rgba = mix(vec4(0.0,0.0,0.0,1.0), gl_FragColor.rgba, uIsVideoReady);
         gl_FragColor.rgb = mix(vec3(0.0), gl_FragColor.rgb, step(uv.x,1.0)*step(uv.y,1.0)*step(0.0, uv.y));
         gl_FragColor.rgb=mix(gl_FragColor.rgb, overlay.rgb, clamp(-rotation+uScroll*overlay.a, 0.0, 1.0)*0.5);
         
@@ -760,6 +764,7 @@ const loader = new THREE.TextureLoader(manager);
         uColor3: { value: hexToVec3Srgb(0xDDDCFF) },
         uTexture: { value: null },
         uTextureOverlay: { value: null },
+        uIsVideoReady: { value: 0.0 },
         uTextTexture: { value: null },
         rotation: { value: 0.0 },
         uTime: { value: 0.0 },
